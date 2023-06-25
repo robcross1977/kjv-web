@@ -12,15 +12,12 @@ export default function FreeSearch() {
   }
 
   return (
-    <div className="flex flex-col w-10/12 mx-auto my-10 h-screen">
-      <div className="flex flex-row w-full py-5 bg-yellow-600 rounded-lg my-3">
-        <label htmlFor="query" className="mr-3">
-          Search:
-        </label>
+    <div className="flex flex-col w-10/12 mx-auto my-5 h-screen">
+      <div className="flex flex-row w-full py-5 bg-yellow-600 rounded-lg my-3 justify-start">
         <input
           type="text"
           id="query"
-          className="mr-3 bg-gray-50 w-1/2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="mr-3 ml-3 bg-gray-50 w-2/12 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Genesis 1:1"
           required
           value={query}

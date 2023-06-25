@@ -9,7 +9,7 @@ module.exports = {
     extend: {
       backgroundImage: {
         parchment: `url("/canvas.png")`,
-        curtain: `url("/curtain.png")`,
+        curtain: `url("/crimson_curtain.png")`,
       },
     },
   },

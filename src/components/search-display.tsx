@@ -31,7 +31,7 @@ export default function SearchDisplay({ book }: { book?: BookRecords }) {
                   {Object.entries(verses).map(([verse, text]) => {
                     return (
                       <div key={`${book}${chapter}${verse}`} className="my-4">
-                        <sup className="text-red-950">{verse}</sup>
+                        <sup className="text-red-950 mr-4">{verse}</sup>
                         <span>{text}</span>
                       </div>
                     );
