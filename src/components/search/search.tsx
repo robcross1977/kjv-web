@@ -22,7 +22,7 @@ export default function Search({
           type="search"
           id="default-search"
           className="block w-full p-4 pl-10 text-sm bg-lime-950 text-white border border-gray-300 rounded-lg  focus:ring-gray-300 focus:border-gray-300"
-          placeholder="Ex: Genesis 1:2-5"
+          placeholder="Ex: Gen 1:2-3"
           required
           value={query}
           onChange={changeQuery}
