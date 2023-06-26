@@ -8,8 +8,7 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        parchment: `url("/canvas.png")`,
-        curtain: `url("/crimson_curtain.png")`,
+        parchment: `url("/canvas.webp")`,
       },
     },
   },
