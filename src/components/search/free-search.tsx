@@ -26,9 +26,10 @@ export default function FreeSearch() {
   }
 
   return (
-    <div className="flex flex-col w-10/12 mx-auto my-5 h-screen">
+    <div className="flex flex-col w-11/12 mx-auto my-5 h-screen">
       <div className="flex flex-col w-full sm:flex-row py-5 bg-yellow-500 rounded-lg my-3 justify-between items-center">
         <Title />
+
         <Search
           query={query}
           changeQuery={changeQuery}

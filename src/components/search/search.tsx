@@ -12,7 +12,7 @@ export default function Search({
   handleKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <div className="flex-grow">
+    <div className="flex-grow w-full sm:w-auto">
       <div className="relative mx-5">
         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
           <MagnifyingGlass />
