@@ -26,7 +26,7 @@ export default function FreeSearch() {
 
   return (
     <div className="flex flex-col w-full mx-auto h-screen">
-      <div className="flex flex-col w-full sm:flex-row py-1 bg-yellow-500 rounded-b-lg justify-between items-center">
+      <div className="flex flex-col w-full sm:flex-row pb-3 bg-violet-950 border-l-2 border-amber-100 rounded-b-lg justify-between items-center">
         <Search
           query={query}
           changeQuery={changeQuery}
@@ -35,7 +35,7 @@ export default function FreeSearch() {
         />
       </div>
 
-      <div className="flex flex-grow w-full bg-parchment rounded-lg py-2.5 px-5 mr-2 mb-2">
+      <div className="flex flex-grow w-full bg-parchment rounded-lg py-2.5 px-5 mr-2 my-1">
         <BookDisplay book={results} isDirty={isDirty} />
       </div>
     </div>
