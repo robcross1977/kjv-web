@@ -35,7 +35,7 @@ export default function FreeSearch() {
         />
       </div>
 
-      <div className="flex flex-grow w-full bg-parchment rounded-lg py-2.5 px-5 mr-2 my-1">
+      <div className="flex flex-grow w-full bg-parchment rounded-lg py-2.5 px-5 mr-2 my-2 border border-zinc-950 shadow-2xl">
         <BookDisplay book={results} isDirty={isDirty} />
       </div>
     </div>
