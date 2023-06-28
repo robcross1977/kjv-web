@@ -1,4 +1,4 @@
-import { ChangeEvent, KeyboardEventHandler } from "react";
+import { ChangeEvent } from "react";
 import MagnifyingGlass from "../shared/magnifying-glass";
 export default function Search({
   query,

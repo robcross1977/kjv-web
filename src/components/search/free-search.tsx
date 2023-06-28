@@ -1,6 +1,6 @@
 import { BookRecords, search } from "kingjames";
 import { ChangeEvent, useState } from "react";
-import BookDisplay from "./book-display";
+import BookDisplay from "../bible/book-display";
 import Search from "./search";
 
 export default function FreeSearch() {
@@ -26,7 +26,7 @@ export default function FreeSearch() {
 
   return (
     <div className="flex flex-col w-full mx-auto h-screen">
-      <div className="flex flex-col w-full sm:flex-row pb-3 bg-violet-950 border-l-2 border-amber-100 rounded-b-lg justify-between items-center">
+      <div className="flex flex-col w-full sm:flex-row pb-3 bg-sky-950 border-l-2 border-amber-100 rounded-b-lg justify-between items-center">
         <Search
           query={query}
           changeQuery={changeQuery}

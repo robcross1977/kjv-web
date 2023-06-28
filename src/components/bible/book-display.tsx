@@ -29,13 +29,13 @@ export default function SearchDisplay({
   }
 
   return (
-    <div>
+    <div className="w-full">
       {Object.entries(book).map(([title, chapters]) => {
         const finalTitle = capitalizeFirstLetter(title);
 
         return (
           <div key={title} className="flex flex-col w-full h-full">
-            <h1 className="text-4xl font-semibold mb-5 text-center">
+            <h1 className="text-4xl font-semibold mb-5 text-center w-full">
               {`${finalTitle}`}
             </h1>
             {ChapterDisplay({ book: title, chapters })}
