@@ -1,7 +1,6 @@
 import { BookRecords, search } from "kingjames";
-import { ChangeEvent, KeyboardEventHandler, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import BookDisplay from "./book-display";
-import Title from "./title";
 import Search from "./search";
 
 export default function FreeSearch() {
@@ -26,10 +25,8 @@ export default function FreeSearch() {
   }
 
   return (
-    <div className="flex flex-col w-11/12 mx-auto my-5 h-screen">
-      <div className="flex flex-col w-full sm:flex-row py-5 bg-yellow-500 rounded-lg my-3 justify-between items-center">
-        <Title />
-
+    <div className="flex flex-col w-full mx-auto h-screen">
+      <div className="flex flex-col w-full sm:flex-row py-1 bg-yellow-500 rounded-b-lg justify-between items-center">
         <Search
           query={query}
           changeQuery={changeQuery}
