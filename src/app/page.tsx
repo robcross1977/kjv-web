@@ -5,7 +5,7 @@ import Header from "@/components/shared/header";
 
 export default function Home() {
   return (
-    <div className="flex flex-col w-11/12 mx-auto my-5 h-screen">
+    <div className="flex flex-col w-11/12 mx-auto my-5">
       <Header />
       <FreeSearch />
     </div>

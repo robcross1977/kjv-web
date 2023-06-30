@@ -9,9 +9,9 @@ export default function Auth() {
   if (error) return <div>Error: {JSON.stringify(error)}</div>;
 
   return (
-    <div className="mr-5 text-zinc-50 hover:text-teal-700 items-center justify-center">
+    <div className="mr-5 text-zinc-50 items-center justify-center">
       {user ? (
-        <div className="flex flex-row items-center justify-center">
+        <div className="flex flex-row items-center justify-center hover:text-teal-700">
           <Link href="/api/auth/logout" data-testid="logout" className="pr-3">
             {`Logout`}
           </Link>

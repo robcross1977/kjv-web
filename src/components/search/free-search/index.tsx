@@ -1,21 +1,22 @@
 import { BookRecords, search } from "kingjames";
-import { ChangeEvent, useState } from "react";
-import BookDisplay from "../bible/book-display";
-import Search from "./search";
+import { useEffect, useRef, useState } from "react";
+import BookDisplay from "../search-results/book";
+import Search from "./search-input";
+import { pipe } from "fp-ts/function";
 
 export default function FreeSearch() {
   const [results, setResults] = useState<BookRecords>();
-  const [query, setQuery] = useState<string>("");
+  const query = useRef<HTMLInputElement>(null);
   const [isDirty, setIsDirty] = useState<boolean>(false);
 
-  function doSearch() {
-    const result = search(query);
-    setResults(result);
-    setIsDirty(true);
-  }
+  useEffect(() => {
+    if (results) {
+      setIsDirty(true);
+    }
+  }, [results]);
 
-  function changeQuery(e: ChangeEvent<HTMLInputElement>) {
-    setQuery(e.target.value);
+  function doSearch() {
+    return pipe(query.current?.value ?? "", search, setResults);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -29,7 +30,6 @@ export default function FreeSearch() {
       <div className="flex flex-col w-full sm:flex-row pb-3 bg-sky-950 border-l-2 border-amber-100 rounded-b-lg justify-between items-center">
         <Search
           query={query}
-          changeQuery={changeQuery}
           doSearch={doSearch}
           handleKeyDown={handleKeyDown}
         />
