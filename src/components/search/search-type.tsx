@@ -8,7 +8,7 @@ export default function SearchType({
   onOptionChange,
 }: Props) {
   return (
-    <div className="w-full flex flex-row justify-end items-center">
+    <div className="w-full flex flex-row justify-start items-center">
       <div>
         <span className="font-semibold mx-1">Search Type:</span>
       </div>

@@ -33,7 +33,7 @@ function SearchButton({ doSearch }: { doSearch: () => void }) {
   return (
     <button
       type="submit"
-      className="text-white absolute right-2.5 bottom-1.5 bg-stone-500 hover:bg-stone-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm px-4 py-1"
+      className="text-white absolute right-2.5 bottom-1 bg-stone-500 hover:bg-stone-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm px-4 py-1"
       onClick={doSearch}
     >
       Search
