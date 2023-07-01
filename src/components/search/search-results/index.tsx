@@ -84,7 +84,7 @@ function getFinalResultDisplay(
   bookExists: boolean
 ) {
   return pipe(
-    isDirty && bookExists,
+    bookExists,
     O.fromPredicate((b) => b),
     O.chain((_) => getResultDisplayFromBooks(books)),
     O.alt(() => getNoResultsFoundFromBooks(isDirty, bookExists))
@@ -98,6 +98,7 @@ type Props = {
 };
 
 export default function BooksDisplay({ book, isDirty }: Props) {
+  console.log(`Book: ${JSON.stringify(book)}`);
   return pipe(
     O.Do,
     O.apS("isDirty", pipe(isDirty, isDirtyPredicate, O.of)),
