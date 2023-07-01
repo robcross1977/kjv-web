@@ -4,14 +4,7 @@ import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
 import * as O from "fp-ts/Option";
 import * as R from "fp-ts/Record";
-
-// Utility Functions
-function capitalizeFirstAlphabeticCharacter(str: string) {
-  return pipe(
-    str.replace(/[a-zA-Z]/, (c) => c.toUpperCase()),
-    O.fromPredicate((s) => s.length > 0)
-  );
-}
+import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
 
 const isDirtyPredicate = (isDirty: boolean | undefined = false) =>
   isDirty === true;
@@ -34,7 +27,7 @@ function EmptyResult() {
 
 function BookContainer(title: string, chapters: ChapterRecords) {
   return (
-    <div key={title} className="flex flex-col w-full h-full">
+    <div key={title} className="flex flex-col w-full h-full text-slate-950 ">
       {TitleDisplay(title)}
       {ChaptersDisplay(title, chapters)}
     </div>
@@ -43,7 +36,7 @@ function BookContainer(title: string, chapters: ChapterRecords) {
 
 function TitleDisplay(title: string) {
   return (
-    <h1 className="text-4xl font-semibold mb-5 text-center w-full">{title}</h1>
+    <h1 className="text-4xl font-semibold mb-5 text-start w-full">{title}</h1>
   );
 }
 

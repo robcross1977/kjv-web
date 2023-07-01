@@ -22,7 +22,7 @@ function TitleDisplay(verse: string) {
 }
 
 function TextDisplay(text: string) {
-  return <div className="border border-1">{text}</div>;
+  return <div>{text}</div>;
 }
 
 function VersesContainer(

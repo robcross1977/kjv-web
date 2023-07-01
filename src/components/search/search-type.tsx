@@ -10,7 +10,7 @@ export default function SearchType({
   return (
     <div className="w-full flex flex-row justify-start items-center">
       <div>
-        <span className="font-semibold mx-1">Search Type:</span>
+        <span className="font-semibold mx-1 text-slate-950">Search Type:</span>
       </div>
       <div className="mx-1">
         <input
@@ -20,7 +20,7 @@ export default function SearchType({
           checked={searchType === "Basic"}
           onChange={onOptionChange}
         />
-        <span className="mx-1">Basic</span>
+        <span className="mx-1 text-slate-950">basic</span>
       </div>
       <div className="mx1">
         <input
@@ -30,7 +30,7 @@ export default function SearchType({
           checked={searchType === "Advanced"}
           onChange={onOptionChange}
         />
-        <span className="mx-1">Advanced</span>
+        <span className="mx-1 text-slate-950">advanced</span>
       </div>
     </div>
   );

@@ -94,7 +94,7 @@ export default function Search() {
 
   return (
     <div className="flex flex-col w-full mx-auto h-screen">
-      <div className="flex flex-col w-full sm:flex-row pb-3 bg-sky-950 border-l-2 border-amber-100 rounded-b-lg justify-between items-start">
+      <div className="flex flex-row w-full pb-3 bg-sky-950 border-l-2 border-amber-100 rounded-b-lg items-start">
         {searchType === "Advanced" ? (
           <FreeSearch
             query={query}
@@ -118,7 +118,7 @@ export default function Search() {
         <SearchType searchType={searchType} onOptionChange={onOptionChange} />
       </div>
 
-      <div className="flex flex-grow w-full bg-parchment rounded-lg py-2.5 px-5 mr-2  border border-zinc-950 shadow-2xl">
+      <div className="flex flex-grow w-full bg-sky-200 rounded-lg py-2.5 px-5 mr-2  border border-zinc-950 shadow-2xl">
         <BookDisplay book={results} isDirty={isDirty} />
       </div>
     </div>
