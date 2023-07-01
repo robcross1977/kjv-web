@@ -9,15 +9,15 @@ export const metadata = {
   description: "By Robert Crossland",
 };
 
-export default function RootLayout({
-  children,
-}: {
+type RootLayoutProps = {
   children: React.ReactNode;
-}) {
+};
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body
-        className={`${inter.className} bg-gradient-to-br from-sky-700 to-sky-500 w-full font-mono`}
+        className={`${inter.className} bg-gradient-to-b from-sky-700 to-sky-500 w-full h-full min-h-screen font-mono`}
       >
         <UserProvider>{children}</UserProvider>
       </body>

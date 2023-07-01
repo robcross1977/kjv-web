@@ -9,13 +9,12 @@ function SearchIcon() {
   );
 }
 
-function SearchInput({
-  query,
-  handleKeyDown,
-}: {
+type SearchInputProps = {
   query: RefObject<HTMLInputElement>;
   handleKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-}) {
+};
+
+function SearchInput({ query, handleKeyDown }: SearchInputProps) {
   return (
     <input
       type="search"
@@ -29,7 +28,11 @@ function SearchInput({
   );
 }
 
-function SearchButton({ doSearch }: { doSearch: () => void }) {
+type SearchButtonProps = {
+  doSearch: () => void;
+};
+
+function SearchButton({ doSearch }: SearchButtonProps) {
   return (
     <button
       type="submit"

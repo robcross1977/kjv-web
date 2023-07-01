@@ -1,4 +1,8 @@
-export default function SearchButton({ doSearch }: { doSearch: () => void }) {
+type SearchButtonProps = {
+  doSearch: () => void;
+};
+
+export default function SearchButton({ doSearch }: SearchButtonProps) {
   return (
     <button
       type="submit"

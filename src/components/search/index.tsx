@@ -1,6 +1,6 @@
 import {
-  BookRecords,
   ValidBookName,
+  WrappedRecords,
   orderedBookNames,
   search,
 } from "kingjames";
@@ -29,7 +29,7 @@ export type OptionVerse = {
 };
 
 export default function Search() {
-  const [results, setResults] = useState<BookRecords>();
+  const [results, setResults] = useState<WrappedRecords>();
   const query = useRef<HTMLInputElement>(null);
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [searchType, setSearchType] = useState<"Basic" | "Advanced">("Basic");

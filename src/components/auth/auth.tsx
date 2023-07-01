@@ -12,8 +12,12 @@ export default function Auth() {
     <div className="mr-5 text-zinc-50 items-center justify-center">
       {user ? (
         <div className="flex flex-row items-center justify-center hover:text-teal-700">
-          <Link href="/api/auth/logout" data-testid="logout" className="pr-3">
-            {`Logout`}
+          <Link
+            href="/api/auth/logout"
+            data-testid="logout"
+            className="pr-3 hover:text-teal-700"
+          >
+            Logout
           </Link>
           {user.picture && (
             <Link href="/profile">

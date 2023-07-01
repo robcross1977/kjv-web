@@ -14,33 +14,44 @@ const byChapterRecord: Ord<ChapterElement> = contramap(
 )(N.Ord);
 
 // Helper Components
-function ChaptersContainer(
-  book: string,
-  chapter: string,
-  verses: VerseRecords
-) {
+type ChapterContainerProps = {
+  book: string;
+  chapter: string;
+  verses: VerseRecords;
+};
+
+function ChaptersContainer({ book, chapter, verses }: ChapterContainerProps) {
   return (
     <div key={`${book}${chapter}`}>
-      {TitleDisplay(chapter)}
+      <TitleDisplay chapter={chapter} />
       {VerseDisplay({ book, chapter, verses })}
     </div>
   );
 }
 
-function TitleDisplay(chapter: string) {
+type TitleDisplayProps = {
+  chapter: string;
+};
+
+function TitleDisplay({ chapter }: TitleDisplayProps) {
   return <h3 className="text-2xl font-semibold mt-5">Chapter {chapter}</h3>;
 }
 
 // Main Component
-export default function ChaptersDisplay(
-  book: string,
-  chapters: ChapterRecords
-) {
+type ChapterDisplayProps = {
+  book: string;
+  chapters: ChapterRecords;
+};
+
+export default function ChaptersDisplay({
+  book,
+  chapters,
+}: ChapterDisplayProps) {
   return pipe(
     chapters,
-    R.mapWithIndex((chapter, verses) =>
-      ChaptersContainer(book, chapter, verses)
-    ),
+    R.mapWithIndex((chapter, verses) => (
+      <ChaptersContainer book={book} chapter={chapter} verses={verses} />
+    )),
     R.toArray,
     A.sort(byChapterRecord),
     A.map(([_, element]) => element)

@@ -1,7 +1,7 @@
 export default function Title() {
   return (
-    <div className="mx-5">
-      <p className="font-serif font-semibold text-4xl mb-1 sm:mb-0 md:text-4xl text-zinc-50">
+    <div className="mx-2">
+      <p className="font-semibold text-4xl mb-1 text-zinc-50 font-serif">
         Bible Buddy
       </p>
     </div>

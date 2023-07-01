@@ -13,7 +13,11 @@ const byVerseRecord: Ord<VerseElement> = contramap((element: VerseElement) =>
 )(N.Ord);
 
 // Helper Components
-function TitleDisplay(verse: string) {
+type TitleDisplayProps = {
+  verse: string;
+};
+
+function TitleDisplay({ verse }: TitleDisplayProps) {
   return (
     <div>
       <p className="text-red-950 mr-4">{verse}</p>
@@ -21,20 +25,26 @@ function TitleDisplay(verse: string) {
   );
 }
 
-function TextDisplay(text: string) {
+type TextDisplayProps = {
+  text: string;
+};
+
+function TextDisplay({ text }: TextDisplayProps) {
   return <div>{text}</div>;
 }
 
-function VersesContainer(
-  book: string,
-  chapter: string,
-  verse: string,
-  text: string
-) {
+type VersesContainerProps = {
+  book: string;
+  chapter: string;
+  verse: string;
+  text: string;
+};
+
+function VersesContainer({ book, chapter, verse, text }: VersesContainerProps) {
   return (
     <div key={`${book}${chapter}${verse}`} className="my-4 flex flex-row">
-      {TitleDisplay(verse)}
-      {TextDisplay(text)}
+      <TitleDisplay verse={verse} />
+      <TextDisplay text={text} />
     </div>
   );
 }
@@ -51,9 +61,14 @@ export default function VersesDisplay({
 }) {
   return pipe(
     verses,
-    R.mapWithIndex((verse, text) =>
-      VersesContainer(book, chapter, verse, text)
-    ),
+    R.mapWithIndex((verse, text) => (
+      <VersesContainer
+        book={book}
+        chapter={chapter}
+        verse={verse}
+        text={text}
+      />
+    )),
     R.toArray,
     A.sort(byVerseRecord),
     A.map(([_, element]) => element)
