@@ -16,13 +16,12 @@ const bookExistsPredicate = (b: WrappedRecords | undefined) =>
 type ResultDisplayProps = {
   book: WrappedRecords;
 };
-
 function ResultDisplay({ book }: ResultDisplayProps) {
   return <div className="w-full">{displayTopLevelBookRecords(book)}</div>;
 }
 
 function NoResultsFoundResult() {
-  return <div>No Result Found</div>;
+  return <>No Result Found</>;
 }
 
 function EmptyResult() {
@@ -33,10 +32,9 @@ type BookContainerProps = {
   title: string;
   chapters: ChapterRecords;
 };
-
 function BookContainer({ title, chapters }: BookContainerProps) {
   return (
-    <div className="flex flex-col w-full h-full text-slate-950 ">
+    <div key={title} className="flex flex-col w-full h-full text-slate-950 ">
       <TitleDisplay title={title} />
       <ChaptersDisplay book={title} chapters={chapters} />
       <div className="w-full flex justify-between">
