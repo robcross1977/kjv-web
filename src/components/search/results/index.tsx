@@ -62,9 +62,11 @@ function TitleDisplay({ title }: TitleProps) {
   return (
     <div className="w-full flex flex-row justify-between">
       <PrevButton />
-      <h1 className="text-3xl sm:text-4xl font-bold mb-2">
+
+      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-2">
         {capitalizeFirstAlphabeticCharacter(title)}
       </h1>
+
       <NextButton />
     </div>
   );
