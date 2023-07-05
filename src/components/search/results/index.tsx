@@ -7,6 +7,7 @@ import * as O from "fp-ts/Option";
 import * as R from "fp-ts/Record";
 import PrevButton from "./prev-button";
 import NextButton from "./next-button";
+import { useSearchParams } from "next/navigation";
 
 const isDirtyPredicate = (isDirty: boolean | undefined = false) =>
   isDirty === true;
@@ -35,14 +36,21 @@ type BookContainerProps = {
   chapters: ChapterRecords;
 };
 function BookContainer({ title, chapters }: BookContainerProps) {
+  const searchParams = useSearchParams();
+  const verse = pipe("verse", searchParams.get, O.fromNullable);
+
   return (
     <div key={title} className="flex flex-col w-full h-full text-slate-950 ">
       <TitleDisplay title={title} />
       <ChaptersDisplay book={title} chapters={chapters} />
-      <div className="w-full flex justify-between">
-        <PrevButton />
-        <NextButton />
-      </div>
+      {O.isNone(verse) ? (
+        <div className="w-full flex justify-between">
+          <PrevButton />
+          <NextButton />
+        </div>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 }
