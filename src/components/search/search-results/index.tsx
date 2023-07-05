@@ -110,13 +110,12 @@ function TitleDisplay({ title }: TitleProps) {
 
 // Controller Logic
 function mapSingleBookRecord(title: string, chapters: ChapterRecords) {
-  return pipe(
-    title,
-    capitalizeFirstAlphabeticCharacter,
-    O.map((finalTitle) => (
-      <BookContainer key={title} title={finalTitle} chapters={chapters} />
-    )),
-    O.getOrElse(() => <EmptyResult />)
+  return (
+    <BookContainer
+      key={title}
+      title={capitalizeFirstAlphabeticCharacter(title)}
+      chapters={chapters}
+    />
   );
 }
 

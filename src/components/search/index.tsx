@@ -35,11 +35,7 @@ export default function Search() {
   const [searchType, setSearchType] = useState<"Basic" | "Advanced">("Basic");
   const [activeBook, setActiveBook] = useState<OptionBook>({
     key: orderedBookNames[0],
-    value: pipe(
-      orderedBookNames[0],
-      capitalizeFirstAlphabeticCharacter,
-      O.getOrElse(() => "")
-    ),
+    value: capitalizeFirstAlphabeticCharacter(orderedBookNames[0]),
   });
   const [activeChapter, setActiveChapter] = useState<OptionChapter>({
     key: `${activeBook}1`,

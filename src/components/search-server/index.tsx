@@ -1,17 +1,17 @@
-import { WrappedRecords } from "kingjames";
-import { useState } from "react";
-import SelectSearch from "./select-search";
+import FreeSearch from "./free-search";
+import BooksDisplay from "./results";
 import SearchType from "./search-type";
-import BooksDisplay from "./search-results";
+import SelectSearch from "./select-search";
+import { ValidBookName, WrappedRecords } from "kingjames";
+import { useState } from "react";
 
 type Props = {
   query?: string;
-  book?: string;
+  book?: ValidBookName;
   chapter?: number;
   verse?: number;
   results?: WrappedRecords;
 };
-
 export default function Search({
   query,
   book,
@@ -19,10 +19,16 @@ export default function Search({
   verse,
   results,
 }: Props) {
-  const [isDirty, setIsDirty] = useState<boolean>(false);
-  const [searchType, setSearchType] = useState<"Basic" | "Advanced">("Basic");
-  const [activeQuery, setActiveQuery] = useState(
-    book && book.length > 0 ? undefined : query ?? ""
+  const [searchType, setSearchType] = useState<"Basic" | "Advanced">(
+    (book && book.trim().length > 0) ||
+      query === undefined ||
+      query.trim().length === 0
+      ? "Basic"
+      : "Advanced"
+  );
+
+  const [isDirty, _setIsDirty] = useState<boolean>(
+    searchType === "Advanced" && results !== undefined
   );
 
   const onOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +44,7 @@ export default function Search({
     <div className="flex flex-col w-full mx-auto h-screen">
       <div className="flex flex-row w-full pb-3 bg-sky-950 border-l-2 border-amber-100 rounded-b-lg items-start">
         {searchType === "Advanced" ? (
-          <></>
+          <FreeSearch query={query ?? ""} />
         ) : (
           <SelectSearch book={book} chapter={chapter} verse={verse} />
         )}
@@ -48,8 +54,8 @@ export default function Search({
         <SearchType searchType={searchType} onOptionChange={onOptionChange} />
       </div>
 
-      <div className="flex flex-grow w-full bg-sky-200 rounded-lg py-2.5 px-5 mr-2  border border-zinc-950 shadow-2xl">
-        <BooksDisplay book={results} isDirty={isDirty} />
+      <div className="flex flex-grow w-full bg-sky-200 rounded-lg py-2.5 px-5 mr-2 border border-zinc-950 shadow-2xl">
+        <BooksDisplay results={results} isDirty={isDirty} />
       </div>
     </div>
   );

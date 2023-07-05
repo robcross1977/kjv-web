@@ -1,10 +1,10 @@
-import { ChapterRecords, WrappedRecords } from "kingjames";
 import ChaptersDisplay from "./chapter";
+import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
+import { ChapterRecords, ValidBookName, WrappedRecords } from "kingjames";
 import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
 import * as O from "fp-ts/Option";
 import * as R from "fp-ts/Record";
-import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
 
 const isDirtyPredicate = (isDirty: boolean | undefined = false) =>
   isDirty === true;
@@ -14,14 +14,14 @@ const bookExistsPredicate = (b: WrappedRecords | undefined) =>
 
 // Helper Components
 type ResultDisplayProps = {
-  book: WrappedRecords;
+  results: WrappedRecords;
 };
-function ResultDisplay({ book }: ResultDisplayProps) {
-  return <div className="w-full">{displayTopLevelBookRecords(book)}</div>;
+function ResultDisplay({ results }: ResultDisplayProps) {
+  return <div className="w-full">{displayTopLevelBookRecords(results)}</div>;
 }
 
 function NoResultsFoundResult() {
-  return <>No Result Found</>;
+  return <div>No Result Found</div>;
 }
 
 function EmptyResult() {
@@ -29,7 +29,7 @@ function EmptyResult() {
 }
 
 type BookContainerProps = {
-  title: string;
+  title: ValidBookName;
   chapters: ChapterRecords;
 };
 function BookContainer({ title, chapters }: BookContainerProps) {
@@ -45,17 +45,19 @@ function BookContainer({ title, chapters }: BookContainerProps) {
   );
 }
 
+function getPrevious() {}
+
 function PrevButton() {
   return (
     <button
       type="button"
-      className="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
+      className="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center"
     >
       <svg
         aria-hidden="true"
-        className="w-5 h-5 rotate-180"
+        className="w-4 h-4 rotate-180"
         fill="currentColor"
-        viewBox="0 0 20 20"
+        viewBox="0 0 18 18"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
@@ -69,17 +71,19 @@ function PrevButton() {
   );
 }
 
+function getNext() {}
+
 function NextButton() {
   return (
     <button
       type="button"
-      className="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
+      className="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 inline-flex items-center"
     >
       <svg
         aria-hidden="true"
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="currentColor"
-        viewBox="0 0 20 20"
+        viewBox="0 0 18 18"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
@@ -100,35 +104,34 @@ function TitleDisplay({ title }: TitleProps) {
   return (
     <div className="w-full flex flex-row justify-between">
       <PrevButton />
-      <h1 className="text-4xl font-semibold mb-2">{title}</h1>
+      <h1 className="text-3xl sm:text-4xl font-bold mb-2">
+        {capitalizeFirstAlphabeticCharacter(title)}
+      </h1>
       <NextButton />
     </div>
   );
 }
 
 // Controller Logic
-function mapSingleBookRecord(title: string, chapters: ChapterRecords) {
-  return pipe(
-    title,
-    capitalizeFirstAlphabeticCharacter,
-    O.map((finalTitle) => (
-      <BookContainer key={title} title={finalTitle} chapters={chapters} />
-    )),
-    O.getOrElse(() => <EmptyResult />)
-  );
+function mapSingleBookRecord(title: ValidBookName, chapters: ChapterRecords) {
+  return <BookContainer title={title} chapters={chapters} />;
 }
 
-function displayTopLevelBookRecords(book: WrappedRecords) {
+function displayTopLevelBookRecords(results: WrappedRecords) {
   return pipe(
-    book.records,
-    R.mapWithIndex((title, chapters) => mapSingleBookRecord(title, chapters)),
+    results.records,
+    R.mapWithIndex((title, chapters) =>
+      mapSingleBookRecord(title as ValidBookName, chapters)
+    ),
     R.toArray,
-    A.map(([_, element]) => element)
+    A.map(([book, element]) => {
+      return { ...element, key: book };
+    })
   );
 }
 
-function getResultDisplayFromBooks(books: WrappedRecords) {
-  return O.of(<ResultDisplay book={books} />);
+function getResultDisplayFromBooks(results: WrappedRecords) {
+  return O.of(<ResultDisplay results={results} />);
 }
 
 function getNoResultsFoundFromBooks(isDirty: boolean, bookExists: boolean) {
@@ -140,31 +143,39 @@ function getNoResultsFoundFromBooks(isDirty: boolean, bookExists: boolean) {
 }
 
 function getFinalResultDisplay(
-  books: WrappedRecords,
+  results: WrappedRecords,
   isDirty: boolean,
   bookExists: boolean
 ) {
   return pipe(
     bookExists,
     O.fromPredicate((b) => b),
-    O.chain((_) => getResultDisplayFromBooks(books)),
+    O.chain((_) => getResultDisplayFromBooks(results)),
     O.alt(() => getNoResultsFoundFromBooks(isDirty, bookExists))
   );
 }
 
 // Main Component
 type Props = {
-  book?: WrappedRecords;
+  results?: WrappedRecords;
   isDirty?: boolean;
+  book?: ValidBookName;
+  chapter?: number;
+  verse?: number;
 };
-
-export default function BooksDisplay({ book, isDirty }: Props) {
+export default function BooksDisplay({
+  results,
+  isDirty,
+  book,
+  chapter,
+  verse,
+}: Props) {
   return pipe(
     O.Do,
     O.apS("isDirty", pipe(isDirty, isDirtyPredicate, O.of)),
-    O.apS("bookExists", pipe(book, bookExistsPredicate, O.of)),
+    O.apS("bookExists", pipe(results, bookExistsPredicate, O.of)),
     O.chain(({ isDirty, bookExists }) =>
-      getFinalResultDisplay(book as WrappedRecords, isDirty, bookExists)
+      getFinalResultDisplay(results as WrappedRecords, isDirty, bookExists)
     ),
     O.getOrElse(() => EmptyResult())
   );

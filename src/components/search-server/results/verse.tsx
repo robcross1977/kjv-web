@@ -1,4 +1,4 @@
-import { VerseRecords } from "kingjames";
+import { ValidBookName, VerseRecords } from "kingjames";
 import { pipe } from "fp-ts/function";
 import { Ord, contramap } from "fp-ts/Ord";
 import * as A from "fp-ts/Array";
@@ -31,7 +31,7 @@ function TextDisplay({ text }: TextDisplayProps) {
 }
 
 type VersesContainerProps = {
-  book: string;
+  book: ValidBookName;
   chapter: string;
   verse: string;
   text: string;
@@ -47,7 +47,7 @@ function VersesContainer({ book, chapter, verse, text }: VersesContainerProps) {
 
 // Main Component
 type Props = {
-  book: string;
+  book: ValidBookName;
   chapter: string;
   verses: VerseRecords;
 };
@@ -64,6 +64,8 @@ export default function VersesDisplay({ book, chapter, verses }: Props) {
     )),
     R.toArray,
     A.sort(byVerseRecord),
-    A.map(([_, element]) => element)
+    A.map(([verse, element]) => {
+      return { ...element, key: `${book} ${chapter}:${verse}` };
+    })
   );
 }

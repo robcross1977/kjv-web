@@ -1,5 +1,5 @@
-import { ChapterRecords, VerseRecords } from "kingjames";
 import VerseDisplay from "./verse";
+import { ChapterRecords, ValidBookName, VerseRecords } from "kingjames";
 import { pipe } from "fp-ts/function";
 import { Ord, contramap } from "fp-ts/Ord";
 import * as A from "fp-ts/Array";
@@ -14,7 +14,7 @@ const byChapterRecord: Ord<ChapterElement> = contramap(
 
 // Helper Components
 type ChapterContainerProps = {
-  book: string;
+  book: ValidBookName;
   chapter: string;
   verses: VerseRecords;
 };
@@ -36,7 +36,7 @@ function TitleDisplay({ chapter }: TitleDisplayProps) {
 
 // Main Component
 type ChapterDisplayProps = {
-  book: string;
+  book: ValidBookName;
   chapters: ChapterRecords;
 };
 export default function ChaptersDisplay({
@@ -50,6 +50,8 @@ export default function ChaptersDisplay({
     )),
     R.toArray,
     A.sort(byChapterRecord),
-    A.map(([_, element]) => element)
+    A.map(([chapter, element]) => {
+      return { ...element, key: `${book} ${chapter}` };
+    })
   );
 }

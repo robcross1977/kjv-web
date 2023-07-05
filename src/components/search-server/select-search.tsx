@@ -1,5 +1,4 @@
 import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
-import { pipe } from "fp-ts/lib/function";
 import {
   ValidBookName,
   chapterCountFrom,
@@ -7,9 +6,10 @@ import {
   verseCountFrom,
 } from "kingjames";
 import { ChangeEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { pipe } from "fp-ts/function";
 import * as O from "fp-ts/Option";
 import * as A from "fp-ts/Array";
-import { useRouter } from "next/navigation";
 
 type OptionBook = {
   key: ValidBookName;
@@ -39,10 +39,12 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
     key: (book as ValidBookName) ?? "genesis",
     value: book ?? "Genesis",
   });
+
   const [activeChapter, setActiveChapter] = useState<OptionChapter>({
     key: `${activeBook} ${chapter ?? 1}`,
     value: `${chapter ?? 1}`,
   });
+
   const [activeVerse, setActiveVerse] = useState<OptionVerse>({
     key: verse ? `${activeBook} ${activeChapter}:${verse}` : `${activeBook} 0`,
     value: `${verse ?? "All"}`,
@@ -82,13 +84,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
         >
           {orderedBookNames.map((b) => {
             return (
-              <option key={b}>
-                {pipe(
-                  b,
-                  capitalizeFirstAlphabeticCharacter,
-                  O.getOrElse(() => "")
-                )}
-              </option>
+              <option key={b}>{capitalizeFirstAlphabeticCharacter(b)}</option>
             );
           })}
         </select>
@@ -105,7 +101,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
               (i) => i + 1
             ),
             A.map((ch) => (
-              <option key={`${activeBook.value}${ch}`}>{ch}</option>
+              <option key={`${activeBook.value} ${ch}`}>{ch}</option>
             ))
           )}
         </select>
@@ -126,7 +122,9 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
               pipe(
                 verses,
                 A.map((v) => (
-                  <option key={`${activeBook.value}${activeChapter.value}${v}`}>
+                  <option
+                    key={`${activeBook.value} ${activeChapter.value}:${v}`}
+                  >
                     {v}
                   </option>
                 ))
