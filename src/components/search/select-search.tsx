@@ -1,55 +1,75 @@
-import { ChangeEvent, Dispatch, SetStateAction } from "react";
-import {
-  orderedBookNames,
-  chapterCountFrom,
-  verseCountFrom,
-  ValidBookName,
-} from "kingjames";
-import * as A from "fp-ts/Array";
-import * as O from "fp-ts/Option";
-import { pipe } from "fp-ts/lib/function";
-import SearchButton from "./search-button";
-import { OptionBook, OptionChapter, OptionVerse } from "./index";
 import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
+import {
+  ValidBookName,
+  chapterCountFrom,
+  orderedBookNames,
+  verseCountFrom,
+} from "kingjames";
+import { ChangeEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { pipe } from "fp-ts/function";
+import * as O from "fp-ts/Option";
+import * as A from "fp-ts/Array";
+
+type OptionBook = {
+  key: ValidBookName;
+  value: string;
+};
+
+type OptionChapter = {
+  key: string;
+  value: string;
+};
+
+type OptionVerse = {
+  key: string;
+  value: string;
+};
 
 type Props = {
-  activeBook: OptionBook;
-  setActiveBook: Dispatch<SetStateAction<OptionBook>>;
-  activeChapter: OptionChapter;
-  setActiveChapter: Dispatch<SetStateAction<OptionChapter>>;
-  activeVerse: OptionVerse;
-  setActiveVerse: Dispatch<SetStateAction<OptionVerse>>;
-  doSearch: () => void;
+  book?: string;
+  chapter?: number;
+  verse?: number;
 };
-export default function SelectSearch({
-  activeBook,
-  setActiveBook,
-  activeChapter,
-  setActiveChapter,
-  activeVerse,
-  setActiveVerse,
-  doSearch,
-}: Props) {
+
+export default function SelectSearch({ book, chapter, verse }: Props) {
+  const router = useRouter();
+
+  const [activeBook, setActiveBook] = useState<OptionBook>({
+    key: (book as ValidBookName) ?? "genesis",
+    value: book ?? "Genesis",
+  });
+
+  const [activeChapter, setActiveChapter] = useState<OptionChapter>({
+    key: `${activeBook} ${chapter ?? 1}`,
+    value: `${chapter ?? 1}`,
+  });
+
+  const [activeVerse, setActiveVerse] = useState<OptionVerse>({
+    key: verse ? `${activeBook} ${activeChapter}:${verse}` : `${activeBook} 0`,
+    value: `${verse ?? "All"}`,
+  });
+
   function onBookChange(event: ChangeEvent<HTMLSelectElement>) {
     setActiveBook({
       key: event.target.value as ValidBookName,
       value: event.target.value as ValidBookName,
     });
-    setActiveChapter({ key: `${event.target.value}1`, value: "1" });
-    setActiveVerse({ key: `${event.target.value}0`, value: "All" });
+    setActiveChapter({ key: `${event.target.value} 1`, value: "1" });
+    setActiveVerse({ key: `${event.target.value} 0`, value: "All" });
   }
 
   function onChapterChange(event: ChangeEvent<HTMLSelectElement>) {
     setActiveChapter({
-      key: `${activeBook}${event.target.value}`,
+      key: `${activeBook} ${event.target.value}`,
       value: event.target.value,
     });
-    setActiveVerse({ key: `${activeBook}${event.target.value}`, value: "All" });
+    setActiveVerse({ key: `${activeBook} 0`, value: "All" });
   }
 
   function onVerseChange(event: ChangeEvent<HTMLSelectElement>) {
     setActiveVerse({
-      key: `${activeBook}${activeChapter}:${event.target.value}`,
+      key: `${activeBook} ${activeChapter}:${event.target.value}`,
       value: event.target.value,
     });
   }
@@ -64,13 +84,7 @@ export default function SelectSearch({
         >
           {orderedBookNames.map((b) => {
             return (
-              <option key={b}>
-                {pipe(
-                  b,
-                  capitalizeFirstAlphabeticCharacter,
-                  O.getOrElse(() => "")
-                )}
-              </option>
+              <option key={b}>{capitalizeFirstAlphabeticCharacter(b)}</option>
             );
           })}
         </select>
@@ -87,7 +101,7 @@ export default function SelectSearch({
               (i) => i + 1
             ),
             A.map((ch) => (
-              <option key={`${activeBook.value}${ch}`}>{ch}</option>
+              <option key={`${activeBook.value} ${ch}`}>{ch}</option>
             ))
           )}
         </select>
@@ -108,14 +122,16 @@ export default function SelectSearch({
               pipe(
                 verses,
                 A.map((v) => (
-                  <option key={`${activeBook.value}${activeChapter.value}${v}`}>
+                  <option
+                    key={`${activeBook.value} ${activeChapter.value}:${v}`}
+                  >
                     {v}
                   </option>
                 ))
               )
             ),
             O.map((verses) => [
-              <option key={`${activeBook}0`} value="All">
+              <option key={`${activeBook} 0`} value="All">
                 All
               </option>,
               ...verses,
@@ -125,7 +141,25 @@ export default function SelectSearch({
         </select>
       </div>
       <div className="border-5 mr-2">
-        <SearchButton doSearch={doSearch} />
+        <button
+          type="submit"
+          className="text-white bg-stone-500 hover:bg-stone-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm p-2"
+          onClick={() => {
+            const book = activeBook.value.toLowerCase();
+            const chapter = Number(activeChapter.value);
+            const verse =
+              activeVerse.value === "All"
+                ? undefined
+                : Number(activeVerse.value);
+            const q = `?book=${book}&chapter=${chapter}${
+              verse ? `&verse=${verse}` : ""
+            }`;
+
+            router.push(`/${q}`);
+          }}
+        >
+          Search
+        </button>
       </div>
     </div>
   );

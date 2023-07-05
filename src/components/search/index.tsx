@@ -1,56 +1,35 @@
-import {
-  ValidBookName,
-  WrappedRecords,
-  orderedBookNames,
-  search,
-} from "kingjames";
-import { useEffect, useRef, useState } from "react";
-import BookDisplay from "./search-results";
 import FreeSearch from "./free-search";
-import SelectSearch from "./select-search";
-import { pipe } from "fp-ts/function";
+import BooksDisplay from "./results";
 import SearchType from "./search-type";
-import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
-import * as O from "fp-ts/Option";
+import SelectSearch from "./select-search";
+import { ValidBookName, WrappedRecords } from "kingjames";
+import { useState } from "react";
 
-export type OptionBook = {
-  key: ValidBookName;
-  value: string;
+type Props = {
+  query?: string;
+  book?: ValidBookName;
+  chapter?: number;
+  verse?: number;
+  results?: WrappedRecords;
 };
+export default function Search({
+  query,
+  book,
+  chapter,
+  verse,
+  results,
+}: Props) {
+  const [searchType, setSearchType] = useState<"Basic" | "Advanced">(
+    (book && book.trim().length > 0) ||
+      query === undefined ||
+      query.trim().length === 0
+      ? "Basic"
+      : "Advanced"
+  );
 
-export type OptionChapter = {
-  key: string;
-  value: string;
-};
-
-export type OptionVerse = {
-  key: string;
-  value: string;
-};
-
-export default function Search() {
-  const [results, setResults] = useState<WrappedRecords>();
-  const query = useRef<HTMLInputElement>(null);
-  const [isDirty, setIsDirty] = useState<boolean>(false);
-  const [searchType, setSearchType] = useState<"Basic" | "Advanced">("Basic");
-  const [activeBook, setActiveBook] = useState<OptionBook>({
-    key: orderedBookNames[0],
-    value: capitalizeFirstAlphabeticCharacter(orderedBookNames[0]),
-  });
-  const [activeChapter, setActiveChapter] = useState<OptionChapter>({
-    key: `${activeBook}1`,
-    value: "1",
-  });
-  const [activeVerse, setActiveVerse] = useState<OptionVerse>({
-    key: `${activeBook}0`,
-    value: "All",
-  });
-
-  useEffect(() => {
-    if (results) {
-      setIsDirty(true);
-    }
-  }, [results]);
+  const [isDirty, _setIsDirty] = useState<boolean>(
+    searchType === "Advanced" && results !== undefined
+  );
 
   const onOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value =
@@ -61,52 +40,13 @@ export default function Search() {
     setSearchType(value);
   };
 
-  function doBasicSearch() {
-    return pipe(
-      O.Do,
-      O.apS("book", O.some(activeBook.value)),
-      O.apS("chapter", O.some(activeChapter.value)),
-      O.apS(
-        "verse",
-        activeVerse.value === "All"
-          ? O.some("")
-          : O.some(`:${activeVerse.value}`)
-      ),
-      O.map(({ book, chapter, verse }) => `${book} ${chapter}${verse}`),
-      O.map(search),
-      O.map(setResults)
-    );
-  }
-
-  function doAdvancedSearch() {
-    return pipe(query.current?.value ?? "", search, setResults);
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" && searchType === "Advanced") {
-      doAdvancedSearch();
-    }
-  }
-
   return (
     <div className="flex flex-col w-full mx-auto h-screen">
       <div className="flex flex-row w-full pb-3 bg-sky-950 border-l-2 border-amber-100 rounded-b-lg items-start">
         {searchType === "Advanced" ? (
-          <FreeSearch
-            query={query}
-            doSearch={doAdvancedSearch}
-            handleKeyDown={handleKeyDown}
-          />
+          <FreeSearch query={query ?? ""} />
         ) : (
-          <SelectSearch
-            activeBook={activeBook}
-            setActiveBook={setActiveBook}
-            activeChapter={activeChapter}
-            setActiveChapter={setActiveChapter}
-            activeVerse={activeVerse}
-            setActiveVerse={setActiveVerse}
-            doSearch={doBasicSearch}
-          />
+          <SelectSearch book={book} chapter={chapter} verse={verse} />
         )}
       </div>
 
@@ -114,8 +54,8 @@ export default function Search() {
         <SearchType searchType={searchType} onOptionChange={onOptionChange} />
       </div>
 
-      <div className="flex flex-grow w-full bg-sky-200 rounded-lg py-2.5 px-5 mr-2  border border-zinc-950 shadow-2xl">
-        <BookDisplay book={results} isDirty={isDirty} />
+      <div className="flex flex-grow w-full bg-sky-200 rounded-lg py-2.5 px-5 mr-2 border border-zinc-950 shadow-2xl">
+        <BooksDisplay results={results} isDirty={isDirty} />
       </div>
     </div>
   );
