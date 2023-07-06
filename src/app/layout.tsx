@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         className={`${inter.className} bg-gradient-to-b from-sky-700 to-sky-500 w-full h-full min-h-screen font-mono`}
       >
         <UserProvider>{children}</UserProvider>
+        <Analytics />
       </body>
     </html>
   );
