@@ -53,7 +53,7 @@ export default function FreeSearch({ query }: Props) {
           type="submit"
           className="text-white absolute right-2.5 bottom-1.5 bg-stone-500 hover:bg-stone-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm px-2 py-1"
           onClick={() => {
-            router.push(`/search?query=${newQuery.current?.value}`);
+            router.push(`/?query=${newQuery.current?.value}`);
           }}
         >
           Search
