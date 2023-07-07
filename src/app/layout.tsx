@@ -2,6 +2,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 import { Analytics } from "@vercel/analytics/react";
+import Header from "@/components/shared/header";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -1,3 +1,5 @@
+"use client";
+
 import Auth from "../auth/auth";
 import NavMenu from "./nav-menu";
 import Title from "./title";
