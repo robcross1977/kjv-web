@@ -31,7 +31,7 @@ export default function FreeSearch({ query }: Props) {
   const newQuery = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex-grow w-full mx-2">
+    <div className="flex-grow w-full">
       <div className="relative">
         <SearchIcon />
 

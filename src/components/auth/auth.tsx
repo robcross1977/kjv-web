@@ -3,15 +3,14 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import Image from "next/image";
 
 export default function Auth() {
-  const { user, error, isLoading } = useUser();
+  const { user, isLoading } = useUser();
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {JSON.stringify(error)}</div>;
+  if (isLoading) return <div className="text-zinc-50 mr-5">Loading...</div>;
 
   return (
     <div className="mr-5 text-zinc-50 items-center justify-center">
       {user ? (
-        <div className="flex flex-row items-center justify-center hover:text-teal-700">
+        <div className="flex flex-row items-center justify-center">
           <Link
             href="/api/auth/logout"
             data-testid="logout"

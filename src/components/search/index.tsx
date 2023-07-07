@@ -42,16 +42,17 @@ export default function Search({
 
   return (
     <div className="flex flex-col w-full mx-auto h-screen">
-      <div className="flex flex-row w-full pb-3 bg-sky-950 border-l-2 border-amber-100 rounded-b-lg items-start">
-        {searchType === "Advanced" ? (
-          <FreeSearch query={query ?? ""} />
-        ) : (
-          <SelectSearch book={book} chapter={chapter} verse={verse} />
-        )}
-      </div>
-
-      <div>
-        <SearchType searchType={searchType} onOptionChange={onOptionChange} />
+      <div className="flex flex-col md:flex-row w-full md:justify-between md:items-center py-1">
+        <div className="h-full flex-grow mr-5">
+          {searchType === "Advanced" ? (
+            <FreeSearch query={query ?? ""} />
+          ) : (
+            <SelectSearch book={book} chapter={chapter} verse={verse} />
+          )}
+        </div>
+        <div>
+          <SearchType searchType={searchType} onOptionChange={onOptionChange} />
+        </div>
       </div>
 
       <div className="flex flex-grow w-full bg-sky-200 rounded-lg py-2.5 px-5 mr-2 border border-zinc-950 shadow-2xl">

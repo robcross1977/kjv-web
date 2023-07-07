@@ -4,6 +4,7 @@ import { Ord, contramap } from "fp-ts/Ord";
 import * as A from "fp-ts/Array";
 import * as N from "fp-ts/number";
 import * as R from "fp-ts/Record";
+import Link from "next/link";
 
 // Types
 type VerseElement = [string, JSX.Element];
@@ -13,12 +14,19 @@ const byVerseRecord: Ord<VerseElement> = contramap((element: VerseElement) =>
 
 // Helper Components
 type TitleDisplayProps = {
+  book: ValidBookName;
+  chapter: string;
   verse: string;
 };
-function TitleDisplay({ verse }: TitleDisplayProps) {
+function TitleDisplay({ book, chapter, verse }: TitleDisplayProps) {
   return (
-    <div>
-      <p className="text-red-950 mr-4">{verse}</p>
+    <div className="mr-4">
+      <Link
+        className="text-red-950 hover:text-red-500"
+        href={`/?book=${book}&chapter=${chapter}&verse=${verse}`}
+      >
+        {verse}
+      </Link>
     </div>
   );
 }
@@ -39,7 +47,7 @@ type VersesContainerProps = {
 function VersesContainer({ book, chapter, verse, text }: VersesContainerProps) {
   return (
     <div key={`${book} ${chapter}:${verse}`} className="my-4 flex flex-row">
-      <TitleDisplay verse={verse} />
+      <TitleDisplay book={book} chapter={chapter} verse={verse} />
       <TextDisplay text={text} />
     </div>
   );

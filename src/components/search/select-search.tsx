@@ -76,7 +76,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
 
   return (
     <div className="flex flex-row justify-start items-center">
-      <div className="ml-2 mr-1">
+      <div className="mr-1">
         <select
           value={activeBook.value}
           onChange={onBookChange}

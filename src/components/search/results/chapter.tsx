@@ -5,6 +5,7 @@ import { Ord, contramap } from "fp-ts/Ord";
 import * as A from "fp-ts/Array";
 import * as N from "fp-ts/number";
 import * as R from "fp-ts/Record";
+import Link from "next/link";
 
 // Types
 type ChapterElement = [string, JSX.Element];
@@ -21,17 +22,27 @@ type ChapterContainerProps = {
 function ChaptersContainer({ book, chapter, verses }: ChapterContainerProps) {
   return (
     <div key={`${book} ${chapter}`}>
-      <TitleDisplay chapter={chapter} />
+      <TitleDisplay book={book} chapter={chapter} />
       <VerseDisplay book={book} chapter={chapter} verses={verses} />
     </div>
   );
 }
 
 type TitleDisplayProps = {
+  book: ValidBookName;
   chapter: string;
 };
-function TitleDisplay({ chapter }: TitleDisplayProps) {
-  return <h3 className="text-2xl font-semibold mt-5">Chapter {chapter}</h3>;
+function TitleDisplay({ book, chapter }: TitleDisplayProps) {
+  return (
+    <div className="mt-5">
+      <Link
+        className="text-2xl font-semibold text-blue-950 hover:text-blue-500"
+        href={`/?book=${book}&chapter=${chapter}`}
+      >
+        Chapter {chapter}
+      </Link>
+    </div>
+  );
 }
 
 // Main Component
