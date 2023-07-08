@@ -66,15 +66,14 @@ function getBasicQuery(book?: ValidBookName, chapter?: number, verse?: number) {
         verse,
         O.fromNullable,
         O.chain(
-          O.fromPredicate((v) => {
-            const maxVerseCount = verseCountFrom(book, Number(chapter));
-
-            if (O.isNone(maxVerseCount)) {
-              return false;
-            }
-
-            return v >= 1 && v <= maxVerseCount.value;
-          })
+          O.fromPredicate((v) =>
+            pipe(
+              O.Do,
+              O.apS("maxVerseCount", verseCountFrom(book, Number(chapter))),
+              O.map(({ maxVerseCount }) => v >= 1 && v <= maxVerseCount),
+              O.getOrElse(() => false)
+            )
+          )
         ),
         O.map((v) => `:${v}`),
         O.alt(() => O.some(""))
