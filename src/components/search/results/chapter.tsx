@@ -23,6 +23,9 @@ function ChaptersContainer({ book, chapter, verses }: ChapterContainerProps) {
   return (
     <div key={`${book} ${chapter}`}>
       <TitleDisplay book={book} chapter={chapter} />
+      <button className="text-blue-950 hover:text-blue-500">
+        Show Actions
+      </button>
       <VerseDisplay book={book} chapter={chapter} verses={verses} />
     </div>
   );

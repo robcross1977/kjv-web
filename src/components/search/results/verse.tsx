@@ -46,7 +46,11 @@ type VersesContainerProps = {
 };
 function VersesContainer({ book, chapter, verse, text }: VersesContainerProps) {
   return (
-    <div key={`${book} ${chapter}:${verse}`} className="my-4 flex flex-row">
+    <div
+      key={`${book} ${chapter}:${verse}`}
+      className="my-4 flex flex-row border border-5 border-black"
+    >
+      <input type="checkbox" className="mr-4" />
       <TitleDisplay book={book} chapter={chapter} verse={verse} />
       <TextDisplay text={text} />
     </div>

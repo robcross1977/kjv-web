@@ -21,27 +21,61 @@ type Props = {
   };
 };
 
+function getQuery(query?: string) {
+  return pipe(
+    query,
+    O.fromNullable,
+    O.alt(() => O.some(""))
+  );
+}
+
+function getFinalQueryFromString(
+  book?: ValidBookName,
+  chapter?: number,
+  verse?: number,
+  query?: string
+) {
+  return pipe(
+    book,
+    isBasic,
+    O.fromPredicate((isBasic) => isBasic),
+    O.map(() => getBasicQuery(book, chapter, verse)),
+    O.alt(() => getQuery(query))
+  );
+}
+
+function getSearchResults(query: string) {
+  return pipe(
+    query,
+    O.fromPredicate((query) => query.length > 0),
+    O.map<string, WrappedRecords>(search),
+    O.alt<WrappedRecords>(() => O.some({ type: "none", records: {} }))
+  );
+}
+
 export default function Home({ searchParams }: Props) {
   const { query, book, chapter, verse } = searchParams ?? {};
-  const isBasicQuery = isBasic(book);
-  const finalQuery = isBasicQuery
-    ? getBasicQuery(book, chapter, verse)
-    : query ?? "";
 
-  const results: WrappedRecords =
-    finalQuery.length > 0 ? search(finalQuery) : { type: "none", records: {} };
-
-  return (
-    <div className="flex flex-col w-11/12 mx-auto my-5">
-      <Header />
-      <Search
-        query={isBasicQuery ? undefined : query ?? ""}
-        book={book}
-        chapter={chapter}
-        verse={verse}
-        results={results}
-      />
-    </div>
+  return pipe(
+    O.Do,
+    O.apS("finalQuery", getFinalQueryFromString(book, chapter, verse, query)),
+    O.bind("results", ({ finalQuery }) => getSearchResults(finalQuery)),
+    O.chain(({ results }) => {
+      return pipe(
+        <div className="flex flex-col w-11/12 mx-auto my-5">
+          <Header />
+          <Search
+            query={isBasic(book) ? undefined : query ?? ""}
+            book={book}
+            chapter={chapter}
+            verse={verse}
+            results={results}
+          />
+        </div>,
+        O.some
+      );
+    }),
+    O.getOrElse(() => <></>)
   );
 }
 
@@ -49,36 +83,48 @@ function isBasic(book?: string) {
   return book !== undefined && book.length > 0;
 }
 
+function getBasicBook(book?: ValidBookName) {
+  return O.fromNullable(book);
+}
+
+function getBasicChapter(book: ValidBookName, chapter?: number) {
+  return pipe(
+    chapter,
+    O.fromNullable,
+    O.chain(O.fromPredicate((c) => c >= 1 && c <= chapterCountFrom(book))),
+    O.map(Number)
+  );
+}
+
+function verseInBookChapter(
+  book: ValidBookName,
+  chapter: number,
+  verse: number
+) {
+  return pipe(
+    O.Do,
+    O.apS("maxVerseCount", verseCountFrom(book, chapter)),
+    O.map(({ maxVerseCount }) => verse >= 1 && verse <= maxVerseCount),
+    O.getOrElse(() => false)
+  );
+}
+
+function getBasicVerse(book: ValidBookName, chapter: number, verse?: number) {
+  return pipe(
+    verse,
+    O.fromNullable,
+    O.chain(O.fromPredicate((v) => verseInBookChapter(book, chapter, v))),
+    O.map((v) => `:${v}`),
+    O.alt(() => O.some(""))
+  );
+}
+
 function getBasicQuery(book?: ValidBookName, chapter?: number, verse?: number) {
   return pipe(
     O.Do,
-    O.apS("book", O.fromNullable(book)),
-    O.bind("chapter", ({ book }) =>
-      pipe(
-        chapter,
-        O.fromNullable,
-        O.chain(O.fromPredicate((c) => c >= 1 && c <= chapterCountFrom(book))),
-        O.map(String)
-      )
-    ),
-    O.bind("verse", ({ book, chapter }) =>
-      pipe(
-        verse,
-        O.fromNullable,
-        O.chain(
-          O.fromPredicate((v) =>
-            pipe(
-              O.Do,
-              O.apS("maxVerseCount", verseCountFrom(book, Number(chapter))),
-              O.map(({ maxVerseCount }) => v >= 1 && v <= maxVerseCount),
-              O.getOrElse(() => false)
-            )
-          )
-        ),
-        O.map((v) => `:${v}`),
-        O.alt(() => O.some(""))
-      )
-    ),
+    O.apS("book", getBasicBook(book)),
+    O.bind("chapter", ({ book }) => getBasicChapter(book, chapter)),
+    O.bind("verse", ({ book, chapter }) => getBasicVerse(book, chapter, verse)),
     O.map(({ book, chapter, verse }) => `${book} ${chapter}${verse}`),
     O.getOrElse(() => "")
   );
