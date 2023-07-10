@@ -6,6 +6,7 @@ import * as A from "fp-ts/Array";
 import * as N from "fp-ts/number";
 import * as R from "fp-ts/Record";
 import Link from "next/link";
+import { useState } from "react";
 
 // Types
 type ChapterElement = [string, JSX.Element];
@@ -20,13 +21,22 @@ type ChapterContainerProps = {
   verses: VerseRecords;
 };
 function ChaptersContainer({ book, chapter, verses }: ChapterContainerProps) {
+  const [show, setShow] = useState(false);
+
   return (
     <div key={`${book} ${chapter}`}>
-      <TitleDisplay book={book} chapter={chapter} />
-      <button className="text-blue-950 hover:text-blue-500">
-        Show Actions
-      </button>
-      <VerseDisplay book={book} chapter={chapter} verses={verses} />
+      <div className="flex flex-row justify-between items-end">
+        <TitleDisplay book={book} chapter={chapter} />
+        <div>
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-zinc-50 font-bold p-1 border border-blue-700 rounded"
+            onClick={() => setShow(!show)}
+          >
+            Show Actions
+          </button>
+        </div>
+      </div>
+      <VerseDisplay book={book} chapter={chapter} verses={verses} show={show} />
     </div>
   );
 }

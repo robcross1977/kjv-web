@@ -42,7 +42,9 @@ function BookContainer({ title, chapters }: BookContainerProps) {
   return (
     <div key={title} className="flex flex-col w-full h-full text-slate-950 ">
       <TitleDisplay title={title} />
+      <hr className="border-sky-950 mt-2" />
       <ChaptersDisplay book={title} chapters={chapters} />
+      <hr className="border-sky-950 mb-2" />
       {O.isNone(verse) ? (
         <div className="w-full flex justify-between">
           <PrevButton />
@@ -61,13 +63,17 @@ type TitleProps = {
 function TitleDisplay({ title }: TitleProps) {
   return (
     <div className="w-full flex flex-row justify-between">
-      <PrevButton />
+      <div>
+        <PrevButton />
+      </div>
 
-      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-2">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-2 text-sky-700">
         {capitalizeFirstAlphabeticCharacter(title)}
       </h1>
 
-      <NextButton />
+      <div>
+        <NextButton />
+      </div>
     </div>
   );
 }

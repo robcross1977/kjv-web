@@ -43,14 +43,23 @@ type VersesContainerProps = {
   chapter: string;
   verse: string;
   text: string;
+  show: boolean;
 };
-function VersesContainer({ book, chapter, verse, text }: VersesContainerProps) {
+function VersesContainer({
+  book,
+  chapter,
+  verse,
+  text,
+  show,
+}: VersesContainerProps) {
   return (
     <div
       key={`${book} ${chapter}:${verse}`}
-      className="my-4 flex flex-row border border-5 border-black"
+      className={`my-4 flex flex-row ${
+        show ? `border border-5 border-sky-400` : ``
+      }`}
     >
-      <input type="checkbox" className="mr-4" />
+      <input type="checkbox" className={`${show ? `mr-4` : "invisible"}`} />
       <TitleDisplay book={book} chapter={chapter} verse={verse} />
       <TextDisplay text={text} />
     </div>
@@ -62,8 +71,14 @@ type Props = {
   book: ValidBookName;
   chapter: string;
   verses: VerseRecords;
+  show: boolean;
 };
-export default function VersesDisplay({ book, chapter, verses }: Props) {
+export default function VersesDisplay({
+  book,
+  chapter,
+  verses,
+  show = false,
+}: Props) {
   return pipe(
     verses,
     R.mapWithIndex((verse, text) => (
@@ -72,6 +87,7 @@ export default function VersesDisplay({ book, chapter, verses }: Props) {
         chapter={chapter}
         verse={verse}
         text={text}
+        show={show}
       />
     )),
     R.toArray,
