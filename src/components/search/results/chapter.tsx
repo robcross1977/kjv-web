@@ -25,17 +25,7 @@ function ChaptersContainer({ book, chapter, verses }: ChapterContainerProps) {
 
   return (
     <div key={`${book} ${chapter}`}>
-      <div className="flex flex-row justify-between items-end">
-        <TitleDisplay book={book} chapter={chapter} />
-        <div>
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-zinc-50 font-bold p-1 border border-blue-700 rounded"
-            onClick={() => setShow(!show)}
-          >
-            Show Actions
-          </button>
-        </div>
-      </div>
+      <TitleDisplay book={book} chapter={chapter} />
       <VerseDisplay book={book} chapter={chapter} verses={verses} show={show} />
     </div>
   );

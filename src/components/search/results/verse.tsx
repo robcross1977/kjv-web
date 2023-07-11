@@ -55,11 +55,11 @@ function VersesContainer({
   return (
     <div
       key={`${book} ${chapter}:${verse}`}
-      className={`my-4 flex flex-row ${
+      className={`my-4 flex flex-row  ${
         show ? `border border-5 border-sky-400` : ``
       }`}
     >
-      <input type="checkbox" className={`${show ? `mr-4` : "invisible"}`} />
+      <input type="checkbox" className={`${show ? `mx-3` : "invisible"}`} />
       <TitleDisplay book={book} chapter={chapter} verse={verse} />
       <TextDisplay text={text} />
     </div>
