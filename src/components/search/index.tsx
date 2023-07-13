@@ -1,7 +1,7 @@
-import FreeSearch from "./free-search";
+import FreeSearch from "./free-search/free-search";
 import BooksDisplay from "./results";
 import SearchType from "./search-type";
-import SelectSearch from "./select-search";
+import SelectSearch from "./select-search/select-search";
 import { ValidBookName, WrappedRecords } from "kingjames";
 import { useState } from "react";
 

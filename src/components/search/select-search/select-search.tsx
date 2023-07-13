@@ -1,20 +1,11 @@
-import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
-import {
-  ValidBookName,
-  chapterCountFrom,
-  orderedBookNames,
-  verseCountFrom,
-} from "kingjames";
+import { ValidBookName, chapterCountFrom, verseCountFrom } from "kingjames";
 import { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { pipe } from "fp-ts/function";
 import * as O from "fp-ts/Option";
 import * as A from "fp-ts/Array";
-
-type OptionBook = {
-  key: ValidBookName;
-  value: string;
-};
+import BookSelect, { getBookOptionFromBook } from "./book-select";
+import { BookOption, bookOptions } from "./types";
 
 type OptionChapter = {
   key: string;
@@ -27,49 +18,46 @@ type OptionVerse = {
 };
 
 type Props = {
-  book?: string;
+  book?: ValidBookName;
   chapter?: number;
   verse?: number;
 };
-
 export default function SelectSearch({ book, chapter, verse }: Props) {
   const router = useRouter();
 
-  const [activeBook, setActiveBook] = useState<OptionBook>({
-    key: (book as ValidBookName) ?? "genesis",
-    value: book ?? "Genesis",
+  // Book State
+  const selectedBookOption = getBookOptionFromBook(book ?? "genesis");
+  const [selectedBook, setSelectedBook] = useState<BookOption>({
+    key: selectedBookOption.key,
+    value: selectedBookOption.value,
   });
+  const [bookQuery, setBookQuery] = useState("");
 
+  // Chapter
   const [activeChapter, setActiveChapter] = useState<OptionChapter>({
-    key: `${activeBook} ${chapter ?? 1}`,
+    key: `${selectedBook} ${chapter ?? 1}`,
     value: `${chapter ?? 1}`,
   });
 
+  // Verse
   const [activeVerse, setActiveVerse] = useState<OptionVerse>({
-    key: verse ? `${activeBook} ${activeChapter}:${verse}` : `${activeBook} 0`,
+    key: verse
+      ? `${selectedBook} ${activeChapter}:${verse}`
+      : `${selectedBook} 0`,
     value: `${verse ?? "All"}`,
   });
 
-  function onBookChange(event: ChangeEvent<HTMLSelectElement>) {
-    setActiveBook({
-      key: event.target.value as ValidBookName,
-      value: event.target.value as ValidBookName,
-    });
-    setActiveChapter({ key: `${event.target.value} 1`, value: "1" });
-    setActiveVerse({ key: `${event.target.value} 0`, value: "All" });
-  }
-
   function onChapterChange(event: ChangeEvent<HTMLSelectElement>) {
     setActiveChapter({
-      key: `${activeBook} ${event.target.value}`,
+      key: `${selectedBook} ${event.target.value}`,
       value: event.target.value,
     });
-    setActiveVerse({ key: `${activeBook} 0`, value: "All" });
+    setActiveVerse({ key: `${selectedBook} 0`, value: "All" });
   }
 
   function onVerseChange(event: ChangeEvent<HTMLSelectElement>) {
     setActiveVerse({
-      key: `${activeBook} ${activeChapter}:${event.target.value}`,
+      key: `${selectedBook} ${activeChapter}:${event.target.value}`,
       value: event.target.value,
     });
   }
@@ -77,17 +65,12 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
   return (
     <div className="flex flex-row justify-start items-center">
       <div className="mr-1">
-        <select
-          value={activeBook.value}
-          onChange={onBookChange}
-          className="bg-stone-600 text-white border border-gray-300 focus:ring-gray-300 focus:border-gray-300 rounded-lg text-sm p-2"
-        >
-          {orderedBookNames.map((b) => {
-            return (
-              <option key={b}>{capitalizeFirstAlphabeticCharacter(b)}</option>
-            );
-          })}
-        </select>
+        <BookSelect
+          selectedBook={selectedBook}
+          setSelectedBook={setSelectedBook}
+          query={bookQuery}
+          setQuery={setBookQuery}
+        />
       </div>
       <div className="mx-1">
         <select
@@ -97,11 +80,13 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
         >
           {pipe(
             A.makeBy(
-              chapterCountFrom(activeBook.value.toLowerCase() as ValidBookName),
+              chapterCountFrom(
+                selectedBook.value.toLowerCase() as ValidBookName
+              ),
               (i) => i + 1
             ),
             A.map((ch) => (
-              <option key={`${activeBook.value} ${ch}`}>{ch}</option>
+              <option key={`${selectedBook.value} ${ch}`}>{ch}</option>
             ))
           )}
         </select>
@@ -114,7 +99,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
         >
           {pipe(
             verseCountFrom(
-              activeBook.value.toLowerCase() as ValidBookName,
+              selectedBook.value.toLowerCase() as ValidBookName,
               Number(activeChapter.value)
             ),
             O.map((vc) => A.makeBy(vc, (i) => i + 1)),
@@ -123,7 +108,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
                 verses,
                 A.map((v) => (
                   <option
-                    key={`${activeBook.value} ${activeChapter.value}:${v}`}
+                    key={`${selectedBook.value} ${activeChapter.value}:${v}`}
                   >
                     {v}
                   </option>
@@ -131,7 +116,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
               )
             ),
             O.map((verses) => [
-              <option key={`${activeBook} 0`} value="All">
+              <option key={`${selectedBook} 0`} value="All">
                 All
               </option>,
               ...verses,
@@ -145,7 +130,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
           type="submit"
           className="text-white bg-stone-500 hover:bg-stone-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm p-2"
           onClick={() => {
-            const book = activeBook.value.toLowerCase();
+            const book = selectedBook.value.toLowerCase();
             const chapter = Number(activeChapter.value);
             const verse =
               activeVerse.value === "All"
