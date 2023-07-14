@@ -3,6 +3,7 @@ import { ValidBookName } from "kingjames";
 import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
 import * as O from "fp-ts/Option";
+import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
 
 /**
  * The getBookOptionFromBook function takes a ValidBookName and returns a BookOption type.
@@ -19,7 +20,14 @@ function getBookOptionFromBook(book: ValidBookName) {
     A.findFirst((b) => b.value === book),
 
     // If the book option is found, return it, otherwise return the first book option (Genesis)
-    O.getOrElse<BookOption>(() => bookOptions[0])
+    O.getOrElse<BookOption>(() => {
+      return {
+        key: bookOptions[0].key,
+        value: capitalizeFirstAlphabeticCharacter(
+          bookOptions[0].value
+        ) as ValidBookName,
+      };
+    })
   );
 }
 

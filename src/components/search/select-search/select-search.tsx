@@ -9,6 +9,7 @@ import { BookOption } from "./types";
 import { getBookOptionFromBook } from "./book-select/book-filter";
 import { KeyValueItem } from "@/components/shared/combobox";
 import ChapterSelect from "./chapter-select";
+import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
 
 type OptionVerse = {
   key: string;
@@ -24,7 +25,9 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
   const router = useRouter();
 
   // Book State
-  const selectedBookOption = getBookOptionFromBook(book ?? "genesis");
+  const selectedBookOption = getBookOptionFromBook(
+    book ?? ("Genesis" as ValidBookName)
+  );
   const [selectedBook, setSelectedBook] = useState<BookOption>({
     key: selectedBookOption.key,
     value: selectedBookOption.value,
