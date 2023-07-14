@@ -66,7 +66,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
 
   return (
     <div className="flex flex-row justify-start items-center gap-1">
-      <div className="flex-grow">
+      <div className="flex-grow w-48">
         <BookSelect
           selectedBook={selectedBook}
           setSelectedBook={setSelectedBook}
