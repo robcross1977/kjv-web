@@ -31,14 +31,14 @@ export default function FreeSearch({ query }: Props) {
   const newQuery = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex-grow w-full">
+    <div className="flex-grow w-full lg:w-96">
       <div className="relative">
         <SearchIcon />
 
         <input
           type="search"
           id="default-search"
-          className="block w-full p-2 pl-10 text-sm bg-stone-600 text-white border border-gray-300 rounded-lg  focus:ring-gray-300 focus:border-gray-300"
+          className="block w-full p-2 pl-10 text-sm bg-white text-slate-900 border border-gray-300 rounded-lg  focus:ring-gray-300 focus:border-gray-300"
           placeholder="Ex: Gen 1:2-3"
           required
           ref={newQuery}
@@ -51,7 +51,7 @@ export default function FreeSearch({ query }: Props) {
 
         <button
           type="submit"
-          className="text-white absolute right-2.5 bottom-1.5 bg-stone-500 hover:bg-stone-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm px-2 py-1"
+          className="text-white absolute right-2.5 bottom-1.5 bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm px-2 py-1"
           onClick={() => {
             router.push(`/?query=${newQuery.current?.value}`);
           }}

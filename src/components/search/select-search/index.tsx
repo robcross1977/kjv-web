@@ -66,7 +66,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
 
   return (
     <div className="flex flex-row justify-start items-center gap-1">
-      <div>
+      <div className="flex-grow">
         <BookSelect
           selectedBook={selectedBook}
           setSelectedBook={setSelectedBook}
@@ -97,7 +97,19 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
       <div className="border-5 mr-2">
         <button
           type="submit"
-          className="text-white bg-stone-500 hover:bg-stone-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm p-2"
+          className={`
+            text-white
+            bg-teal-600
+            w-24
+            hover:bg-teal-700
+            focus:ring-4
+            focus:outline-none
+            focus:ring-blue-300
+            font-small
+            rounded-lg
+            text-sm
+            p-2
+          `}
           onClick={() => {
             const book = selectedBook.value.toLowerCase();
             const chapter = Number(selectedChapter.value);
@@ -112,7 +124,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
             router.push(`/${q}`, { shallow: true });
           }}
         >
-          Search
+          Go
         </button>
       </div>
     </div>

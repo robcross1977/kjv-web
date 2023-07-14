@@ -1,7 +1,7 @@
 import FreeSearch from "./free-search/free-search";
 import BooksDisplay from "./results";
 import SearchType from "./search-type";
-import SelectSearch from "./select-search/select-search";
+import SelectSearch from "./select-search";
 import { ValidBookName, WrappedRecords } from "kingjames";
 import { useState } from "react";
 
@@ -42,8 +42,8 @@ export default function Search({
 
   return (
     <div className="flex flex-col w-full mx-auto h-screen">
-      <div className="flex flex-col md:flex-row w-full md:justify-between md:items-center py-1">
-        <div className="h-full flex-grow mr-5">
+      <div className="flex flex-col w-full lg:flex-row lg:justify-between lg:items-center py-1">
+        <div className="h-full">
           {searchType === "Advanced" ? (
             <FreeSearch query={query ?? ""} />
           ) : (

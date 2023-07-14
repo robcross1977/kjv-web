@@ -2,6 +2,16 @@ import { Combobox, Transition } from "@headlessui/react";
 import { ChangeEvent, Fragment } from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
+type InputModeOptions =
+  | "none"
+  | "text"
+  | "decimal"
+  | "numeric"
+  | "tel"
+  | "search"
+  | "email"
+  | "url";
+
 export type KeyValueItem = {
   key: number;
   value: string;
@@ -126,15 +136,7 @@ function ComboboxButton() {
 type ComboboxInputProps<T> = {
   displayValue: (opt: T) => string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  inputMode:
-    | "none"
-    | "text"
-    | "decimal"
-    | "numeric"
-    | "tel"
-    | "search"
-    | "email"
-    | "url";
+  inputMode: InputModeOptions;
 };
 
 function ComboboxInput<T>({
@@ -158,15 +160,7 @@ type Props = {
   items: KeyValueItem[];
   query: string;
   setQuery(query: string): void;
-  inputMode:
-    | "none"
-    | "text"
-    | "decimal"
-    | "numeric"
-    | "tel"
-    | "search"
-    | "email"
-    | "url";
+  inputMode: InputModeOptions;
 };
 export default function ComboBox({
   selectedValue,
