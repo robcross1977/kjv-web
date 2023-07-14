@@ -1,20 +1,11 @@
-import { ValidBookName, verseCountFrom } from "kingjames";
-import { ChangeEvent, useState } from "react";
+import { ValidBookName } from "kingjames";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { pipe } from "fp-ts/function";
-import * as O from "fp-ts/Option";
-import * as A from "fp-ts/Array";
 import BookSelect from "./book-select";
-import { BookOption } from "./types";
 import { getBookOptionFromBook } from "./book-select/book-filter";
 import { KeyValueItem } from "@/components/shared/combobox";
 import ChapterSelect from "./chapter-select";
-import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
-
-type OptionVerse = {
-  key: string;
-  value: string;
-};
+import VerseSelect from "./verse-select";
 
 type Props = {
   book?: ValidBookName;
@@ -25,16 +16,14 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
   const router = useRouter();
 
   // Book State
-  const selectedBookOption = getBookOptionFromBook(
-    book ?? ("Genesis" as ValidBookName)
-  );
-  const [selectedBook, setSelectedBook] = useState<BookOption>({
+  const selectedBookOption = getBookOptionFromBook(book ?? "genesis");
+  const [selectedBook, setSelectedBook] = useState<KeyValueItem>({
     key: selectedBookOption.key,
     value: selectedBookOption.value,
   });
   const [bookQuery, setBookQuery] = useState<string>("");
 
-  // Chapter
+  // Chapter State
   const selectedChapterOption = chapter ?? 1;
   const [selectedChapter, setSelectedChapter] = useState<KeyValueItem>({
     key: selectedChapterOption,
@@ -42,24 +31,42 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
   });
   const [chapterQuery, setChapterQuery] = useState<string>("");
 
-  // Verse
-  const [activeVerse, setActiveVerse] = useState<OptionVerse>({
-    key: verse
-      ? `${selectedBook} ${selectedChapter}:${verse}`
-      : `${selectedBook} 0`,
-    value: `${verse ?? "All"}`,
+  // Verse State
+  const selectedVerseOption = verse ?? "All";
+  const [selectedVerse, setSelectedVerse] = useState<KeyValueItem>({
+    key: selectedVerseOption === "All" ? 0 : selectedChapterOption,
+    value:
+      selectedVerseOption === "All" ? "All" : String(selectedChapterOption),
   });
+  const [verseQuery, setVerseQuery] = useState<string>("");
 
-  function onVerseChange(event: ChangeEvent<HTMLSelectElement>) {
-    setActiveVerse({
-      key: `${selectedBook} ${selectedChapter}:${event.target.value}`,
-      value: event.target.value,
+  useEffect(() => {
+    console.log(
+      `In use effect: book: ${book}, chapter: ${chapter}, verse: ${verse}`
+    );
+    const selectedBookOption = getBookOptionFromBook(book ?? "genesis");
+    setSelectedBook({
+      key: selectedBookOption.key,
+      value: selectedBookOption.value,
     });
-  }
+
+    const selectedChapterOption = chapter ?? 1;
+    setSelectedChapter({
+      key: selectedChapterOption,
+      value: String(selectedChapterOption),
+    });
+
+    const selectedVerseOption = verse ?? "All";
+    setSelectedVerse({
+      key: selectedVerseOption === "All" ? 0 : selectedVerseOption,
+      value:
+        selectedVerseOption === "All" ? "All" : String(selectedVerseOption),
+    });
+  }, [book, chapter, verse]);
 
   return (
-    <div className="flex flex-row justify-start items-center">
-      <div className="mr-1">
+    <div className="flex flex-row justify-start items-center gap-1">
+      <div>
         <BookSelect
           selectedBook={selectedBook}
           setSelectedBook={setSelectedBook}
@@ -67,76 +74,24 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
           setQuery={setBookQuery}
         />
       </div>
-      <div className="mr-1 w-24">
+      <div className="w-24">
         <ChapterSelect
-          selectedBook={selectedBook.value}
+          selectedBook={selectedBook.value.toLowerCase() as ValidBookName}
           selectedChapter={selectedChapter}
           setSelectedChapter={setSelectedChapter}
           query={chapterQuery}
           setQuery={setChapterQuery}
         />
       </div>
-
-      <div className="relative mt-1 mr-1">
-        <div
-          className={`
-        relative
-        overflow-hidden
-        rounded-lg
-        bg-white
-        shadow-md
-        focus:outline-none
-        focus-visible:ring-2
-        focus-visible:ring-white
-        focus-visible:ring-opacity-75
-        focus-visible:ring-offset-2
-        focus-visible:ring-offset-teal-300
-        sm:text-sm`}
-        >
-          <select
-            value={activeVerse.value}
-            onChange={onVerseChange}
-            //className="bg-stone-600 text-white border border-gray-300 focus:ring-gray-300 focus:border-gray-300 rounded-lg text-sm p-2"
-            className={`
-                      w-full
-            border-none
-            py-2
-            pl-3
-            pr-10
-            text-sm
-            leading-5
-          text-slate-900
-            focus:ring-0
-          `}
-          >
-            {pipe(
-              verseCountFrom(
-                selectedBook.value.toLowerCase() as ValidBookName,
-                Number(selectedChapter.value)
-              ),
-              O.map((vc) => A.makeBy(vc, (i) => i + 1)),
-              O.map((verses) =>
-                pipe(
-                  verses,
-                  A.map((v) => (
-                    <option
-                      key={`${selectedBook.value} ${selectedChapter.value}:${v}`}
-                    >
-                      {v}
-                    </option>
-                  ))
-                )
-              ),
-              O.map((verses) => [
-                <option key={`${selectedBook} 0`} value="All">
-                  All
-                </option>,
-                ...verses,
-              ]),
-              O.getOrElse<JSX.Element[]>(() => [])
-            )}
-          </select>
-        </div>
+      <div className="w-24">
+        <VerseSelect
+          selectedBook={selectedBook.value.toLowerCase() as ValidBookName}
+          selectedChapter={Number(selectedChapter.value)}
+          selectedVerse={selectedVerse}
+          setSelectedVerse={setSelectedVerse}
+          query={verseQuery}
+          setQuery={setVerseQuery}
+        />
       </div>
 
       <div className="border-5 mr-2">
@@ -147,14 +102,14 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
             const book = selectedBook.value.toLowerCase();
             const chapter = Number(selectedChapter.value);
             const verse =
-              activeVerse.value === "All"
+              selectedVerse.value === "All"
                 ? undefined
-                : Number(activeVerse.value);
+                : Number(selectedVerse.value);
             const q = `?book=${book}&chapter=${chapter}${
               verse ? `&verse=${verse}` : ""
             }`;
 
-            router.push(`/${q}`);
+            router.push(`/${q}`, { shallow: true });
           }}
         >
           Search

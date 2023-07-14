@@ -4,6 +4,7 @@ import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
 import * as O from "fp-ts/Option";
 import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
+import { KeyValueItem } from "@/components/shared/combobox";
 
 /**
  * The getBookOptionFromBook function takes a ValidBookName and returns a BookOption type.
@@ -17,15 +18,19 @@ function getBookOptionFromBook(book: ValidBookName) {
     bookOptions,
 
     // Find the first book option that matches the book name
-    A.findFirst((b) => b.value === book),
+    A.findFirst((b) => b.value.toLowerCase() === book.toLowerCase()),
+    O.map<BookOption, KeyValueItem>((b) => {
+      return {
+        key: b.key,
+        value: capitalizeFirstAlphabeticCharacter(b.value),
+      };
+    }),
 
     // If the book option is found, return it, otherwise return the first book option (Genesis)
-    O.getOrElse<BookOption>(() => {
+    O.getOrElse<KeyValueItem>(() => {
       return {
         key: bookOptions[0].key,
-        value: capitalizeFirstAlphabeticCharacter(
-          bookOptions[0].value
-        ) as ValidBookName,
+        value: capitalizeFirstAlphabeticCharacter(bookOptions[0].value),
       };
     })
   );

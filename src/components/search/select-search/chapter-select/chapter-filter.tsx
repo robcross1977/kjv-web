@@ -3,8 +3,8 @@ import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
 import { KeyValueItem } from "@/components/shared/combobox";
 
-// The bookFilterPredicate function takes a book option and a query and returns a boolean indicating whether the book
-// option starts the query.
+// The chapterFilterPredicate function takes a book option and a query and returns a boolean indicating whether the
+// chapter option starts the query.
 function chapterFilterPredicate(chapter: string, query: string) {
   return chapter.startsWith(query);
 }
