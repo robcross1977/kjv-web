@@ -1,6 +1,6 @@
 "use client";
 
-import Header from "@/components/shared/header";
+import Header from "@components/shared/header";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import Image from "next/image";
 

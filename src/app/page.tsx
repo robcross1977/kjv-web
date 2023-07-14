@@ -1,7 +1,7 @@
 "use client";
 
 import Search from "@/components/search";
-import Header from "@/components/shared/header";
+import Header from "@components/shared/header";
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/lib/function";
 import {

@@ -1,7 +1,7 @@
 "use client";
 
 import FillInTheBlank from "@/components/education/fill-in-the-blank";
-import Header from "@/components/shared/header";
+import Header from "@components/shared/header";
 
 export default function Discipleship() {
   return (
