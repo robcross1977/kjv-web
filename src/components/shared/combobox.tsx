@@ -23,9 +23,7 @@ type DisplayedValueProps = {
 };
 function DisplayedValue({ selected, value }: DisplayedValueProps) {
   return (
-    <span
-      className={`block truncate ${selected ? "font-medium" : "font-normal"}`}
-    >
+    <span className={`block ${selected ? "font-medium" : "font-normal"}`}>
       {value}
     </span>
   );
