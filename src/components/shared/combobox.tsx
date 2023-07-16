@@ -23,7 +23,9 @@ type DisplayedValueProps = {
 };
 function DisplayedValue({ selected, value }: DisplayedValueProps) {
   return (
-    <span className={`block ${selected ? "font-medium" : "font-normal"}`}>
+    <span
+      className={`block truncate ${selected ? "font-medium" : "font-normal"}`}
+    >
       {value}
     </span>
   );
@@ -52,7 +54,7 @@ function ComboboxOptions({ items }: ComboboxOptionsProps) {
     <Combobox.Option
       key={item.key}
       className={({ active }) =>
-        `relative cursor-default select-none py-2 pl-10 pr-4 ${
+        `relative cursor-default select-none pl-3 md:pl-8 pr-4 ${
           active ? "bg-teal-600 text-white" : "text-gray-900"
         }`
       }
@@ -105,12 +107,12 @@ function ComboboxTransition({
         rounded-md
         bg-white
         py-1
-        text-base
+        text-sm
         shadow-lg
         ring-1
         ring-black
         ring-opacity-5
-        focus:outline-none sm:text-sm
+        focus:outline-none
       `}
       >
         {items.length === 0 && query !== "" ? (

@@ -38,7 +38,12 @@ function filterVerseOptions(
 
   const verseOptions = pipe(
     // No matter what the "All" option will exist so start with it
-    [{ key: 0, value: "All" }],
+    [
+      {
+        key: 0,
+        value: "All",
+      },
+    ],
 
     // Join it together with the filtered verse options
     A.concat(
