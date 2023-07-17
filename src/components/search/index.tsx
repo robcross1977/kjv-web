@@ -34,7 +34,7 @@ export default function Search({
         <div className="h-full lg:hidden">
           <SelectSearch book={book} chapter={chapter} verse={verse} />
         </div>
-        <div className="mr-4">
+        <div>
           <SearchMenu
             freeFormSearchEnabled={useAdvancedSearch}
             setFreeFormSearchEnabled={setUseAdvanceSearch}
