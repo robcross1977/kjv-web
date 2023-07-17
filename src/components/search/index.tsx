@@ -1,6 +1,6 @@
 import FreeSearch from "./free-search/free-search";
+import SearchMenu from "./menu";
 import BooksDisplay from "./results";
-import SearchType from "./search-type";
 import SelectSearch from "./select-search";
 import { ValidBookName, WrappedRecords } from "kingjames";
 import { useState } from "react";
@@ -20,7 +20,7 @@ export default function Search({
   results,
 }: Props) {
   const [useAdvancedSearch, setUseAdvanceSearch] = useState(false);
-
+  const [useEditMode, setUseEditMode] = useState(false);
   return (
     <div className="flex flex-col w-full mx-auto h-screen">
       <div className="flex flex-col w-full lg:flex-row lg:justify-between lg:items-center py-1">
@@ -35,9 +35,11 @@ export default function Search({
           <SelectSearch book={book} chapter={chapter} verse={verse} />
         </div>
         <div className="mr-4">
-          <SearchType
-            enabled={useAdvancedSearch}
-            setEnabled={setUseAdvanceSearch}
+          <SearchMenu
+            freeFormSearchEnabled={useAdvancedSearch}
+            setFreeFormSearchEnabled={setUseAdvanceSearch}
+            useEditMode={useEditMode}
+            setUseEditMode={setUseEditMode}
           />
         </div>
       </div>

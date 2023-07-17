@@ -192,7 +192,8 @@ export default function ComboBox({
           focus-visible:ring-white
           focus-visible:ring-opacity-75
           focus-visible:ring-offset-2
-          focus-visible:ring-offset-teal-300 sm:text-sm
+          focus-visible:ring-offset-teal-300
+          sm:text-sm
         `}
         >
           <ComboboxInput
