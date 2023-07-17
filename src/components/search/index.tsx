@@ -19,44 +19,31 @@ export default function Search({
   verse,
   results,
 }: Props) {
-  const [searchType, setSearchType] = useState<"Basic" | "Advanced">(
-    (book && book.trim().length > 0) ||
-      query === undefined ||
-      query.trim().length === 0
-      ? "Basic"
-      : "Advanced"
-  );
-
-  const [isDirty, _setIsDirty] = useState<boolean>(
-    searchType === "Advanced" && results !== undefined
-  );
-
-  const onOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value =
-      e.target.value === "Basic" || e.target.value === "Advanced"
-        ? e.target.value
-        : "Basic";
-
-    setSearchType(value);
-  };
+  const [useAdvancedSearch, setUseAdvanceSearch] = useState(false);
 
   return (
     <div className="flex flex-col w-full mx-auto h-screen">
       <div className="flex flex-col w-full lg:flex-row lg:justify-between lg:items-center py-1">
-        <div className="h-full">
-          {searchType === "Advanced" ? (
+        <div className="h-full hidden lg:block">
+          {useAdvancedSearch ? (
             <FreeSearch query={query ?? ""} />
           ) : (
             <SelectSearch book={book} chapter={chapter} verse={verse} />
           )}
         </div>
-        <div>
-          <SearchType searchType={searchType} onOptionChange={onOptionChange} />
+        <div className="h-full lg:hidden">
+          <SelectSearch book={book} chapter={chapter} verse={verse} />
+        </div>
+        <div className="mr-4">
+          <SearchType
+            enabled={useAdvancedSearch}
+            setEnabled={setUseAdvanceSearch}
+          />
         </div>
       </div>
 
       <div className="flex flex-grow w-full bg-sky-200 rounded-lg py-2.5 px-5 mr-2 border border-zinc-950 shadow-2xl">
-        <BooksDisplay results={results} isDirty={isDirty} />
+        <BooksDisplay results={results} />
       </div>
     </div>
   );

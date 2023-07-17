@@ -1,34 +1,16 @@
+import Switcheroo from "../shared/switcheroo";
+
 type Props = {
-  searchType: "Basic" | "Advanced";
-  onOptionChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  enabled: boolean;
+  setEnabled: (value: boolean) => void;
 };
 
-export default function SearchType({
-  onOptionChange,
-  searchType = "Basic",
-}: Props) {
+export default function SearchType({ enabled, setEnabled }: Props) {
   return (
-    <div className="w-full flex flex-row justify-start items-center">
+    <div className="w-full flex-row justify-start items-center gap-2 hidden lg:flex">
+      <div>Use Free-Form Search?</div>
       <div>
-        <span className="font-semibold mx-1 text-slate-950">Search Type:</span>
-      </div>
-      <div className="mx-1">
-        <input
-          type="radio"
-          checked={searchType === "Basic"}
-          value="Basic"
-          onChange={onOptionChange}
-        />
-        <span className="mx-1 text-slate-950">basic</span>
-      </div>
-      <div className="mx1">
-        <input
-          type="radio"
-          checked={searchType === "Advanced"}
-          value="Advanced"
-          onChange={onOptionChange}
-        />
-        <span className="mx-1 text-slate-950">advanced</span>
+        <Switcheroo enabled={enabled} setEnabled={setEnabled} />
       </div>
     </div>
   );

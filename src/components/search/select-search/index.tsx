@@ -41,9 +41,6 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
   const [verseQuery, setVerseQuery] = useState<string>("");
 
   useEffect(() => {
-    console.log(
-      `In use effect: book: ${book}, chapter: ${chapter}, verse: ${verse}`
-    );
     const selectedBookOption = getBookOptionFromBook(book ?? "genesis");
     setSelectedBook({
       key: selectedBookOption.key,
@@ -83,7 +80,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
           setQuery={setChapterQuery}
         />
       </div>
-      <div className="w-24">
+      <div className="w-24 hidden sm:block">
         <VerseSelect
           selectedBook={selectedBook.value.toLowerCase() as ValidBookName}
           selectedChapter={Number(selectedChapter.value)}
@@ -100,7 +97,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
           className={`
             text-white
             bg-teal-600
-            w-24
+            w-14
             hover:bg-teal-700
             focus:ring-4
             focus:outline-none
