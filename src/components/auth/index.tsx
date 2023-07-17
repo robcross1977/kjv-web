@@ -12,7 +12,7 @@ export default function Auth() {
   return (
     <div className="lg:mr-5 text-black lg:text-zinc-50 items-center justify-center">
       {user ? (
-        <div className="flex flex-row items-center justify-center">
+        <div className="flex flex-row items-center justify-center gap-2">
           <Link
             href="/api/auth/logout"
             data-testid="logout"
