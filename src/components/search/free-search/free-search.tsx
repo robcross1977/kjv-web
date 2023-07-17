@@ -38,7 +38,7 @@ export default function FreeSearch({ query }: Props) {
         <input
           type="search"
           id="default-search"
-          className="block w-full p-2 pl-10 text-sm bg-white text-slate-900 border border-gray-300 rounded-lg  focus:ring-gray-300 focus:border-gray-300"
+          className="block w-full p-2 pl-10 text-sm  bg-white text-slate-900 border border-gray-300 rounded-lg  focus:ring-gray-300 focus:border-gray-300"
           placeholder="Ex: Gen 1:2-3"
           required
           ref={newQuery}

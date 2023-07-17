@@ -1,3 +1,4 @@
+import Auth from "@/components/auth";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -8,7 +9,7 @@ export default function NavMenu() {
     <div>
       <nav>
         {/* MOBILE MENU */}
-        <section className="flex md:hidden justify-end mb-2">
+        <section className="flex lg:hidden justify-end mb-2">
           {/* HAMBURGER ICON */}
           <div
             className="space-y-1 mr-5"
@@ -40,6 +41,9 @@ export default function NavMenu() {
             </div>
             <ul className="flex flex-col items-center justify-between min-h-[250px]">
               <li className="border-b border-gray-400 my-8 uppercase">
+                <Auth />
+              </li>
+              <li className="border-b border-gray-400 my-8 uppercase">
                 <Link href="/">Home</Link>
               </li>
               <li className="border-b border-gray-400 my-8 uppercase">
@@ -53,7 +57,7 @@ export default function NavMenu() {
         </section>
 
         {/* DESKTOP MENU */}
-        <ul className="hidden space-x-3 md:flex ml-3 text-sm text-zinc-50">
+        <ul className="hidden space-x-3 lg:flex ml-3 text-sm text-zinc-50">
           <li>
             <Link href="/" className="hover:text-teal-700">
               Home
