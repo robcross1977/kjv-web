@@ -2,7 +2,7 @@ import { ValidBookName, verseCountFrom } from "kingjames";
 import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
 import * as O from "fp-ts/Option";
-import { KeyValueItem } from "@/components/shared/combobox";
+import { KeyValueItem } from "@/components/shared/types";
 
 // The verseFilterPredicate function takes a verse option and a query and returns a boolean indicating whether the verse
 // option starts the query.
