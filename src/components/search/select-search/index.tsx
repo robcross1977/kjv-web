@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BookSelect from "./book-select";
 import { getBookOptionFromBook } from "./book-select/book-filter";
-import { KeyValueItem } from "@/components/shared/combobox";
 import ChapterSelect from "./chapter-select";
 import VerseSelect from "./verse-select";
+import { KeyValueItem } from "@/components/shared/types";
 
 type Props = {
   book?: ValidBookName;
@@ -22,6 +22,12 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
     value: selectedBookOption.value,
   });
   const [bookQuery, setBookQuery] = useState<string>("");
+  const onBookChange = (newBook: KeyValueItem) => {
+    if (newBook.key !== Number.NEGATIVE_INFINITY) {
+      setSelectedBook(newBook);
+      setBookQuery(newBook.value);
+    }
+  };
 
   // Chapter State
   const selectedChapterOption = chapter ?? 1;
@@ -66,7 +72,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
       <div className="flex-grow w-48">
         <BookSelect
           selectedBook={selectedBook}
-          setSelectedBook={setSelectedBook}
+          setSelectedBook={onBookChange}
           query={bookQuery}
           setQuery={setBookQuery}
         />

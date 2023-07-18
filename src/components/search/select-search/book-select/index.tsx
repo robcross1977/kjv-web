@@ -1,11 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
 import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
 import { filterBookOptions } from "./book-filter";
-import ComboBox, { KeyValueItem } from "@components/shared/combobox";
+import ComboBox from "@components/shared/combobox";
+import { KeyValueItem } from "@/components/shared/types";
 
 type Props = {
   selectedBook: KeyValueItem;
-  setSelectedBook: Dispatch<SetStateAction<KeyValueItem>>;
+  setSelectedBook: (kvItem: KeyValueItem) => void;
   query: string;
   setQuery: Dispatch<SetStateAction<string>>;
 };

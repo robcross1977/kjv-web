@@ -1,7 +1,7 @@
 import { ValidBookName, chapterCountFrom } from "kingjames";
 import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
-import { KeyValueItem } from "@/components/shared/combobox";
+import { KeyValueItem } from "@/components/shared/types";
 
 // The chapterFilterPredicate function takes a book option and a query and returns a boolean indicating whether the
 // chapter option starts the query.

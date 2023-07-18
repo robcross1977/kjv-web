@@ -1,7 +1,6 @@
-import { ValidBookName } from "kingjames";
+import { KeyValueItem } from "@/components/shared/types";
 
-type BookOption = { key: number; value: ValidBookName };
-const bookOptions: BookOption[] = [
+const bookOptions: KeyValueItem[] = [
   { key: 1, value: "genesis" },
   { key: 2, value: "exodus" },
   { key: 3, value: "leviticus" },
@@ -41,6 +40,7 @@ const bookOptions: BookOption[] = [
   { key: 37, value: "haggai" },
   { key: 38, value: "zechariah" },
   { key: 39, value: "malachi" },
+  { key: Number.NEGATIVE_INFINITY, value: "----------------" },
   { key: 40, value: "matthew" },
   { key: 41, value: "mark" },
   { key: 42, value: "luke" },
@@ -70,4 +70,4 @@ const bookOptions: BookOption[] = [
   { key: 66, value: "revelation" },
 ];
 
-export { type BookOption, bookOptions };
+export { bookOptions };

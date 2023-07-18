@@ -1,10 +1,10 @@
-import { BookOption, bookOptions } from "../types";
+import { bookOptions } from "../types";
 import { ValidBookName } from "kingjames";
 import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
 import * as O from "fp-ts/Option";
 import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
-import { KeyValueItem } from "@/components/shared/combobox";
+import { KeyValueItem } from "@/components/shared/types";
 
 /**
  * The getBookOptionFromBook function takes a ValidBookName and returns a BookOption type.
@@ -19,7 +19,7 @@ function getBookOptionFromBook(book: ValidBookName) {
 
     // Find the first book option that matches the book name
     A.findFirst((b) => b.value.toLowerCase() === book.toLowerCase()),
-    O.map<BookOption, KeyValueItem>((b) => {
+    O.map((b) => {
       return {
         key: b.key,
         value: capitalizeFirstAlphabeticCharacter(b.value),
@@ -43,7 +43,7 @@ function getFormattedQuery(query: string) {
 
 // The bookFilterPredicate function takes a book option and a query and returns a boolean indicating whether the book
 // option starts the query.
-function bookFilterPredicate(book: BookOption, query: string) {
+function bookFilterPredicate(book: KeyValueItem, query: string) {
   return book.value
     .toLowerCase()
     .replace(/\s+/g, "")

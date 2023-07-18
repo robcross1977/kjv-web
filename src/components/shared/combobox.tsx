@@ -1,6 +1,7 @@
 import { Combobox, Transition } from "@headlessui/react";
-import { ChangeEvent, Fragment } from "react";
+import { ChangeEvent, Fragment, ReactNode } from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { KeyValueItem } from "./types";
 
 type InputModeOptions =
   | "none"
@@ -12,14 +13,9 @@ type InputModeOptions =
   | "email"
   | "url";
 
-export type KeyValueItem = {
-  key: number;
-  value: string;
-};
-
 type DisplayedValueProps = {
   selected: boolean;
-  value: string;
+  value: string | ReactNode;
 };
 function DisplayedValue({ selected, value }: DisplayedValueProps) {
   return (
@@ -50,24 +46,32 @@ type ComboboxOptionsProps = {
   items: KeyValueItem[];
 };
 function ComboboxOptions({ items }: ComboboxOptionsProps) {
-  return items.map((item) => (
-    <Combobox.Option
-      key={item.key}
-      className={({ active }) =>
-        `relative cursor-default select-none pl-3 md:pl-8 pr-4 ${
-          active ? "bg-teal-600 text-white" : "text-gray-900"
-        }`
-      }
-      value={item}
-    >
-      {({ selected, active }) => (
-        <>
-          <DisplayedValue selected={selected} value={String(item.value)} />
-          {selected ? <SelectedOption active={active} /> : null}
-        </>
-      )}
-    </Combobox.Option>
-  ));
+  return items.map((item) => {
+    const itemOrHr = item.value.match(/-{2,}/)
+      ? {
+          key: Number.NEGATIVE_INFINITY,
+          value: <hr className="border-1 border-black my-2" />,
+        }
+      : item;
+    return (
+      <Combobox.Option
+        key={itemOrHr.key}
+        className={({ active }) =>
+          `relative cursor-default select-none pl-3 md:pl-8 pr-4 ${
+            active ? "bg-teal-600 text-white" : "text-gray-900"
+          }`
+        }
+        value={itemOrHr}
+      >
+        {({ selected, active }) => (
+          <>
+            <DisplayedValue selected={selected} value={itemOrHr.value} />
+            {selected ? <SelectedOption active={active} /> : null}
+          </>
+        )}
+      </Combobox.Option>
+    );
+  });
 }
 
 function NotFound() {
@@ -133,21 +137,17 @@ function ComboboxButton() {
   );
 }
 
-type ComboboxInputProps<T> = {
-  displayValue: (opt: T) => string;
+type ComboboxInputProps = {
+  displayValue: (opt: KeyValueItem) => string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   inputMode: InputModeOptions;
 };
 
-function ComboboxInput<T>({
-  displayValue,
-  onChange,
-  inputMode = "search",
-}: ComboboxInputProps<T>) {
+function ComboboxInput({ onChange, inputMode = "search" }: ComboboxInputProps) {
   return (
     <Combobox.Input
       className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-slate-900 focus:ring-0"
-      displayValue={displayValue}
+      displayValue={(item: KeyValueItem) => item.value}
       onChange={onChange}
       inputMode={inputMode}
     />
