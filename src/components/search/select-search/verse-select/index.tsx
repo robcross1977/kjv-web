@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
 import { filterVerseOptions } from "./verse-filter";
-import ComboBox, { KeyValueItem } from "@components/shared/combobox";
+import ComboBox from "@components/shared/combobox";
 import { ValidBookName } from "kingjames";
+import { KeyValueItem } from "@/components/shared/types";
 
 type Props = {
   selectedBook: ValidBookName;
