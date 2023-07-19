@@ -23,8 +23,8 @@ export default function Header() {
       bg-sky-950
       `}
     >
-      <div className="flex flex-row lg:flex-col justify-between lg:items-start w-2/3 mx-auto">
-        <div className="flex flex-row justify-between w-full">
+      <div className="flex lg:flex-col justify-between items-center lg:items-start w-11/12 lg:w-2/3 mx-auto">
+        <div className="flex justify-between items-center w-full">
           <Title />
           <div className="hidden lg:block">
             <Auth />

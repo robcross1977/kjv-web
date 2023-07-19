@@ -65,7 +65,7 @@ type TitleProps = {
 function TitleDisplay({ title }: TitleProps) {
   return (
     <div className="w-full flex justify-between items-center bg-sky-800 rounded-md shadow-lg">
-      <div className="ml-2">
+      <div className="ml-2 my-2">
         <PrevButton />
       </div>
 
@@ -75,7 +75,7 @@ function TitleDisplay({ title }: TitleProps) {
         </h1>
       </div>
 
-      <div className="mr-2">
+      <div className="mr-2 my-2">
         <NextButton />
       </div>
     </div>

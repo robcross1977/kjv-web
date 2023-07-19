@@ -33,7 +33,11 @@ export default function Auth() {
           )}
         </div>
       ) : (
-        <Link href="/api/auth/login" data-testid="login">
+        <Link
+          href="/api/auth/login"
+          data-testid="login"
+          className="hover:text-teal-700"
+        >
           Login
         </Link>
       )}

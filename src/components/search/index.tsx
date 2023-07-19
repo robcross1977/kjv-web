@@ -11,12 +11,12 @@ type Props = {
 export default function Search({ book, chapter, verse, results }: Props) {
   return (
     <div className="flex flex-col w-full mx-auto h-screen">
-      <div className="w-2/3 mx-auto">
+      <div className="w-11/12 lg:w-2/3 mx-auto">
         <SearchBar book={book} chapter={chapter} verse={verse} />
       </div>
 
       <div className="flex flex-grow w-full bg-sky-200 pt-2">
-        <div className="w-2/3 mx-auto">
+        <div className="w-11/12 lg:w-2/3 mx-auto">
           <BooksDisplay results={results} />
         </div>
       </div>
