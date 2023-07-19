@@ -27,7 +27,7 @@ export default function NextButton() {
   return O.isSome(next) ? (
     <button
       type="button"
-      className="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 inline-flex items-center"
+      className="text-zinc-50 border border-zinc-50 bg-teal-600 hover:bg-teal-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 inline-flex items-center"
       onClick={() => router.push(`/?${next.value}`)}
     >
       <svg

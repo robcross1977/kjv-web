@@ -49,7 +49,7 @@ export default function FreeSearch() {
 
         <button
           type="submit"
-          className="text-white absolute right-2.5 bottom-1.5 bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm px-2 py-1"
+          className="text-white absolute right-2.5 bottom-[4px] bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm px-2 py-1"
           onClick={() => {
             router.push(`/?query=${newQuery.current?.value}`);
           }}
