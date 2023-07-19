@@ -65,7 +65,7 @@ export default function Home({ searchParams }: Props) {
         <div>
           <Header />
           <div className="w-full">
-            <div className="flex flex-col w-2/3 mx-auto">
+            <div className="flex flex-col mx-auto">
               <Search
                 book={book}
                 chapter={chapter}

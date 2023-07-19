@@ -40,11 +40,14 @@ function BookContainer({ title, chapters }: BookContainerProps) {
   const verse = pipe("verse", searchParams.get, O.fromNullable);
 
   return (
-    <div key={title} className="flex flex-col w-full h-full text-slate-950 ">
+    <div
+      key={title}
+      className="flex flex-col w-full h-full text-slate-950 border border-gray-400 rounded-md p-2"
+    >
       <TitleDisplay title={title} />
-      <hr className="border-sky-950 mt-2" />
+      <hr className="border-gray-400 mt-2" />
       <ChaptersDisplay book={title} chapters={chapters} />
-      <hr className="border-sky-950 mb-2" />
+      <hr className="border-gray-400 mb-2" />
       {O.isNone(verse) ? (
         <div className="w-full flex justify-between">
           <PrevButton />
