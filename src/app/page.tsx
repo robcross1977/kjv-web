@@ -62,15 +62,18 @@ export default function Home({ searchParams }: Props) {
     O.bind("results", ({ finalQuery }) => getSearchResults(finalQuery)),
     O.chain(({ results }) => {
       return pipe(
-        <div className="flex flex-col w-11/12 mx-auto my-5">
+        <div>
           <Header />
-          <Search
-            query={isBasic(book) ? undefined : query ?? ""}
-            book={book}
-            chapter={chapter}
-            verse={verse}
-            results={results}
-          />
+          <div className="w-full">
+            <div className="flex flex-col w-2/3 mx-auto">
+              <Search
+                book={book}
+                chapter={chapter}
+                verse={verse}
+                results={results}
+              />
+            </div>
+          </div>
         </div>,
         O.some
       );

@@ -57,7 +57,7 @@ function ComboboxOptions({ items }: ComboboxOptionsProps) {
       <Combobox.Option
         key={itemOrHr.key}
         className={({ active }) =>
-          `relative cursor-default select-none pl-3 md:pl-8 pr-4 ${
+          `relative cursor-default select-none pl-3 md:pl-4 pr-4 ${
             active ? "bg-teal-600 text-white" : "text-gray-900"
           }`
         }
@@ -176,7 +176,7 @@ export default function ComboBox({
 
   return (
     <Combobox value={selectedValue} onChange={onChange}>
-      <div className="relative mt-1">
+      <div className="relative">
         <div
           className={`
           relative

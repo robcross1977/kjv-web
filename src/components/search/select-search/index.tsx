@@ -69,7 +69,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
 
   return (
     <div className="flex flex-row justify-start items-center gap-1">
-      <div className="flex-grow w-48">
+      <div className="flex-grow lg:w-40 lg:max-w-[512px]">
         <BookSelect
           selectedBook={selectedBook}
           setSelectedBook={onBookChange}
@@ -77,7 +77,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
           setQuery={setBookQuery}
         />
       </div>
-      <div className="w-24">
+      <div className="w-20">
         <ChapterSelect
           selectedBook={selectedBook.value.toLowerCase() as ValidBookName}
           selectedChapter={selectedChapter}
@@ -86,7 +86,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
           setQuery={setChapterQuery}
         />
       </div>
-      <div className="w-24 hidden sm:block">
+      <div className="w-20 hidden sm:block">
         <VerseSelect
           selectedBook={selectedBook.value.toLowerCase() as ValidBookName}
           selectedChapter={Number(selectedChapter.value)}
@@ -97,7 +97,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
         />
       </div>
 
-      <div className="border-5 mr-2">
+      <div className="border-5 self-end">
         <button
           type="submit"
           className={`

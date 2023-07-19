@@ -5,9 +5,9 @@ import NavMenu from "./nav-menu";
 
 function Title() {
   return (
-    <div className="ml-3">
-      <p className="font-semibold text-6xl mb-1 text-zinc-50 font-serif">
-        Bible Buddy
+    <div>
+      <p className="font-semibold text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-1 text-zinc-50 font-serif">
+        Scripture Seeker
       </p>
     </div>
   );
@@ -21,12 +21,9 @@ export default function Header() {
       w-full h-[105px]
       py-1
       bg-sky-950
-      border-l-2 border-t-2 border-r-1 border-b-1
-      border-amber-100 border-b-black border-r-black      
-      rounded-lg
       `}
     >
-      <div className="flex flex-row lg:flex-col justify-between lg:items-start">
+      <div className="flex flex-row lg:flex-col justify-between lg:items-start w-2/3 mx-auto">
         <div className="flex flex-row justify-between w-full">
           <Title />
           <div className="hidden lg:block">

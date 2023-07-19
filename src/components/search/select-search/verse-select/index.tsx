@@ -29,19 +29,22 @@ export default function VerseSelect({
   setQuery,
 }: Props) {
   return (
-    <div>
-      <ComboBox
-        selectedValue={selectedVerse}
-        onChange={setSelectedVerse}
-        query={query}
-        setQuery={setQuery}
-        items={filterVerseOptions(
-          selectedBook.toLowerCase() as ValidBookName,
-          selectedChapter,
-          query
-        ).map((b) => b)}
-        inputMode="numeric"
-      />
+    <div className="flex flex-col">
+      <div className="text-sm text-gray-300">Verse</div>
+      <div>
+        <ComboBox
+          selectedValue={selectedVerse}
+          onChange={setSelectedVerse}
+          query={query}
+          setQuery={setQuery}
+          items={filterVerseOptions(
+            selectedBook.toLowerCase() as ValidBookName,
+            selectedChapter,
+            query
+          ).map((b) => b)}
+          inputMode="numeric"
+        />
+      </div>
     </div>
   );
 }

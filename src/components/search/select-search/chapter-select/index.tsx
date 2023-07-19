@@ -27,18 +27,21 @@ export default function ChapterSelect({
   setQuery,
 }: Props) {
   return (
-    <div>
-      <ComboBox
-        selectedValue={selectedChapter}
-        onChange={setSelectedChapter}
-        query={query}
-        setQuery={setQuery}
-        items={filterChapterOptions(
-          selectedBook.toLowerCase() as ValidBookName,
-          query
-        ).map((b) => b)}
-        inputMode="numeric"
-      />
+    <div className="flex flex-col">
+      <div className="text-sm text-gray-300">Chapter</div>
+      <div>
+        <ComboBox
+          selectedValue={selectedChapter}
+          onChange={setSelectedChapter}
+          query={query}
+          setQuery={setQuery}
+          items={filterChapterOptions(
+            selectedBook.toLowerCase() as ValidBookName,
+            query
+          ).map((b) => b)}
+          inputMode="numeric"
+        />
+      </div>
     </div>
   );
 }

@@ -25,20 +25,23 @@ export default function BookSelect({
   setQuery,
 }: Props) {
   return (
-    <div>
-      <ComboBox
-        selectedValue={selectedBook}
-        onChange={setSelectedBook}
-        query={query}
-        setQuery={setQuery}
-        items={filterBookOptions(query).map((b) => {
-          return {
-            key: b.key,
-            value: capitalizeFirstAlphabeticCharacter(b.value),
-          };
-        })}
-        inputMode="search"
-      />
+    <div className="flex flex-col">
+      <div className="text-sm text-gray-300">Book</div>
+      <div className="w-full">
+        <ComboBox
+          selectedValue={selectedBook}
+          onChange={setSelectedBook}
+          query={query}
+          setQuery={setQuery}
+          items={filterBookOptions(query).map((b) => {
+            return {
+              key: b.key,
+              value: capitalizeFirstAlphabeticCharacter(b.value),
+            };
+          })}
+          inputMode="search"
+        />
+      </div>
     </div>
   );
 }

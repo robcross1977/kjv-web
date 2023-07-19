@@ -21,7 +21,7 @@ type ChapterContainerProps = {
   verses: VerseRecords;
 };
 function ChaptersContainer({ book, chapter, verses }: ChapterContainerProps) {
-  const [show, setShow] = useState(false);
+  const [show, _setShow] = useState(false);
 
   return (
     <div key={`${book} ${chapter}`}>

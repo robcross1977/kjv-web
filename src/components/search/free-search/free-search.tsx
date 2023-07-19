@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function SearchIcon() {
   return (
@@ -23,22 +23,20 @@ function SearchIcon() {
   );
 }
 
-type Props = {
-  query: string;
-};
-export default function FreeSearch({ query }: Props) {
+export default function FreeSearch() {
   const router = useRouter();
   const newQuery = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex-grow w-full lg:w-96">
-      <div className="relative">
+    <div className="flex-grow lg:flex-auto w-full">
+      <div className="text-sm text-gray-300">Search the Bible</div>
+      <div className="relative lg:max-w-[512px]">
         <SearchIcon />
 
         <input
           type="search"
           id="default-search"
-          className="block w-full p-2 pl-10 text-sm  bg-white text-slate-900 border border-gray-300 rounded-lg  focus:ring-gray-300 focus:border-gray-300"
+          className="block w-full p-2 pl-10 text-sm bg-white text-slate-900 border-gray-300 rounded-lg focus:ring-gray-300 focus:border-gray-300"
           placeholder="Ex: Gen 1:2-3"
           required
           ref={newQuery}
