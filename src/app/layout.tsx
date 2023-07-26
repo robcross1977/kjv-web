@@ -18,7 +18,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body
-        className={`${inter.className} bg-gradient-to-b from-sky-700 to-sky-500 w-full h-full min-h-screen font-mono`}
+        className={`${inter.className} bg-sky-700 w-full h-full min-h-screen`}
       >
         <UserProvider>{children}</UserProvider>
         <Analytics />

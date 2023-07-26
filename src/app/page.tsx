@@ -64,16 +64,14 @@ export default function Home({ searchParams }: Props) {
       return pipe(
         <div>
           <Header />
-          <div className="w-full">
-            <div className="flex flex-col mx-auto">
-              <Search
-                book={book}
-                chapter={chapter}
-                verse={verse}
-                results={results}
-              />
-            </div>
-          </div>
+          <main className="w-full flex flex-col mx-auto">
+            <Search
+              book={book}
+              chapter={chapter}
+              verse={verse}
+              results={results}
+            />
+          </main>
         </div>,
         O.some
       );

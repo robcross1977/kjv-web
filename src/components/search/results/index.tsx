@@ -46,12 +46,15 @@ function BookContainer({ title, chapters }: BookContainerProps) {
     >
       <TitleDisplay title={title} />
       <ChaptersDisplay book={title} chapters={chapters} />
-      <hr className="border-gray-400 mb-2" />
+
       {O.isNone(verse) ? (
-        <div className="w-full flex justify-between">
-          <PrevButton />
-          <NextButton />
-        </div>
+        <>
+          <hr className="border-gray-400 mb-2" />
+          <div className="w-full flex justify-between">
+            <PrevButton />
+            <NextButton />
+          </div>
+        </>
       ) : (
         <div></div>
       )}
