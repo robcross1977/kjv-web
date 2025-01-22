@@ -7,7 +7,7 @@ function Title() {
   return (
     <div>
       <p className="font-semibold text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-1 text-zinc-50 font-serif">
-        Scripture Seeker
+        Bible Buddy
       </p>
     </div>
   );
