@@ -1,7 +1,6 @@
 "use client";
 
 import Auth from "@components/auth";
-import NavMenu from "./nav-menu";
 
 function Title() {
   return (
@@ -26,9 +25,6 @@ export default function Header() {
           <div className="hidden lg:block">
             <Auth />
           </div>
-        </div>
-        <div>
-          <NavMenu />
         </div>
       </div>
     </header>

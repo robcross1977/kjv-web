@@ -9,6 +9,7 @@ import {
   search,
   verseCountFrom,
 } from "kingjames";
+import { SearchSheet } from "./search-sheet";
 
 type Props = {
   searchParams?: Promise<{

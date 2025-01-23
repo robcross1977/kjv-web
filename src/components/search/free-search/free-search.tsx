@@ -32,28 +32,31 @@ export default function FreeSearch() {
   const newQuery = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex-grow lg:flex-auto w-full">
-      <div className="text-sm">Search the Bible</div>
-      <div className="relative lg:max-w-[512px]">
-        <SearchIcon />
+    <div className="flex flex-col">
+      <div className="self-center pb-4 font-semibold text-lg">
+        Search by bible reference
+      </div>
+      <div className="flex flex-row gap-1">
+        <div className="relative">
+          <SearchIcon />
 
-        <Input
-          type="search"
-          id="default-search"
-          className="block w-full p-2 pl-10 text-sm rounded-lg"
-          placeholder="Ex: Gen 1:2-3"
-          required
-          ref={newQuery}
-          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (e.key === "Enter") {
-              router.push(`/?query=${newQuery.current?.value}`);
-            }
-          }}
-        />
-
+          <Input
+            type="search"
+            id="default-search"
+            className="block w-full p-2 pl-10 text-sm rounded-lg"
+            placeholder="Ex: Gen 1:2-3"
+            required
+            ref={newQuery}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === "Enter") {
+                router.push(`/?query=${newQuery.current?.value}`);
+              }
+            }}
+          />
+        </div>
         <Button
           type="submit"
-          className="absolute right-2.5 bottom-0 font-small rounded-lg text-sm px-2"
+          className="font-small rounded-lg text-sm p-2"
           onClick={() => {
             router.push(`/?query=${newQuery.current?.value}`);
           }}

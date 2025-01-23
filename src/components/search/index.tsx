@@ -1,6 +1,6 @@
+import { SearchSheet } from "@/app/search-sheet";
 import BooksDisplay from "./results";
 import { ValidBookName, WrappedRecords } from "kingjames";
-import SearchBar from "./search-bar";
 
 type Props = {
   book?: ValidBookName;
@@ -11,12 +11,11 @@ type Props = {
 export default function Search({ book, chapter, verse, results }: Props) {
   return (
     <div className="flex flex-col w-full mx-auto h-screen">
-      <div className="w-11/12 lg:w-2/3 mx-auto">
-        <SearchBar book={book} chapter={chapter} verse={verse} />
-      </div>
-
       <div className="flex flex-grow w-full pt-2">
         <div className="w-11/12 lg:w-2/3 mx-auto">
+          <div className="self-end">
+            <SearchSheet book={book} chapter={chapter} verse={verse} />
+          </div>
           <BooksDisplay results={results} />
         </div>
       </div>

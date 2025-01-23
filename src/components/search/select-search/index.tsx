@@ -62,55 +62,60 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
   }, [book, chapter, verse]);
 
   return (
-    <div className="flex flex-row justify-start items-center gap-1">
-      <div className="flex-grow lg:w-40 lg:max-w-[512px]">
-        <BookSelect
-          selectedBook={selectedBook}
-          setSelectedBook={setSelectedBook}
-        />
-      </div>
-      <div className="w-20">
-        <ChapterSelect
-          selectedBook={selectedBook.value.toLowerCase() as ValidBookName}
-          selectedChapter={selectedChapter}
-          setSelectedChapter={setSelectedChapter}
-        />
-      </div>
-      <div className="w-20 hidden sm:block">
-        <VerseSelect
-          selectedBook={selectedBook.value.toLowerCase() as ValidBookName}
-          selectedChapter={Number(selectedChapter?.value)}
-          selectedVerse={selectedVerse}
-          setSelectedVerse={setSelectedVerse}
-        />
-      </div>
+    <div className="flex flex-col">
+      <h3 className="self-center pb-4 font-semibold text-lg">
+        Search by Selection
+      </h3>
+      <div className="flex flex-row justify-start items-center gap-1">
+        <div className="flex-grow">
+          <BookSelect
+            selectedBook={selectedBook}
+            setSelectedBook={setSelectedBook}
+          />
+        </div>
+        <div className="w-20">
+          <ChapterSelect
+            selectedBook={selectedBook.value.toLowerCase() as ValidBookName}
+            selectedChapter={selectedChapter}
+            setSelectedChapter={setSelectedChapter}
+          />
+        </div>
+        <div className="w-20 hidden sm:block">
+          <VerseSelect
+            selectedBook={selectedBook.value.toLowerCase() as ValidBookName}
+            selectedChapter={Number(selectedChapter?.value)}
+            selectedVerse={selectedVerse}
+            setSelectedVerse={setSelectedVerse}
+          />
+        </div>
 
-      <div className="border-5 self-end">
-        <Button
-          type="submit"
-          className={`
+        <div className="border-5 self-end">
+          <Button
+            type="submit"
+            className={`
             w-14
             font-small
             rounded-lg
             text-sm
             p-2
           `}
-          onClick={() => {
-            const book = selectedBook.value.toLowerCase();
-            const chapter = Number(selectedChapter?.value);
-            const verse =
-              selectedVerse?.value === "All"
-                ? undefined
-                : Number(selectedVerse?.value);
-            const q = `?book=${book}&chapter=${chapter}${
-              verse ? `&verse=${verse}` : ""
-            }`;
+            onClick={() => {
+              const book = selectedBook.value.toLowerCase();
+              const chapter = Number(selectedChapter?.value);
+              const verse =
+                selectedVerse?.value === "All"
+                  ? undefined
+                  : Number(selectedVerse?.value);
+              const q = `?book=${book}&chapter=${chapter}${
+                verse ? `&verse=${verse}` : ""
+              }`;
 
-            router.push(`/${q}`);
-          }}
-        >
-          Go
-        </Button>
+              router.push(`/${q}`);
+            }}
+          >
+            Go
+          </Button>
+        </div>
       </div>
     </div>
   );
