@@ -1,16 +1,22 @@
 import { Dispatch, SetStateAction } from "react";
 import { filterVerseOptions } from "./verse-filter";
-import ComboBox from "@components/shared/combobox";
 import { ValidBookName } from "kingjames";
 import { KeyValueItem } from "@/components/shared/types";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type Props = {
   selectedBook: ValidBookName;
   selectedChapter: number;
-  selectedVerse: KeyValueItem;
-  setSelectedVerse: Dispatch<SetStateAction<KeyValueItem>>;
-  query: string;
-  setQuery: Dispatch<SetStateAction<string>>;
+  selectedVerse: KeyValueItem | null;
+  setSelectedVerse: Dispatch<SetStateAction<KeyValueItem | null>>;
 };
 
 /**
@@ -25,26 +31,43 @@ export default function VerseSelect({
   selectedChapter,
   selectedVerse,
   setSelectedVerse,
-  query,
-  setQuery,
 }: Props) {
   return (
     <div className="flex flex-col">
-      <div className="text-sm text-gray-300">Verse</div>
-      <div>
-        <ComboBox
-          selectedValue={selectedVerse}
-          onChange={setSelectedVerse}
-          query={query}
-          setQuery={setQuery}
-          items={filterVerseOptions(
-            selectedBook.toLowerCase() as ValidBookName,
+      <div className="text-sm">Verse</div>
+      <Select
+        onValueChange={(value) => {
+          const selected = filterVerseOptions(
+            selectedBook,
             selectedChapter,
-            query
-          ).map((b) => b)}
-          inputMode="numeric"
-        />
-      </div>
+            ""
+          ).find((v) => v.value === value);
+          setSelectedVerse(selected ?? null);
+        }}
+        defaultValue={selectedVerse?.value}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select a verse"></SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Verse</SelectLabel>
+            {filterVerseOptions(selectedBook, selectedChapter, "").map(
+              (verse) => {
+                return (
+                  <SelectItem
+                    key={verse.key}
+                    value={verse.value}
+                    onClick={() => setSelectedVerse(verse)}
+                  >
+                    {verse.value}
+                  </SelectItem>
+                );
+              }
+            )}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </div>
   );
 }

@@ -1,5 +1,3 @@
-"use client";
-
 import Search from "@/components/search";
 import Header from "@components/shared/header";
 import * as O from "fp-ts/Option";
@@ -13,12 +11,12 @@ import {
 } from "kingjames";
 
 type Props = {
-  searchParams?: {
+  searchParams?: Promise<{
     query?: string;
     book?: ValidBookName;
     chapter?: number;
     verse?: number;
-  };
+  }>;
 };
 
 function getQuery(query?: string) {
@@ -53,7 +51,8 @@ function getSearchResults(query: string) {
   );
 }
 
-export default function Home({ searchParams }: Props) {
+export default async function Home(props: Props) {
+  const searchParams = await props.searchParams;
   const { query, book, chapter, verse } = searchParams ?? {};
 
   return pipe(

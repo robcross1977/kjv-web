@@ -15,9 +15,9 @@ export default function NavMenu() {
             className="space-y-1 mr-5"
             onClick={() => setIsNavOpen((prev) => !prev)}
           >
-            <span className="block h-0.5 w-5 animate-pulse bg-zinc-50"></span>
-            <span className="block h-0.5 w-5 animate-pulse bg-zinc-50"></span>
-            <span className="block h-0.5 w-5 animate-pulse bg-zinc-50"></span>
+            <span className="block h-0.5 w-5 animate-pulse"></span>
+            <span className="block h-0.5 w-5 animate-pulse"></span>
+            <span className="block h-0.5 w-5 animate-pulse"></span>
           </div>
 
           <div className={isNavOpen ? "showMenuNav" : "hideMenuNav"}>
@@ -27,7 +27,7 @@ export default function NavMenu() {
             >
               {/* X ICON */}
               <svg
-                className="h-8 w-8 text-gray-600"
+                className="h-8 w-8"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -40,16 +40,16 @@ export default function NavMenu() {
               </svg>
             </div>
             <ul className="flex flex-col items-center justify-between min-h-[250px]">
-              <li className="border-b border-gray-400 my-8 uppercase">
+              <li className="border-b my-8 uppercase">
                 <Auth />
               </li>
-              <li className="border-b border-gray-400 my-8 uppercase">
+              <li className="border-b my-8 uppercase">
                 <Link href="/">Home</Link>
               </li>
-              <li className="border-b border-gray-400 my-8 uppercase">
+              <li className="border-b my-8 uppercase">
                 <Link href="/discipleship">Discipleship</Link>
               </li>
-              <li className="border-b border-gray-400 my-8 uppercase">
+              <li className="border-b my-8 uppercase">
                 <Link href="/contact">Contact</Link>
               </li>
             </ul>
@@ -57,43 +57,18 @@ export default function NavMenu() {
         </section>
 
         {/* DESKTOP MENU */}
-        <ul className="hidden space-x-3 lg:flex ml-3 text-sm text-zinc-50">
+        <ul className="hidden space-x-3 lg:flex ml-3 text-sm">
           <li>
-            <Link href="/" className="hover:text-teal-700">
-              Home
-            </Link>
+            <Link href="/">Home</Link>
           </li>
           <li>
-            <Link href="/discipleship" className="hover:text-teal-700">
-              Discipleship
-            </Link>
+            <Link href="/discipleship">Discipleship</Link>
           </li>
           <li>
-            <Link href="/contact" className="hover:text-teal-700">
-              Contact
-            </Link>
+            <Link href="/contact">Contact</Link>
           </li>
         </ul>
       </nav>
-      <style>{`
-      .hideMenuNav {
-        display: none;
-      }
-      .showMenuNav {
-        display: block;
-        position: absolute;
-        width: 100%;
-        height: 100vh;
-        top: 0;
-        left: 0;
-        background: white;
-        z-index: 10;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        align-items: center;
-      }
-      `}</style>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import {
 } from "next/navigation";
 import { getNext } from "kingjames";
 import * as O from "fp-ts/Option";
+import { Button } from "@/components/ui/button";
 
 function getParams(searchParams: ReadonlyURLSearchParams) {
   const book = searchParams.get("book");
@@ -25,9 +26,9 @@ export default function NextButton() {
   const router = useRouter();
 
   return O.isSome(next) ? (
-    <button
+    <Button
       type="button"
-      className="text-zinc-50 border border-zinc-50 bg-teal-600 hover:bg-teal-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 inline-flex items-center"
+      className="border font-medium rounded-lg text-sm p-2.5 inline-flex items-center"
       onClick={() => router.push(`/?${next.value}`)}
     >
       <svg
@@ -44,7 +45,7 @@ export default function NextButton() {
         ></path>
       </svg>
       <span className="sr-only">Icon description</span>
-    </button>
+    </Button>
   ) : (
     <div></div>
   );

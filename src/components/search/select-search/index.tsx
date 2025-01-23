@@ -1,3 +1,5 @@
+"use client";
+
 import { ValidBookName } from "kingjames";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -6,6 +8,7 @@ import { getBookOptionFromBook } from "./book-select/book-filter";
 import ChapterSelect from "./chapter-select";
 import VerseSelect from "./verse-select";
 import { KeyValueItem } from "@/components/shared/types";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   book?: ValidBookName;
@@ -21,30 +24,21 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
     key: selectedBookOption.key,
     value: selectedBookOption.value,
   });
-  const [bookQuery, setBookQuery] = useState<string>("");
-  const onBookChange = (newBook: KeyValueItem) => {
-    if (newBook.key !== Number.NEGATIVE_INFINITY) {
-      setSelectedBook(newBook);
-      setBookQuery(newBook.value);
-    }
-  };
 
   // Chapter State
   const selectedChapterOption = chapter ?? 1;
-  const [selectedChapter, setSelectedChapter] = useState<KeyValueItem>({
+  const [selectedChapter, setSelectedChapter] = useState<KeyValueItem | null>({
     key: selectedChapterOption,
     value: String(selectedChapterOption),
   });
-  const [chapterQuery, setChapterQuery] = useState<string>("");
 
   // Verse State
   const selectedVerseOption = verse ?? "All";
-  const [selectedVerse, setSelectedVerse] = useState<KeyValueItem>({
+  const [selectedVerse, setSelectedVerse] = useState<KeyValueItem | null>({
     key: selectedVerseOption === "All" ? 0 : selectedChapterOption,
     value:
       selectedVerseOption === "All" ? "All" : String(selectedChapterOption),
   });
-  const [verseQuery, setVerseQuery] = useState<string>("");
 
   useEffect(() => {
     const selectedBookOption = getBookOptionFromBook(book ?? "genesis");
@@ -72,9 +66,7 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
       <div className="flex-grow lg:w-40 lg:max-w-[512px]">
         <BookSelect
           selectedBook={selectedBook}
-          setSelectedBook={onBookChange}
-          query={bookQuery}
-          setQuery={setBookQuery}
+          setSelectedBook={setSelectedBook}
         />
       </div>
       <div className="w-20">
@@ -82,32 +74,22 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
           selectedBook={selectedBook.value.toLowerCase() as ValidBookName}
           selectedChapter={selectedChapter}
           setSelectedChapter={setSelectedChapter}
-          query={chapterQuery}
-          setQuery={setChapterQuery}
         />
       </div>
       <div className="w-20 hidden sm:block">
         <VerseSelect
           selectedBook={selectedBook.value.toLowerCase() as ValidBookName}
-          selectedChapter={Number(selectedChapter.value)}
+          selectedChapter={Number(selectedChapter?.value)}
           selectedVerse={selectedVerse}
           setSelectedVerse={setSelectedVerse}
-          query={verseQuery}
-          setQuery={setVerseQuery}
         />
       </div>
 
       <div className="border-5 self-end">
-        <button
+        <Button
           type="submit"
           className={`
-            text-white
-            bg-teal-600
             w-14
-            hover:bg-teal-700
-            focus:ring-4
-            focus:outline-none
-            focus:ring-blue-300
             font-small
             rounded-lg
             text-sm
@@ -115,20 +97,20 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
           `}
           onClick={() => {
             const book = selectedBook.value.toLowerCase();
-            const chapter = Number(selectedChapter.value);
+            const chapter = Number(selectedChapter?.value);
             const verse =
-              selectedVerse.value === "All"
+              selectedVerse?.value === "All"
                 ? undefined
-                : Number(selectedVerse.value);
+                : Number(selectedVerse?.value);
             const q = `?book=${book}&chapter=${chapter}${
               verse ? `&verse=${verse}` : ""
             }`;
 
-            router.push(`/${q}`, { shallow: true });
+            router.push(`/${q}`);
           }}
         >
           Go
-        </button>
+        </Button>
       </div>
     </div>
   );

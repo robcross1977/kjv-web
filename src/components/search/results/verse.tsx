@@ -21,10 +21,7 @@ type TitleDisplayProps = {
 function TitleDisplay({ book, chapter, verse }: TitleDisplayProps) {
   return (
     <div className="mr-4">
-      <Link
-        className="text-red-950 hover:text-red-500"
-        href={`/?book=${book}&chapter=${chapter}&verse=${verse}`}
-      >
+      <Link href={`/?book=${book}&chapter=${chapter}&verse=${verse}`}>
         {verse}
       </Link>
     </div>
@@ -53,13 +50,7 @@ function VersesContainer({
   show,
 }: VersesContainerProps) {
   return (
-    <div
-      key={`${book} ${chapter}:${verse}`}
-      className={`my-4 flex flex-row  ${
-        show ? `border border-5 border-sky-400` : ``
-      }`}
-    >
-      <input type="checkbox" className={`${show ? `mx-3` : "invisible"}`} />
+    <div key={`${book} ${chapter}:${verse}`} className="my-4 flex flex-row">
       <TitleDisplay book={book} chapter={chapter} verse={verse} />
       <TextDisplay text={text} />
     </div>

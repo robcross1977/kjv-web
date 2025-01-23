@@ -40,7 +40,6 @@ const bookOptions: KeyValueItem[] = [
   { key: 37, value: "haggai" },
   { key: 38, value: "zechariah" },
   { key: 39, value: "malachi" },
-  { key: Number.NEGATIVE_INFINITY, value: "----------------" },
   { key: 40, value: "matthew" },
   { key: 41, value: "mark" },
   { key: 42, value: "luke" },

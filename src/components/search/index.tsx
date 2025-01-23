@@ -15,7 +15,7 @@ export default function Search({ book, chapter, verse, results }: Props) {
         <SearchBar book={book} chapter={chapter} verse={verse} />
       </div>
 
-      <div className="flex flex-grow w-full bg-sky-200 pt-2">
+      <div className="flex flex-grow w-full pt-2">
         <div className="w-11/12 lg:w-2/3 mx-auto">
           <BooksDisplay results={results} />
         </div>

@@ -6,17 +6,17 @@ export default function Auth() {
   const { user, isLoading } = useUser();
 
   if (isLoading) {
-    return <div className="text-black lg:text-zinc-50 lg:mr-5">Loading...</div>;
+    return <div className="lg:mr-5">Loading...</div>;
   }
 
   return (
-    <div className="lg:mr-5 text-black lg:text-zinc-50 items-center justify-center">
+    <div className="lg:mr-5 items-center justify-center">
       {user ? (
         <div className="flex flex-row items-center justify-center gap-2">
           <Link
             href="/api/auth/logout"
             data-testid="logout"
-            className="lg:pr-3 lg:hover:text-teal-700"
+            className="lg:pr-3"
           >
             Logout
           </Link>
@@ -33,11 +33,7 @@ export default function Auth() {
           )}
         </div>
       ) : (
-        <Link
-          href="/api/auth/login"
-          data-testid="login"
-          className="hover:text-teal-700"
-        >
+        <Link href="/api/auth/login" data-testid="login">
           Login
         </Link>
       )}

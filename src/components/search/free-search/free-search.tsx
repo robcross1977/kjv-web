@@ -1,5 +1,9 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 function SearchIcon() {
   return (
@@ -29,14 +33,14 @@ export default function FreeSearch() {
 
   return (
     <div className="flex-grow lg:flex-auto w-full">
-      <div className="text-sm text-gray-300">Search the Bible</div>
+      <div className="text-sm">Search the Bible</div>
       <div className="relative lg:max-w-[512px]">
         <SearchIcon />
 
-        <input
+        <Input
           type="search"
           id="default-search"
-          className="block w-full p-2 pl-10 text-sm bg-white text-slate-900 border-gray-300 rounded-lg focus:ring-gray-300 focus:border-gray-300"
+          className="block w-full p-2 pl-10 text-sm rounded-lg"
           placeholder="Ex: Gen 1:2-3"
           required
           ref={newQuery}
@@ -47,15 +51,15 @@ export default function FreeSearch() {
           }}
         />
 
-        <button
+        <Button
           type="submit"
-          className="text-white absolute right-2.5 bottom-[4px] bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm px-2 py-1"
+          className="absolute right-2.5 bottom-0 font-small rounded-lg text-sm px-2"
           onClick={() => {
             router.push(`/?query=${newQuery.current?.value}`);
           }}
         >
           Search
-        </button>
+        </Button>
       </div>
     </div>
   );

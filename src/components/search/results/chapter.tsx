@@ -39,7 +39,7 @@ function TitleDisplay({ book, chapter }: TitleDisplayProps) {
   return (
     <div className="mt-5">
       <Link
-        className="text-2xl font-semibold text-blue-950 hover:text-blue-500"
+        className="text-2xl font-semibold"
         href={`/?book=${book}&chapter=${chapter}`}
       >
         Chapter {chapter}

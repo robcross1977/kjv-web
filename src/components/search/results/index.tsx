@@ -1,3 +1,5 @@
+"use client";
+
 import ChaptersDisplay from "./chapter";
 import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
 import { ChapterRecords, ValidBookName, WrappedRecords } from "kingjames";
@@ -8,6 +10,7 @@ import * as R from "fp-ts/Record";
 import PrevButton from "./prev-button";
 import NextButton from "./next-button";
 import { useSearchParams } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
 
 const isDirtyPredicate = (isDirty: boolean | undefined = false) =>
   isDirty === true;
@@ -37,19 +40,19 @@ type BookContainerProps = {
 };
 function BookContainer({ title, chapters }: BookContainerProps) {
   const searchParams = useSearchParams();
-  const verse = pipe("verse", searchParams.get, O.fromNullable);
+  const verse = pipe(searchParams.get("verse"), O.fromNullable);
 
   return (
     <div
       key={title}
-      className="flex flex-col w-full h-full text-slate-950 border border-gray-400 rounded-md p-2"
+      className="flex flex-col w-full h-full border rounded-md p-2"
     >
       <TitleDisplay title={title} />
       <ChaptersDisplay book={title} chapters={chapters} />
 
       {O.isNone(verse) ? (
         <>
-          <hr className="border-gray-400 mb-2" />
+          <Separator className="my-4" />
           <div className="w-full flex justify-between">
             <PrevButton />
             <NextButton />
@@ -67,13 +70,13 @@ type TitleProps = {
 };
 function TitleDisplay({ title }: TitleProps) {
   return (
-    <div className="w-full flex justify-between items-center bg-sky-800 rounded-md shadow-lg">
+    <div className="w-full flex justify-between items-center rounded-md shadow-lg">
       <div className="ml-2 my-2">
         <PrevButton />
       </div>
 
       <div>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-zinc-50">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
           {capitalizeFirstAlphabeticCharacter(title)}
         </h1>
       </div>

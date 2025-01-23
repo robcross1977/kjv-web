@@ -20,12 +20,12 @@ describe("The book-filter module", () => {
   describe("The getBookOptionFromBook function", () => {
     it("should return a book option from a book", () => {
       const result = getBookOptionFromBook("amos");
-      expect(result).toEqual({ key: 30, value: "amos" });
+      expect(result).toEqual({ key: 30, value: "Amos" });
     });
 
     it("should return Genesis if the book is unrecognized", () => {
       const result = getBookOptionFromBook("macabees" as ValidBookName);
-      expect(result).toEqual({ key: 1, value: "genesis" });
+      expect(result).toEqual({ key: 1, value: "Genesis" });
     });
   });
 });

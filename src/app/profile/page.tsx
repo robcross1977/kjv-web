@@ -4,7 +4,7 @@ import Header from "@components/shared/header";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import Image from "next/image";
 
-export default async function Profile() {
+export default function Profile() {
   const { user, isLoading } = useUser();
 
   if (isLoading) return <div className="text-zinc-50">Loading...</div>;

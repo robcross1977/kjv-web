@@ -1,15 +1,21 @@
 import { Dispatch, SetStateAction } from "react";
 import { filterChapterOptions } from "./chapter-filter";
-import ComboBox from "@components/shared/combobox";
 import { ValidBookName } from "kingjames";
 import { KeyValueItem } from "@/components/shared/types";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@components/ui/select";
 
 type Props = {
   selectedBook: ValidBookName;
-  selectedChapter: KeyValueItem;
-  setSelectedChapter: Dispatch<SetStateAction<KeyValueItem>>;
-  query: string;
-  setQuery: Dispatch<SetStateAction<string>>;
+  selectedChapter: KeyValueItem | null;
+  setSelectedChapter: Dispatch<SetStateAction<KeyValueItem | null>>;
 };
 
 /**
@@ -23,25 +29,40 @@ export default function ChapterSelect({
   selectedBook,
   selectedChapter,
   setSelectedChapter,
-  query,
-  setQuery,
 }: Props) {
   return (
-    <div className="flex flex-col">
-      <div className="text-sm text-gray-300">Chapter</div>
-      <div>
-        <ComboBox
-          selectedValue={selectedChapter}
-          onChange={setSelectedChapter}
-          query={query}
-          setQuery={setQuery}
-          items={filterChapterOptions(
-            selectedBook.toLowerCase() as ValidBookName,
-            query
-          ).map((b) => b)}
-          inputMode="numeric"
-        />
-      </div>
-    </div>
+    <section className="flex flex-col">
+      <div className="text-sm">Chapter</div>
+
+      <Select
+        onValueChange={(value) => {
+          const selected = filterChapterOptions(selectedBook, "").find(
+            (c) => c.value === value
+          );
+          setSelectedChapter(selected ?? null);
+        }}
+        defaultValue={selectedChapter?.value}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select a chapter"></SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Chapter</SelectLabel>
+            {filterChapterOptions(selectedBook, "").map((chapter) => {
+              return (
+                <SelectItem
+                  key={chapter.key}
+                  value={chapter.value}
+                  onClick={() => setSelectedChapter(chapter)}
+                >
+                  {chapter.value}
+                </SelectItem>
+              );
+            })}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </section>
   );
 }
