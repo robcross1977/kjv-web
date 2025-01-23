@@ -1,11 +1,10 @@
 import Prisma from "@prisma/client";
-import { PrismaClientOptions } from "@prisma/client/runtime";
 
 const prismaGlobal = global as typeof global & {
   prisma?: Prisma.PrismaClient;
 };
 
-const prisma: Prisma.PrismaClient<PrismaClientOptions, "query"> =
+const prisma: Prisma.PrismaClient =
   prismaGlobal.prisma ??
   new Prisma.PrismaClient({
     log:
@@ -20,10 +19,10 @@ if (process.env.NODE_ENV !== "production") {
 
 // Uncomment this batch of code if you want to see the
 // actual queries being run in real-time in the console
-prisma.$on("query", (q) => {
-  if (process.env.NODE_ENV === "development") {
-    console.log(q);
-  }
-});
+// prisma.$on("query", (q) => {
+//   if (process.env.NODE_ENV === "development") {
+//     console.log(q);
+//   }
+// });
 
 export default prisma;
