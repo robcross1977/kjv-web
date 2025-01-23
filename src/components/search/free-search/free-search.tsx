@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { Dispatch, SetStateAction, useRef } from "react";
 
 function SearchIcon() {
   return (
@@ -27,7 +27,10 @@ function SearchIcon() {
   );
 }
 
-export default function FreeSearch() {
+type Props = {
+  setOpen: Dispatch<SetStateAction<boolean>>;
+};
+export default function FreeSearch({ setOpen }: Props) {
   const router = useRouter();
   const newQuery = useRef<HTMLInputElement>(null);
 
@@ -49,7 +52,14 @@ export default function FreeSearch() {
             ref={newQuery}
             onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
               if (e.key === "Enter") {
-                router.push(`/?query=${newQuery.current?.value}`);
+                setOpen(false);
+
+                const query = newQuery.current?.value;
+                if (newQuery.current) {
+                  newQuery.current.value = "";
+                }
+
+                router.push(`/?query=${query}`);
               }
             }}
           />
@@ -58,7 +68,14 @@ export default function FreeSearch() {
           type="submit"
           className="font-small rounded-lg text-sm p-2"
           onClick={() => {
-            router.push(`/?query=${newQuery.current?.value}`);
+            setOpen(false);
+
+            const query = newQuery.current?.value;
+            if (newQuery.current) {
+              newQuery.current.value = "";
+            }
+
+            router.push(`/?query=${query}`);
           }}
         >
           Search

@@ -1,7 +1,7 @@
 "use client";
 
 import { ValidBookName } from "kingjames";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BookSelect from "./book-select";
 import { getBookOptionFromBook } from "./book-select/book-filter";
@@ -14,8 +14,9 @@ type Props = {
   book?: ValidBookName;
   chapter?: number;
   verse?: number;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 };
-export default function SelectSearch({ book, chapter, verse }: Props) {
+export default function SelectSearch({ book, chapter, verse, setOpen }: Props) {
   const router = useRouter();
 
   // Book State
@@ -40,25 +41,35 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
       selectedVerseOption === "All" ? "All" : String(selectedChapterOption),
   });
 
-  useEffect(() => {
-    const selectedBookOption = getBookOptionFromBook(book ?? "genesis");
+  const selectBook = (book: ValidBookName) => {
+    const selectedBookOption = getBookOptionFromBook(book);
     setSelectedBook({
       key: selectedBookOption.key,
       value: selectedBookOption.value,
     });
+  };
 
-    const selectedChapterOption = chapter ?? 1;
+  const selectChapter = (chapter: number) => {
     setSelectedChapter({
-      key: selectedChapterOption,
-      value: String(selectedChapterOption),
+      key: chapter,
+      value: String(chapter),
     });
+  };
 
-    const selectedVerseOption = verse ?? "All";
+  const selectVerse = (verse: number | "All") => {
+    const selectedVerseOption = verse;
+
     setSelectedVerse({
       key: selectedVerseOption === "All" ? 0 : selectedVerseOption,
       value:
         selectedVerseOption === "All" ? "All" : String(selectedVerseOption),
     });
+  };
+
+  useEffect(() => {
+    selectBook(book ?? "genesis");
+    selectChapter(chapter ?? 1);
+    selectVerse(verse ?? "All");
   }, [book, chapter, verse]);
 
   return (
@@ -109,6 +120,8 @@ export default function SelectSearch({ book, chapter, verse }: Props) {
               const q = `?book=${book}&chapter=${chapter}${
                 verse ? `&verse=${verse}` : ""
               }`;
+
+              setOpen(false);
 
               router.push(`/${q}`);
             }}

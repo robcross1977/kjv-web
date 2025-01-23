@@ -7,23 +7,28 @@ import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ValidBookName } from "kingjames";
+import { useState } from "react";
 
 type Props = {
   book?: ValidBookName;
   chapter?: number;
   verse?: number;
+  open?: boolean;
 };
 export function SearchSheet({ book, chapter, verse }: Props) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Sheet>
-      <SheetTrigger>
-        <Button variant="outline">Search</Button>
+    <Sheet open={open}>
+      <SheetTrigger asChild>
+        <Button variant="outline" onClick={() => setOpen(!open)}>
+          Search
+        </Button>
       </SheetTrigger>
       <SheetContent side="right">
         <SheetHeader>
@@ -31,9 +36,14 @@ export function SearchSheet({ book, chapter, verse }: Props) {
         </SheetHeader>
         <div className="flex flex-col w-full space-y-5">
           <Separator />
-          <FreeSearch />
+          <FreeSearch setOpen={setOpen} />
           <Separator />
-          <SelectSearch book={book} chapter={chapter} verse={verse} />
+          <SelectSearch
+            book={book}
+            chapter={chapter}
+            verse={verse}
+            setOpen={setOpen}
+          />
           <Separator />
         </div>
       </SheetContent>
