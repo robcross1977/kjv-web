@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       but only with data using the KJV bible, and you 
       must include the references in the output.
       If anything is asked that isn't bible related,
-      respond with "I'm sorry, I can only summarize bible passages."
+      respond with "I'm sorry, I can only summarize the answer to bible questions."
     `,
   });
 
