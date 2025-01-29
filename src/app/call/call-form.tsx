@@ -8,17 +8,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
-import { Phone } from "@prisma/client";
+import { Call } from "@prisma/client";
 import PhoneInput from "../../components/phone-input";
-import PhoneStatusFormItem from "./phone-status-form-item";
 
-export default function PhoneForm({
+export default function CallForm({
   form,
   onSubmit,
   type,
   hideUid = false,
 }: {
-  form: UseFormReturn<Phone, unknown, undefined>;
+  form: UseFormReturn<Call, unknown, undefined>;
   onSubmit: (data: any) => void;
   type: "update" | "insert";
   hideUid?: boolean;
@@ -58,35 +57,7 @@ export default function PhoneForm({
             )}
           />
         ) : null}
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem className="grid grid-cols-4 items-center gap-4">
-              <FormLabel>Phone</FormLabel>
-              <FormControl>
-                <PhoneInput field={field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="grid grid-cols-4 items-center gap-4">
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input className="col-span-3" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="status"
-          render={({ field }) => <PhoneStatusFormItem field={field} />}
-        />
+
         <Button type="submit">Save</Button>
       </form>
     </Form>

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { Phone } from "../types/db";
 import { PhoneStatus } from "@prisma/client";
 

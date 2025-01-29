@@ -5,10 +5,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PhoneStatus } from "@prisma/client";
+import { CallStatus } from "@prisma/client";
 
 export default function StatusSelect() {
-  const statuses = Object.entries(PhoneStatus);
+  const statuses = Object.entries(CallStatus);
 
   return (
     <Select>

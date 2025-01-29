@@ -22,7 +22,7 @@ import { Phone, PhoneStatus } from "@prisma/client";
 import { PhoneSchema } from "../types/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import PhoneInput from "./phone-input";
+import PhoneInput from "../../components/phone-input";
 import { z } from "zod";
 import PhoneStatusFormItem from "./phone-status-form-item";
 

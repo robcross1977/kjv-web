@@ -39,6 +39,7 @@ export default function EditSheet({
       uid: -1,
       email: "",
       name: "",
+      role: "USER",
       phone: "",
     },
     values: {
@@ -46,6 +47,7 @@ export default function EditSheet({
       email: user.email ?? "",
       name: user.name ?? "",
       phone: user.phone ?? "",
+      role: user.role ?? "USER",
     },
   });
 
