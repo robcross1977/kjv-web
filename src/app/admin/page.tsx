@@ -1,20 +1,14 @@
 import { getAdmins } from "./actions";
 import Display from "./display";
-import { revalidatePath } from "next/cache";
 
-export default async function AdminPage({
-  searchParams,
-}: {
-  searchParams?: { version?: string };
-}) {
+export default async function AdminPage() {
   const admins = await getAdmins();
-  const version = searchParams?.version || "0";
 
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">
       <h1 className="text-2xl font-bold">Admin Management</h1>
       <div className="flex flex-col gap-2">
-        <Display admins={admins} key={`${version}-${admins.length}`} />
+        <Display admins={admins} />
       </div>
     </div>
   );

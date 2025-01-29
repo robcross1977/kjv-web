@@ -15,28 +15,41 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { updateAdmin } from "./actions";
 import { useToast } from "@/hooks/use-toast";
 import { Admin } from "@prisma/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AdminSchema } from "../types/db";
+import { useEffect } from "react";
 
 export default function EditSheet({
   open,
   setOpen,
-  form,
-  admin: { id, email, name },
+  admin,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  form: UseFormReturn<Admin>;
   admin: Admin;
 }) {
   const { toast } = useToast();
-  if (!form.formState.isDirty) {
-    form.setValue("id", id);
-    form.setValue("email", email);
-    form.setValue("name", name);
-  }
+  const form = useForm<Admin>({
+    resolver: zodResolver(AdminSchema),
+    defaultValues: {
+      id: NaN,
+      email: "",
+      name: "",
+    },
+    values: {
+      id: admin.id,
+      email: admin.email,
+      name: admin.name,
+    },
+  });
+
+  useEffect(() => {
+    form.reset();
+  }, [open]);
 
   const onSubmit = async (admin: Admin) => {
     try {
@@ -46,8 +59,6 @@ export default function EditSheet({
         title: "Success",
         description: "Admin added successfully.",
       });
-
-      form.reset();
 
       setOpen(false);
     } catch (error: unknown) {

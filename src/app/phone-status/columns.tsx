@@ -93,7 +93,7 @@ const ActionCell = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleEdit = useCallback(() => {
-    setSelectedPhoneStatus({ ...phoneStatus });
+    setSelectedPhoneStatus(phoneStatus);
     setEditOpen(true);
   }, [phoneStatus, setSelectedPhoneStatus, setEditOpen]);
 

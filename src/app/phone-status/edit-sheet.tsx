@@ -15,28 +15,45 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { updatePhoneStatus } from "./actions";
 import { useToast } from "@/hooks/use-toast";
 import { PhoneStatus } from "@prisma/client";
+import { PhoneStatusSchema } from "../types/db";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 
 export default function EditSheet({
   open,
   setOpen,
-  form,
-  phoneStatus: { id, status },
+  selectedPhoneStatus,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  form: UseFormReturn<PhoneStatus>;
-  phoneStatus: PhoneStatus;
+  selectedPhoneStatus: PhoneStatus;
 }) {
   const { toast } = useToast();
-  if (!form.formState.isDirty) {
-    form.setValue("id", id);
-    form.setValue("status", status);
-  }
+  const form = useForm<PhoneStatus>({
+    resolver: zodResolver(PhoneStatusSchema),
+    defaultValues: {
+      id: selectedPhoneStatus.id ?? -1,
+      status: selectedPhoneStatus.status ?? "",
+      createdAt: selectedPhoneStatus.createdAt ?? new Date(),
+      updatedAt: selectedPhoneStatus.updatedAt ?? new Date(),
+    },
+    values: {
+      id: selectedPhoneStatus.id ?? -1,
+      status: selectedPhoneStatus.status ?? "",
+      createdAt: selectedPhoneStatus.createdAt ?? new Date(),
+      updatedAt: selectedPhoneStatus.updatedAt ?? new Date(),
+    },
+  });
 
+  useEffect(() => {
+    form.reset();
+  }, [open]);
+
+  console.dir(form.getValues());
   const onSubmit = async (phoneStatus: PhoneStatus) => {
     try {
       await updatePhoneStatus(phoneStatus);
@@ -45,8 +62,6 @@ export default function EditSheet({
         title: "Success",
         description: "Phone status updated successfully.",
       });
-
-      form.reset();
 
       setOpen(false);
     } catch (error: unknown) {
