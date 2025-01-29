@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import PhoneForm from "./phone-form";
 import { createPhone } from "./actions";
-import { Phone } from "@prisma/client";
+import { Phone, PhoneStatus } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PhoneSchema } from "../types/db";
 import { z } from "zod";
@@ -31,6 +31,7 @@ export default function AddPhoneStatusDialog({ ...props }) {
     defaultValues: {
       phone: "",
       name: "",
+      status: PhoneStatus.NEW,
     },
   });
 
@@ -62,9 +63,7 @@ export default function AddPhoneStatusDialog({ ...props }) {
   return (
     <Dialog {...props} open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          Add
-        </Button>
+        <Button size="sm">Add</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { Phone } from "@prisma/client";
 import PhoneInput from "./phone-input";
+import PhoneStatusFormItem from "./phone-status-form-item";
 
 export default function PhoneForm({
   form,
@@ -80,6 +81,11 @@ export default function PhoneForm({
               </FormControl>
             </FormItem>
           )}
+        />
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => <PhoneStatusFormItem field={field} />}
         />
         <Button type="submit">Save</Button>
       </form>

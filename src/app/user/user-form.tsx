@@ -8,15 +8,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
-import { PhoneStatus } from "@prisma/client";
+import { User } from "@prisma/client";
 
-export default function AdminForm({
+export default function UserForm({
   form,
   onSubmit,
   type,
   hideUid = false,
 }: {
-  form: UseFormReturn<PhoneStatus, unknown, undefined>;
+  form: UseFormReturn<User, unknown, undefined>;
   onSubmit: (data: any) => void;
   type: "update" | "insert";
   hideUid?: boolean;
@@ -26,7 +26,7 @@ export default function AdminForm({
       <form
         onSubmit={form.handleSubmit((data) => {
           if (type === "insert") {
-            const { id, ...insertData } = data;
+            const { uid, ...insertData } = data;
             onSubmit(insertData);
           } else {
             onSubmit(data);
@@ -37,19 +37,19 @@ export default function AdminForm({
         {type === "update" ? (
           <FormField
             control={form.control}
-            name="id"
+            name="uid"
             render={({ field }) => (
               <FormItem
                 hidden={hideUid}
                 className="grid grid-cols-4 items-center gap-4"
               >
-                <FormLabel>Id</FormLabel>
+                <FormLabel>UID</FormLabel>
                 <FormControl>
                   <Input
                     className="col-span-3"
                     {...field}
                     disabled
-                    value={field.value}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
               </FormItem>
@@ -58,12 +58,48 @@ export default function AdminForm({
         ) : null}
         <FormField
           control={form.control}
-          name="status"
+          name="email"
           render={({ field }) => (
             <FormItem className="grid grid-cols-4 items-center gap-4">
-              <FormLabel>Status</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input className="col-span-3" {...field} />
+                <Input
+                  className="col-span-3"
+                  {...field}
+                  value={field.value ?? ""}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="grid grid-cols-4 items-center gap-4">
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  className="col-span-3"
+                  {...field}
+                  value={field.value ?? ""}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem className="grid grid-cols-4 items-center gap-4">
+              <FormLabel>Phone</FormLabel>
+              <FormControl>
+                <Input
+                  className="col-span-3"
+                  {...field}
+                  value={field.value ?? ""}
+                />
               </FormControl>
             </FormItem>
           )}

@@ -16,36 +16,36 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { updatePhoneStatus } from "./actions";
+import { updateUser } from "./actions";
 import { useToast } from "@/hooks/use-toast";
-import { PhoneStatus } from "@prisma/client";
-import { PhoneStatusSchema } from "../types/db";
+import { User } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { UserSchema } from "../types/db";
 import { useEffect } from "react";
 
 export default function EditSheet({
   open,
   setOpen,
-  selectedPhoneStatus,
+  user,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  selectedPhoneStatus: PhoneStatus;
+  user: User;
 }) {
   const { toast } = useToast();
-  const form = useForm<PhoneStatus>({
-    resolver: zodResolver(PhoneStatusSchema),
+  const form = useForm<User>({
+    resolver: zodResolver(UserSchema),
     defaultValues: {
-      id: selectedPhoneStatus.id ?? -1,
-      status: selectedPhoneStatus.status ?? "",
-      createdAt: selectedPhoneStatus.createdAt ?? new Date(),
-      updatedAt: selectedPhoneStatus.updatedAt ?? new Date(),
+      uid: -1,
+      email: "",
+      name: "",
+      phone: "",
     },
     values: {
-      id: selectedPhoneStatus.id ?? -1,
-      status: selectedPhoneStatus.status ?? "",
-      createdAt: selectedPhoneStatus.createdAt ?? new Date(),
-      updatedAt: selectedPhoneStatus.updatedAt ?? new Date(),
+      uid: user.uid ?? -1,
+      email: user.email ?? "",
+      name: user.name ?? "",
+      phone: user.phone ?? "",
     },
   });
 
@@ -53,14 +53,13 @@ export default function EditSheet({
     form.reset();
   }, [open]);
 
-  console.dir(form.getValues());
-  const onSubmit = async (phoneStatus: PhoneStatus) => {
+  const onSubmit = async (user: User) => {
     try {
-      await updatePhoneStatus(phoneStatus);
+      await updateUser(user);
 
       toast({
         title: "Success",
-        description: "Phone status updated successfully.",
+        description: "User updated successfully.",
       });
 
       setOpen(false);
@@ -70,8 +69,7 @@ export default function EditSheet({
       toast({
         title: "Error",
         description:
-          (error as any)?.response?.data?.message ||
-          "Failed to update phone status.",
+          (error as any)?.response?.data?.message || "Failed to update User.",
       });
     }
   };
@@ -80,21 +78,21 @@ export default function EditSheet({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Edit Phone Status</SheetTitle>
+          <SheetTitle>Edit User</SheetTitle>
         </SheetHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
-              name="id"
+              name="uid"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Id</FormLabel>
+                  <FormLabel>UID</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled
-                      placeholder="Id"
+                      placeholder="UID"
                       className="bg-muted"
                     />
                   </FormControl>
@@ -102,12 +100,34 @@ export default function EditSheet({
               )}
             />
             <FormField
-              name="status"
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Status" />
+                    <Input {...field} placeholder="Email" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Name" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Phone" />
                   </FormControl>
                 </FormItem>
               )}

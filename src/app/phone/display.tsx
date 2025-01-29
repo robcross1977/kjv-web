@@ -12,7 +12,7 @@ export default function Display({ phone }: { phone: Phone[] }) {
   const [selectedPhone, setSelectedPhone] = useState<Phone | null>(null);
 
   return (
-    <>
+    <div className="w-full">
       <CreateDialog />
       {phone.length > 0 && (
         <DataTable
@@ -27,6 +27,6 @@ export default function Display({ phone }: { phone: Phone[] }) {
           selectedPhone={selectedPhone}
         />
       ) : null}
-    </>
+    </div>
   );
 }

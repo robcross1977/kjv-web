@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
 import { Phone } from "../types/db";
+import { PhoneStatus } from "@prisma/client";
 
 export async function getPhone() {
   return prisma.phone.findMany({
@@ -15,6 +16,7 @@ export async function createPhone({ phone, name }: Phone) {
     data: {
       phone,
       name,
+      status: PhoneStatus.NEW,
     },
   });
   revalidatePath("/phone");

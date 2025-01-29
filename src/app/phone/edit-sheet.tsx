@@ -18,12 +18,13 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { updatePhone } from "./actions";
 import { useToast } from "@/hooks/use-toast";
-import { Phone } from "@prisma/client";
+import { Phone, PhoneStatus } from "@prisma/client";
 import { PhoneSchema } from "../types/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import PhoneInput from "./phone-input";
 import { z } from "zod";
+import PhoneStatusFormItem from "./phone-status-form-item";
 
 export default function EditSheet({
   open,
@@ -45,6 +46,7 @@ export default function EditSheet({
       id: selectedPhone.id ?? -1,
       phone: selectedPhone.phone ?? "",
       name: selectedPhone.name ?? "",
+      status: selectedPhone.status ?? PhoneStatus.NEW,
     },
     values: {
       id: selectedPhone.id ?? -1,
@@ -52,6 +54,7 @@ export default function EditSheet({
       name: selectedPhone.name ?? "",
       createdAt: selectedPhone.createdAt ?? new Date(),
       updatedAt: selectedPhone.updatedAt ?? new Date(),
+      status: selectedPhone.status ?? PhoneStatus.NEW,
     },
   });
 
@@ -130,6 +133,11 @@ export default function EditSheet({
                   </FormControl>
                 </FormItem>
               )}
+            />
+            <FormField
+              name="status"
+              control={form.control}
+              render={({ field }) => <PhoneStatusFormItem field={field} />}
             />
             <Button type="submit">Save changes</Button>
           </form>

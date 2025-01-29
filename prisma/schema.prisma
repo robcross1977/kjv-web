@@ -12,29 +12,40 @@ datasource db {
   url = env("POSTGRES_URL")
 }
 
-model Admin {
-  id      Int      @id @default(autoincrement())
+model User {
+  uid      Int      @id @default(autoincrement())
   email    String   @unique
-  name     String   @default("Admin")
-  
-  @@map("admin")
+  name     String?
+  phone    String?
+  role     Role @relation(fields: [roleId], references: [id])
+  roleId   Int
+
+  @@map("user")
 }
 
-model PhoneStatus {
+model Role {
   id      Int      @id @default(autoincrement())
-  status  String    @unique
-  calls  Call[] 
+  name    String
+  users   User[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@map("role")
+}   
 
-  @@map("phone_status")
+enum PhoneStatus {
+  NEW
+  CONTACTED
+  NO_ANSWER
+  NO_CONTACT
+  NO_RESPONSE
+  NO_INTEREST
+  DO_NOT_CALL
 }
 
 model Phone {
   id      Int      @id @default(autoincrement())
   phone  String
   name  String
+  status PhoneStatus
   calls   Call[]
 
   createdAt DateTime @default(now())
@@ -43,14 +54,20 @@ model Phone {
   @@map("phone")
 }
 
+enum CallStatus {
+  HOLD
+  PENDING
+  COMPLETED
+  FAILED
+}
+
 model Call {
   id      Int      @id @default(autoincrement())
   phone Phone @relation(fields: [phoneId], references: [id])
   phoneId Int
-  status PhoneStatus @relation(fields: [statusId], references: [id])
-  statusId Int
+  status CallStatus
   script String
-  
+  notes String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

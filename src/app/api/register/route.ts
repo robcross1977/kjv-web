@@ -1,9 +1,9 @@
-import prisma from "@lib/prisma";
+import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { email, userId, secret } = body;
+  const { email, userId, secret, phone } = body;
 
   if (secret !== process.env.AUTH0_HOOK_SECRET) {
     const error_response = {
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
   if (email && userId) {
     await prisma.user.create({
-      data: { uid: userId, email },
+      data: { uid: userId, email, phone },
     });
   }
 
