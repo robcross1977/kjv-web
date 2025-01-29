@@ -12,24 +12,25 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
-import AdminForm from "./admin-form";
-import { createAdmin } from "./actions";
-import { Admin } from "@prisma/client";
-export default function AddAdminDialog({
+import PhoneStatusForm from "./phone-status-form";
+import { createPhoneStatus } from "./actions";
+import { PhoneStatus } from "@prisma/client";
+
+export default function AddPhoneStatusDialog({
   form,
   ...props
 }: {
-  form: UseFormReturn<Admin, unknown, undefined>;
+  form: UseFormReturn<PhoneStatus, unknown, undefined>;
 }) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
-  const onSubmit = async (admin: Admin) => {
+  const onSubmit = async (phoneStatus: PhoneStatus) => {
     try {
-      await createAdmin(admin);
+      await createPhoneStatus(phoneStatus);
 
       toast({
         title: "Success",
-        description: "Admin added successfully.",
+        description: "Phone status added successfully.",
       });
 
       form.reset();
@@ -41,7 +42,8 @@ export default function AddAdminDialog({
       toast({
         title: "Error",
         description:
-          (error as any)?.response?.data?.message || "Failed to add Admin.",
+          (error as any)?.response?.data?.message ||
+          "Failed to add phone status.",
       });
     }
   };
@@ -55,10 +57,10 @@ export default function AddAdminDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Admin</DialogTitle>
+          <DialogTitle>Add Phone Status</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <AdminForm
+        <PhoneStatusForm
           form={form}
           onSubmit={onSubmit}
           type="insert"

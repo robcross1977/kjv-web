@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
-import { Admin } from "@prisma/client";
+import { PhoneStatus } from "@prisma/client";
 
 export default function AdminForm({
   form,
@@ -16,7 +16,7 @@ export default function AdminForm({
   type,
   hideUid = false,
 }: {
-  form: UseFormReturn<Admin, unknown, undefined>;
+  form: UseFormReturn<PhoneStatus, unknown, undefined>;
   onSubmit: (data: any) => void;
   type: "update" | "insert";
   hideUid?: boolean;
@@ -58,22 +58,10 @@ export default function AdminForm({
         ) : null}
         <FormField
           control={form.control}
-          name="email"
+          name="status"
           render={({ field }) => (
             <FormItem className="grid grid-cols-4 items-center gap-4">
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input className="col-span-3" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="grid grid-cols-4 items-center gap-4">
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Status</FormLabel>
               <FormControl>
                 <Input className="col-span-3" {...field} />
               </FormControl>

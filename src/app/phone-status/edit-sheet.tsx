@@ -16,35 +16,34 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { UseFormReturn } from "react-hook-form";
-import { updateAdmin } from "./actions";
+import { updatePhoneStatus } from "./actions";
 import { useToast } from "@/hooks/use-toast";
-import { Admin } from "@prisma/client";
+import { PhoneStatus } from "@prisma/client";
 
 export default function EditSheet({
   open,
   setOpen,
   form,
-  admin: { id, email, name },
+  phoneStatus: { id, status },
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  form: UseFormReturn<Admin>;
-  admin: Admin;
+  form: UseFormReturn<PhoneStatus>;
+  phoneStatus: PhoneStatus;
 }) {
   const { toast } = useToast();
   if (!form.formState.isDirty) {
     form.setValue("id", id);
-    form.setValue("email", email);
-    form.setValue("name", name);
+    form.setValue("status", status);
   }
 
-  const onSubmit = async (admin: Admin) => {
+  const onSubmit = async (phoneStatus: PhoneStatus) => {
     try {
-      await updateAdmin(admin);
+      await updatePhoneStatus(phoneStatus);
 
       toast({
         title: "Success",
-        description: "Admin added successfully.",
+        description: "Phone status updated successfully.",
       });
 
       form.reset();
@@ -56,7 +55,8 @@ export default function EditSheet({
       toast({
         title: "Error",
         description:
-          (error as any)?.response?.data?.message || "Failed to add Admin.",
+          (error as any)?.response?.data?.message ||
+          "Failed to update phone status.",
       });
     }
   };
@@ -65,7 +65,7 @@ export default function EditSheet({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Edit Admin</SheetTitle>
+          <SheetTitle>Edit Phone Status</SheetTitle>
         </SheetHeader>
 
         <Form {...form}>
@@ -87,23 +87,12 @@ export default function EditSheet({
               )}
             />
             <FormField
-              name="email"
+              name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Status</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Email" />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="Name" />
+                    <Input {...field} placeholder="Status" />
                   </FormControl>
                 </FormItem>
               )}

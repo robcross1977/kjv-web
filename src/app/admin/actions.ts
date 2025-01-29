@@ -1,8 +1,8 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Admin, NewAdmin } from "./types";
 import { revalidatePath } from "next/cache";
+import { Admin } from "../types/db";
 
 export async function getAdmins() {
   try {
@@ -13,7 +13,7 @@ export async function getAdmins() {
   }
 }
 
-export async function createAdmin(admin: NewAdmin) {
+export async function createAdmin(admin: Admin) {
   console.log(admin);
   try {
     const createdAdmin = await prisma.admin.create({ data: admin });

@@ -17,8 +17,7 @@ import { deleteAdmin } from "./actions";
 export function columns(
   open: boolean,
   setOpen: (open: boolean) => void,
-  setSelectedAdmin: (admin: Admin) => void,
-  refreshData: () => void
+  setSelectedAdmin: (admin: Admin) => void
 ) {
   const columns: ColumnDef<Admin>[] = [
     {
@@ -43,7 +42,6 @@ export function columns(
             open={open}
             setSelectedAdmin={setSelectedAdmin}
             setEditOpen={setOpen}
-            refreshData={refreshData}
           />
         );
       },
@@ -58,13 +56,11 @@ const ActionCell = ({
   open,
   setEditOpen,
   setSelectedAdmin,
-  refreshData,
 }: {
   admin: Admin;
   open: boolean;
   setEditOpen: (open: boolean) => void;
   setSelectedAdmin: (admin: Admin) => void;
-  refreshData: () => void;
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -96,7 +92,6 @@ const ActionCell = ({
         <DropdownMenuItem
           onClick={async () => {
             await deleteAdmin(admin.id);
-            refreshData();
           }}
         >
           Delete
