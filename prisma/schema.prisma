@@ -1,33 +1,49 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-  shadowDatabaseUrl = env("POSTGRES_SHADOW_DATABASE_URL") // used for migrations
+  url = env("POSTGRES_URL")
 }
 
-model User {
-  uid      String   @id @unique
-  email    String   @unique
-  name     String?
-  bookmarks Bookmark[]
-  
-  @@map("user")
-}
-
-model Bookmark {
+model Admin {
   id      Int      @id @default(autoincrement())
-  book    String
-  chapter String
-  verse   String
-  user    User     @relation(fields: [userId], references: [uid])
-  userId  String
+  email    String   @unique
+  name     String   @default("Admin")
+  
+  @@map("admin")
+}
 
-  @@map("bookmark")
+model PhoneStatus {
+  id      Int      @id @default(autoincrement())
+  status  String   @unique
+  phones  PhoneNumber[] 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("phone_status")
+}
+
+model PhoneNumber {
+  id      Int      @id @default(autoincrement())
+  number  String
+  status  PhoneStatus @relation(fields: [statusId], references: [id])
+  statusId Int
+  calls   Call[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("phone_number")
+}
+
+model Call {
+  id      Int      @id @default(autoincrement())
+  phoneNumber PhoneNumber @relation(fields: [phoneNumberId], references: [id])
+  phoneNumberId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("call")
 }
