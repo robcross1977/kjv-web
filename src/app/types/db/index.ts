@@ -16,7 +16,7 @@ export const AdminScalarFieldEnumSchema = z.enum(['id','email','name']);
 
 export const PhoneStatusScalarFieldEnumSchema = z.enum(['id','status','createdAt','updatedAt']);
 
-export const PhoneScalarFieldEnumSchema = z.enum(['id','number','createdAt','updatedAt']);
+export const PhoneScalarFieldEnumSchema = z.enum(['id','phone','name','createdAt','updatedAt']);
 
 export const CallScalarFieldEnumSchema = z.enum(['id','phoneId','statusId','script','createdAt','updatedAt']);
 
@@ -58,7 +58,8 @@ export type PhoneStatus = z.infer<typeof PhoneStatusSchema>
 
 export const PhoneSchema = z.object({
   id: z.number().int(),
-  number: z.string(),
+  phone: z.string(),
+  name: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 })
@@ -146,7 +147,8 @@ export const PhoneCountOutputTypeSelectSchema: z.ZodType<Prisma.PhoneCountOutput
 
 export const PhoneSelectSchema: z.ZodType<Prisma.PhoneSelect> = z.object({
   id: z.boolean().optional(),
-  number: z.boolean().optional(),
+  phone: z.boolean().optional(),
+  name: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
   calls: z.union([z.boolean(),z.lazy(() => CallFindManyArgsSchema)]).optional(),
@@ -307,7 +309,8 @@ export const PhoneWhereInputSchema: z.ZodType<Prisma.PhoneWhereInput> = z.object
   OR: z.lazy(() => PhoneWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PhoneWhereInputSchema),z.lazy(() => PhoneWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  number: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  phone: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   calls: z.lazy(() => CallListRelationFilterSchema).optional()
@@ -315,7 +318,8 @@ export const PhoneWhereInputSchema: z.ZodType<Prisma.PhoneWhereInput> = z.object
 
 export const PhoneOrderByWithRelationInputSchema: z.ZodType<Prisma.PhoneOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  number: z.lazy(() => SortOrderSchema).optional(),
+  phone: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   calls: z.lazy(() => CallOrderByRelationAggregateInputSchema).optional()
@@ -329,7 +333,8 @@ export const PhoneWhereUniqueInputSchema: z.ZodType<Prisma.PhoneWhereUniqueInput
   AND: z.union([ z.lazy(() => PhoneWhereInputSchema),z.lazy(() => PhoneWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => PhoneWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PhoneWhereInputSchema),z.lazy(() => PhoneWhereInputSchema).array() ]).optional(),
-  number: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  phone: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   calls: z.lazy(() => CallListRelationFilterSchema).optional()
@@ -337,7 +342,8 @@ export const PhoneWhereUniqueInputSchema: z.ZodType<Prisma.PhoneWhereUniqueInput
 
 export const PhoneOrderByWithAggregationInputSchema: z.ZodType<Prisma.PhoneOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  number: z.lazy(() => SortOrderSchema).optional(),
+  phone: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => PhoneCountOrderByAggregateInputSchema).optional(),
@@ -352,7 +358,8 @@ export const PhoneScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.PhoneSc
   OR: z.lazy(() => PhoneScalarWhereWithAggregatesInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PhoneScalarWhereWithAggregatesInputSchema),z.lazy(() => PhoneScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  number: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  phone: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
@@ -515,7 +522,8 @@ export const PhoneStatusUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PhoneSt
 }).strict();
 
 export const PhoneCreateInputSchema: z.ZodType<Prisma.PhoneCreateInput> = z.object({
-  number: z.string(),
+  phone: z.string(),
+  name: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   calls: z.lazy(() => CallCreateNestedManyWithoutPhoneInputSchema).optional()
@@ -523,14 +531,16 @@ export const PhoneCreateInputSchema: z.ZodType<Prisma.PhoneCreateInput> = z.obje
 
 export const PhoneUncheckedCreateInputSchema: z.ZodType<Prisma.PhoneUncheckedCreateInput> = z.object({
   id: z.number().int().optional(),
-  number: z.string(),
+  phone: z.string(),
+  name: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   calls: z.lazy(() => CallUncheckedCreateNestedManyWithoutPhoneInputSchema).optional()
 }).strict();
 
 export const PhoneUpdateInputSchema: z.ZodType<Prisma.PhoneUpdateInput> = z.object({
-  number: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  phone: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   calls: z.lazy(() => CallUpdateManyWithoutPhoneNestedInputSchema).optional()
@@ -538,7 +548,8 @@ export const PhoneUpdateInputSchema: z.ZodType<Prisma.PhoneUpdateInput> = z.obje
 
 export const PhoneUncheckedUpdateInputSchema: z.ZodType<Prisma.PhoneUncheckedUpdateInput> = z.object({
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  number: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  phone: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   calls: z.lazy(() => CallUncheckedUpdateManyWithoutPhoneNestedInputSchema).optional()
@@ -546,20 +557,23 @@ export const PhoneUncheckedUpdateInputSchema: z.ZodType<Prisma.PhoneUncheckedUpd
 
 export const PhoneCreateManyInputSchema: z.ZodType<Prisma.PhoneCreateManyInput> = z.object({
   id: z.number().int().optional(),
-  number: z.string(),
+  phone: z.string(),
+  name: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
 
 export const PhoneUpdateManyMutationInputSchema: z.ZodType<Prisma.PhoneUpdateManyMutationInput> = z.object({
-  number: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  phone: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PhoneUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PhoneUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  number: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  phone: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -774,7 +788,8 @@ export const DateTimeWithAggregatesFilterSchema: z.ZodType<Prisma.DateTimeWithAg
 
 export const PhoneCountOrderByAggregateInputSchema: z.ZodType<Prisma.PhoneCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  number: z.lazy(() => SortOrderSchema).optional(),
+  phone: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -785,14 +800,16 @@ export const PhoneAvgOrderByAggregateInputSchema: z.ZodType<Prisma.PhoneAvgOrder
 
 export const PhoneMaxOrderByAggregateInputSchema: z.ZodType<Prisma.PhoneMaxOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  number: z.lazy(() => SortOrderSchema).optional(),
+  phone: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const PhoneMinOrderByAggregateInputSchema: z.ZodType<Prisma.PhoneMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  number: z.lazy(() => SortOrderSchema).optional(),
+  phone: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -1167,14 +1184,16 @@ export const CallUpdateManyWithWhereWithoutPhoneInputSchema: z.ZodType<Prisma.Ca
 }).strict();
 
 export const PhoneCreateWithoutCallsInputSchema: z.ZodType<Prisma.PhoneCreateWithoutCallsInput> = z.object({
-  number: z.string(),
+  phone: z.string(),
+  name: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
 
 export const PhoneUncheckedCreateWithoutCallsInputSchema: z.ZodType<Prisma.PhoneUncheckedCreateWithoutCallsInput> = z.object({
   id: z.number().int().optional(),
-  number: z.string(),
+  phone: z.string(),
+  name: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -1214,14 +1233,16 @@ export const PhoneUpdateToOneWithWhereWithoutCallsInputSchema: z.ZodType<Prisma.
 }).strict();
 
 export const PhoneUpdateWithoutCallsInputSchema: z.ZodType<Prisma.PhoneUpdateWithoutCallsInput> = z.object({
-  number: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  phone: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PhoneUncheckedUpdateWithoutCallsInputSchema: z.ZodType<Prisma.PhoneUncheckedUpdateWithoutCallsInput> = z.object({
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  number: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  phone: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();

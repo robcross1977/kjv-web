@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { Phone } from "@prisma/client";
+import PhoneInput from "./phone-input";
 
 export default function PhoneForm({
   form,
@@ -58,32 +59,24 @@ export default function PhoneForm({
         ) : null}
         <FormField
           control={form.control}
-          name="number"
+          name="phone"
           render={({ field }) => (
             <FormItem className="grid grid-cols-4 items-center gap-4">
-              <FormLabel>Number</FormLabel>
+              <FormLabel>Phone</FormLabel>
               <FormControl>
-                <Input
-                  className="col-span-3"
-                  {...field}
-                  value={field.value?.replace(
-                    /(\d{3})(\d{3})(\d{4})/,
-                    "$1-$2-$3"
-                  )}
-                  onChange={(e) => {
-                    const rawValue = e.target.value.replace(/-/g, "");
-                    // Allow only numbers and limit to 10 digits
-                    const formattedValue = rawValue
-                      .replace(/\D/g, "")
-                      .slice(0, 10)
-                      .replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
-                    field.onChange(formattedValue);
-                  }}
-                  placeholder="123-456-7890"
-                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                  maxLength={12}
-                  title="Please use the format: 123-456-7890"
-                />
+                <PhoneInput field={field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="grid grid-cols-4 items-center gap-4">
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input className="col-span-3" {...field} />
               </FormControl>
             </FormItem>
           )}

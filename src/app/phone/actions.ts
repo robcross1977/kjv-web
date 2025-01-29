@@ -10,10 +10,11 @@ export async function getPhone() {
   });
 }
 
-export async function createPhone({ number }: Phone) {
+export async function createPhone({ phone, name }: Phone) {
   const newPhone = await prisma.phone.create({
     data: {
-      number,
+      phone,
+      name,
     },
   });
   revalidatePath("/phone");

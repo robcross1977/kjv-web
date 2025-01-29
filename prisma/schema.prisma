@@ -33,7 +33,8 @@ model PhoneStatus {
 
 model Phone {
   id      Int      @id @default(autoincrement())
-  number  String
+  phone  String
+  name  String
   calls   Call[]
 
   createdAt DateTime @default(now())

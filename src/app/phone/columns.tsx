@@ -25,8 +25,12 @@ export function columns(
       header: "Id",
     },
     {
-      accessorKey: "number",
-      header: "Number",
+      accessorKey: "phone",
+      header: "Phone",
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
     },
     {
       accessorKey: "createdAt",

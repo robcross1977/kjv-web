@@ -22,6 +22,8 @@ import { Phone } from "@prisma/client";
 import { PhoneSchema } from "../types/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
+import PhoneInput from "./phone-input";
+import { z } from "zod";
 
 export default function EditSheet({
   open,
@@ -34,16 +36,20 @@ export default function EditSheet({
 }) {
   const { toast } = useToast();
   const form = useForm<Phone>({
-    resolver: zodResolver(PhoneSchema),
+    resolver: zodResolver(
+      PhoneSchema.extend({
+        phone: z.string().min(12).max(12),
+      })
+    ),
     defaultValues: {
       id: selectedPhone.id ?? -1,
-      number: selectedPhone.number ?? "",
-      createdAt: selectedPhone.createdAt ?? new Date(),
-      updatedAt: selectedPhone.updatedAt ?? new Date(),
+      phone: selectedPhone.phone ?? "",
+      name: selectedPhone.name ?? "",
     },
     values: {
       id: selectedPhone.id ?? -1,
-      number: selectedPhone.number ?? "",
+      phone: selectedPhone.phone ?? "",
+      name: selectedPhone.name ?? "",
       createdAt: selectedPhone.createdAt ?? new Date(),
       updatedAt: selectedPhone.updatedAt ?? new Date(),
     },
@@ -53,7 +59,6 @@ export default function EditSheet({
     form.reset();
   }, [open]);
 
-  console.dir(form.getValues());
   const onSubmit = async (phone: Phone) => {
     try {
       await updatePhone(phone);
@@ -86,6 +91,7 @@ export default function EditSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               name="id"
+              control={form.control}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Id</FormLabel>
@@ -101,12 +107,26 @@ export default function EditSheet({
               )}
             />
             <FormField
-              name="number"
+              name="phone"
+              control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Number</FormLabel>
+                  <FormLabel>Phone</FormLabel>
+
                   <FormControl>
-                    <Input {...field} placeholder="Number" />
+                    <PhoneInput field={field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="name"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Name" />
                   </FormControl>
                 </FormItem>
               )}

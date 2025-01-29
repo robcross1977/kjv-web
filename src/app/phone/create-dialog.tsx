@@ -17,16 +17,20 @@ import { createPhone } from "./actions";
 import { Phone } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PhoneSchema } from "../types/db";
+import { z } from "zod";
 
 export default function AddPhoneStatusDialog({ ...props }) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   const form = useForm<Phone>({
     resolver: zodResolver(
-      PhoneSchema.omit({ id: true, createdAt: true, updatedAt: true })
+      PhoneSchema.omit({ id: true, createdAt: true, updatedAt: true }).extend({
+        phone: z.string().min(12).max(12),
+      })
     ),
     defaultValues: {
-      number: "",
+      phone: "",
+      name: "",
     },
   });
 
