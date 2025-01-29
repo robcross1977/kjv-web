@@ -12,25 +12,21 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
-import PhoneStatusForm from "./phone-status-form";
-import { createPhoneStatus } from "./actions";
-import { PhoneStatus } from "@prisma/client";
+import PhoneForm from "./phone-form";
+import { createPhone } from "./actions";
+import { Phone } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PhoneStatusSchema } from "../types/db";
+import { PhoneSchema } from "../types/db";
 
 export default function AddPhoneStatusDialog({ ...props }) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
-  const form = useForm<PhoneStatus>({
+  const form = useForm<Phone>({
     resolver: zodResolver(
-      PhoneStatusSchema.omit({
-        id: true,
-        createdAt: true,
-        updatedAt: true,
-      })
+      PhoneSchema.omit({ id: true, createdAt: true, updatedAt: true })
     ),
     defaultValues: {
-      status: "",
+      number: "",
     },
   });
 
@@ -38,13 +34,13 @@ export default function AddPhoneStatusDialog({ ...props }) {
     form.reset();
   }, [open]);
 
-  const onSubmit = async (phoneStatus: PhoneStatus) => {
+  const onSubmit = async (phone: Phone) => {
     try {
-      await createPhoneStatus(phoneStatus);
+      await createPhone(phone);
 
       toast({
         title: "Success",
-        description: "Phone status added successfully.",
+        description: "Phone added successfully.",
       });
 
       setOpen(false);
@@ -54,8 +50,7 @@ export default function AddPhoneStatusDialog({ ...props }) {
       toast({
         title: "Error",
         description:
-          (error as any)?.response?.data?.message ||
-          "Failed to add phone status.",
+          (error as any)?.response?.data?.message || "Failed to add phone.",
       });
     }
   };
@@ -69,10 +64,10 @@ export default function AddPhoneStatusDialog({ ...props }) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Phone Status</DialogTitle>
+          <DialogTitle>Add Phone</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <PhoneStatusForm
+        <PhoneForm
           form={form}
           onSubmit={onSubmit}
           type="insert"

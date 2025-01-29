@@ -22,8 +22,8 @@ model Admin {
 
 model PhoneStatus {
   id      Int      @id @default(autoincrement())
-  status  String   @unique
-  phones  PhoneNumber[] 
+  status  String    @unique
+  calls  Call[] 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -31,22 +31,25 @@ model PhoneStatus {
   @@map("phone_status")
 }
 
-model PhoneNumber {
+model Phone {
   id      Int      @id @default(autoincrement())
   number  String
-  status  PhoneStatus @relation(fields: [statusId], references: [id])
-  statusId Int
   calls   Call[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("phone_number")
+  @@map("phone")
 }
 
 model Call {
   id      Int      @id @default(autoincrement())
-  phoneNumber PhoneNumber @relation(fields: [phoneNumberId], references: [id])
-  phoneNumberId Int
+  phone Phone @relation(fields: [phoneId], references: [id])
+  phoneId Int
+  status PhoneStatus @relation(fields: [statusId], references: [id])
+  statusId Int
+  script String
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
