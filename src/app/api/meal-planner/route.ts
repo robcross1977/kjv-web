@@ -1,10 +1,6 @@
 import { mealPlanSchema } from "@/app/types/meal-planner";
 import { streamObject } from "ai";
 import { openai } from "@ai-sdk/openai";
-import { z } from "zod";
-
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
 
 export async function POST(req: Request) {
   const { instructions } = await req.json();
@@ -20,6 +16,10 @@ export async function POST(req: Request) {
           - Person A: 2750 calories/day, 3 meals/day, weighs 240 lbs.
           - Person B: 2000 calories/day, 3 meals/day, weighs 250 lbs.
           - Person C: 2000 calories/day, 2 meals/day (no breakfast), weighs 160 lbs.
+        
+        2. **Other Requirements**
+          - Assume a default of 3 meals per day (Breakfast, lunch and dinner) unless told otherwise, and then call it "meal #<number>" instead of "meal #<number>"
+          - If you are asked to create a meal plan for a specific day, then create a meal plan for that day.
 
         2. **Nutritional Goals:**
           - Limit carbs to 175g/day per person.

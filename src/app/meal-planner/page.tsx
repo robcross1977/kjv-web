@@ -36,7 +36,9 @@ export default function MealPlanner() {
     <div className="flex flex-col w-full py-5 mx-auto stretch">
       {isLoading ? (
         <div className="flex justify-center items-center h-full mt-10">
-          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="flex justify-center items-center h-screen">
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
         </div>
       ) : mealPlan === null ? null : (
         <ScrollArea className="h-[600px] w-full">
@@ -69,7 +71,7 @@ export default function MealPlanner() {
                 <ul className="list-disc ml-[2rem]">
                   {recipe.ingredients.map((i) => (
                     <li key={i.name} className="ml-[2rem]">
-                      {i.name}
+                      {i.amount} {i.name} ({i.estimatedCostPerAmount})
                     </li>
                   ))}
                 </ul>
@@ -93,7 +95,7 @@ export default function MealPlanner() {
                 <ul className="list-disc ml-[2rem]">
                   {groceryList.items.map((i) => (
                     <li key={i.name} className="ml-[2rem]">
-                      {i.name}
+                      {i.amount} {i.name}
                     </li>
                   ))}
                 </ul>
@@ -118,7 +120,7 @@ export default function MealPlanner() {
       >
         <input
           name="instructions"
-          className="fixed dark:bg-zinc-900 bottom-0 w-full max-w-md p-2 mb-8 border border-zinc-300 dark:border-zinc-800 rounded shadow-xl"
+          className="dark:bg-zinc-900 w-full p-2 mb-8 border border-zinc-300 dark:border-zinc-800 rounded shadow-xl"
           value={input}
           placeholder="Just say something to plan a meal..."
           onChange={(e) => setInput(e.target.value)}

@@ -5,7 +5,7 @@ import { UserProvider } from "@auth0/nextjs-auth0/client";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider defaultTheme="dark" attribute="class" enableSystem>
+    <ThemeProvider defaultTheme="light" attribute="class" enableSystem>
       <UserProvider>
         <>{children}</>
       </UserProvider>
