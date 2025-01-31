@@ -1,4 +1,4 @@
-import { mealPlanSchema } from "@/app/types/meal-planner";
+import { mealPlanSchema } from "@/app/meal-planner/types";
 import { streamObject } from "ai";
 import { openai } from "@ai-sdk/openai";
 

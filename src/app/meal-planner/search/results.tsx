@@ -1,13 +1,19 @@
 import { Separator } from "@/components/ui/separator";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MealPlan } from "@/app/types/meal-planner";
+import { MealPlan } from "@/app/meal-planner/types";
 
 export default function Results({ mealPlan }: { mealPlan: MealPlan }) {
   return (
     <ScrollArea className="h-[600px] w-full">
       <ul>
         <h2 className="text-3xl font-bold mb-4">Meal Schedule</h2>
+
+        <p>Budget: ${mealPlan?.budget.total}</p>
+        <p>Remaining: ${mealPlan?.budget.remaining}</p>
+        <p>Spent: ${mealPlan?.budget.spent}</p>
+        <p>Days: {mealPlan?.budget.numberOfDays}</p>
+        <p>Amount: ${mealPlan?.budget.amount}</p>
 
         {mealPlan?.schedule.map((day) => (
           <li key={day.dayNumber}>

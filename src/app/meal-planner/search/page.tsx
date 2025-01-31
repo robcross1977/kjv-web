@@ -3,10 +3,8 @@
 import { useState } from "react";
 import { experimental_useObject as useObject } from "ai/react";
 import { useRef } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { mealPlanSchema } from "@/app/types/meal-planner";
-import { MealPlan } from "@/app/types/meal-planner";
+import { mealPlanSchema } from "@/app/meal-planner/types";
+import { MealPlan } from "@/app/meal-planner/types";
 import { generateMealPlanCommand } from "../lib";
 import Results from "./results";
 import SpecialInstructionsForm from "./special-instructions-form";
