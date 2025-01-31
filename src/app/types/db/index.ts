@@ -249,15 +249,24 @@ export const PhoneOrderByWithRelationInputSchema: z.ZodType<Prisma.PhoneOrderByW
   calls: z.lazy(() => CallOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
-export const PhoneWhereUniqueInputSchema: z.ZodType<Prisma.PhoneWhereUniqueInput> = z.object({
-  id: z.number().int()
-})
+export const PhoneWhereUniqueInputSchema: z.ZodType<Prisma.PhoneWhereUniqueInput> = z.union([
+  z.object({
+    id: z.number().int(),
+    phone: z.string()
+  }),
+  z.object({
+    id: z.number().int(),
+  }),
+  z.object({
+    phone: z.string(),
+  }),
+])
 .and(z.object({
   id: z.number().int().optional(),
+  phone: z.string().optional(),
   AND: z.union([ z.lazy(() => PhoneWhereInputSchema),z.lazy(() => PhoneWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => PhoneWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PhoneWhereInputSchema),z.lazy(() => PhoneWhereInputSchema).array() ]).optional(),
-  phone: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   status: z.union([ z.lazy(() => EnumPhoneStatusFilterSchema),z.lazy(() => PhoneStatusSchema) ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),

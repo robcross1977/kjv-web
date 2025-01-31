@@ -14,7 +14,7 @@ export default function PhoneStatusFormItem({ field }: { field: FieldValues }) {
     <FormItem className="grid grid-cols-4 items-center gap-4">
       <FormLabel>Status</FormLabel>
       <Select onValueChange={field.onChange} defaultValue={field.value}>
-        <FormControl>
+        <FormControl className="col-span-3">
           <SelectTrigger>
             <SelectValue placeholder="Select Status" />
           </SelectTrigger>

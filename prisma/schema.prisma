@@ -39,7 +39,7 @@ enum PhoneStatus {
 
 model Phone {
   id      Int      @id @default(autoincrement())
-  phone  String
+  phone  String @unique
   name  String
   status PhoneStatus
   calls   Call[]

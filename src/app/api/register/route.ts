@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
   if (email && userId) {
     await prisma.user.create({
-      data: { uid: userId, email, phone },
+      data: { uid: userId, email, phone, role: "USER" },
     });
   }
 

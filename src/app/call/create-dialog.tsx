@@ -14,22 +14,24 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import CallForm from "./call-form";
 import { createCall } from "./actions";
-import { Call, CallStatus } from "@prisma/client";
+import { Call, CallStatus, Phone } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CallSchema } from "../types/db";
 import { z } from "zod";
 
+type CallWithPhone = Call & { phone: Phone };
+
 export default function AddPhoneStatusDialog({ ...props }) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
-  const form = useForm<Call>({
+  const form = useForm<CallWithPhone>({
     resolver: zodResolver(
       CallSchema.omit({ id: true, createdAt: true, updatedAt: true }).extend({
-        phone: z.string().min(12).max(12),
+        phone: z.object({ id: z.number() }),
       })
     ),
     defaultValues: {
-      phoneId: 0,
+      phone: { id: 0 } as Phone,
       script: "",
       status: CallStatus.HOLD,
       notes: "",
@@ -72,7 +74,7 @@ export default function AddPhoneStatusDialog({ ...props }) {
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <CallForm
-          form={form}
+          form={form as any}
           onSubmit={onSubmit}
           type="insert"
           hideUid={true}

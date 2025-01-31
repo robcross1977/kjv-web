@@ -1,0 +1,40 @@
+import { z } from "zod";
+
+const ingredientSchema = z.object({
+  name: z.string(),
+  amount: z.string(),
+  estimatedCostPerAmount: z.string(),
+});
+
+const recipeSchema = z.object({
+  name: z.string(),
+  ingredients: z.array(ingredientSchema),
+  steps: z.array(z.string()),
+});
+
+const groceryListItemSchema = z.object({
+  category: z.string(),
+  items: z.array(
+    z.object({
+      name: z.string(),
+      amount: z.string(),
+    })
+  ),
+});
+
+const daySchema = z.object({
+  dayNumber: z
+    .number()
+    .int()
+    .describe(
+      "The user inputs how many days they want to plan for, not the day of the week"
+    ),
+  meals: z.array(z.string().describe("The name of the recipe")),
+});
+
+export const mealPlanSchema = z.object({
+  schedule: z.array(daySchema),
+  recipes: z.array(recipeSchema),
+  groceryList: z.array(groceryListItemSchema),
+});
+export type MealPlan = z.infer<typeof mealPlanSchema>;

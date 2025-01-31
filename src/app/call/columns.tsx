@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Call } from "@prisma/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,13 +12,14 @@ import {
 import { ChevronRight, ChevronDown } from "lucide-react";
 import { useState, useCallback } from "react";
 import { deleteCall } from "./actions";
+import { CallWithPhone } from "./types";
 
 export function columns(
   open: boolean,
   setOpen: (open: boolean) => void,
-  setSelectedCall: (call: Call) => void
+  setSelectedCall: (call: CallWithPhone) => void
 ) {
-  const columns: ColumnDef<Call>[] = [
+  const columns: ColumnDef<CallWithPhone>[] = [
     {
       accessorKey: "id",
       header: "Id",
@@ -27,10 +27,10 @@ export function columns(
     {
       accessorKey: "phone",
       header: "Phone",
-    },
-    {
-      accessorKey: "name",
-      header: "Name",
+      cell: ({ row }) => {
+        const phone = row.original.phone;
+        return `${phone.name}:${phone.phone}`;
+      },
     },
     {
       accessorKey: "status",
@@ -101,10 +101,10 @@ const ActionCell = ({
   setEditOpen,
   setSelectedCall,
 }: {
-  call: Call;
+  call: CallWithPhone;
   isOpen: boolean;
   setEditOpen: (open: boolean) => void;
-  setSelectedCall: (call: Call) => void;
+  setSelectedCall: (call: CallWithPhone) => void;
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 

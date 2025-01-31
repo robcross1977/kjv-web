@@ -4,12 +4,12 @@ import { DataTable } from "@/components/ui/data-table";
 import { useState } from "react";
 import EditSheet from "./edit-sheet";
 import CreateDialog from "../phone/create-dialog";
-import { Call } from "@prisma/client";
+import { Call, Phone } from "@prisma/client";
 import { columns } from "./columns";
-
-export default function Display({ calls }: { calls: Call[] }) {
+import { CallWithPhone } from "./types";
+export default function Display({ calls }: { calls: CallWithPhone[] }) {
   const [editOpen, setEditOpen] = useState(false);
-  const [selectedCall, setSelectedCall] = useState<Call | null>(null);
+  const [selectedCall, setSelectedCall] = useState<CallWithPhone | null>(null);
 
   return (
     <div className="w-full">

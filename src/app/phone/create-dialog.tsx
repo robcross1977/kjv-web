@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PhoneSchema } from "../types/db";
 import { z } from "zod";
 
-export default function AddPhoneStatusDialog({ ...props }) {
+export default function CreatePhoneStatusDialog({ ...props }) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   const form = useForm<Phone>({

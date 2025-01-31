@@ -2,7 +2,11 @@ import { prisma } from "@/lib/prisma";
 import { Call } from "@prisma/client";
 
 export async function getCalls() {
-  const calls = await prisma.call.findMany();
+  const calls = await prisma.call.findMany({
+    include: {
+      phone: true,
+    },
+  });
   return calls;
 }
 
