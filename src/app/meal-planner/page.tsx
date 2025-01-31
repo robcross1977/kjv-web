@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { experimental_useObject as useObject } from "ai/react";
 import { useRef } from "react";
 import { MealPlan, mealPlanSchema } from "../types/meal-planner";

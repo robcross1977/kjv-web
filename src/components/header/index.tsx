@@ -5,7 +5,7 @@ import Auth from "@/components/auth";
 function Title() {
   return (
     <h1 className="font-semibold text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-1 font-serif text-gray-900 dark:text-white">
-      Ami's Meal Planner
+      FamilyTable.AI
     </h1>
   );
 }

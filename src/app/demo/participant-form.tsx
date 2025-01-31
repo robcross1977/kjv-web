@@ -1,14 +1,19 @@
-import React, { useState, forwardRef } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import {
   FormField,
   FormItem,
   FormLabel,
   FormControl,
 } from "@/components/ui/form";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 type Participant = {
   name: string;
@@ -43,11 +48,24 @@ const ForwardedSelect = forwardRef<HTMLSelectElement, any>(
 );
 
 export function ParticipantForm() {
-  const [participants, setParticipants] = useState<Participant[]>([]);
-  const methods = useForm<Participant>();
+  const [participants, setParticipants] = useState<Participant[]>(() => {
+    // Load initial participants from local storage
+    const savedParticipants = localStorage.getItem("participants");
+    return savedParticipants ? JSON.parse(savedParticipants) : [];
+  });
+
+  const methods = useForm<Participant>({
+    defaultValues:
+      participants.length > 0 ? participants[0] : defaultParticipant,
+  });
 
   const addParticipant = () => {
-    setParticipants([...participants, { ...defaultParticipant }]);
+    const randomId = Math.floor(Math.random() * 1000);
+    const newParticipant = {
+      ...defaultParticipant,
+      name: `Player #${randomId}`,
+    };
+    setParticipants([...participants, newParticipant]);
   };
 
   const updateParticipant = (
@@ -61,130 +79,151 @@ export function ParticipantForm() {
     setParticipants(updatedParticipants);
   };
 
+  const deleteParticipant = (index: number) => {
+    const updatedParticipants = participants.filter((_, i) => i !== index);
+    setParticipants(updatedParticipants);
+  };
+
+  useEffect(() => {
+    // Save participants to local storage whenever they change
+    localStorage.setItem("participants", JSON.stringify(participants));
+  }, [participants]);
+
   return (
     <div className="p-4">
-      {participants.map((participant, index) => (
-        <FormProvider {...methods} key={index}>
-          <form>
-            <FormField
-              control={methods.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Name"
-                      value={participant.name}
-                      onChange={(e) =>
-                        updateParticipant(index, "name", e.target.value)
-                      }
-                      className="mb-2"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={methods.control}
-              name="calories"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Calories</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="number"
-                      placeholder="Calories"
-                      value={participant.calories}
-                      onChange={(e) =>
-                        updateParticipant(
-                          index,
-                          "calories",
-                          Number(e.target.value)
-                        )
-                      }
-                      className="mb-2"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={methods.control}
-              name="meals"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Meals Per Day</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="number"
-                      placeholder="Meals"
-                      value={participant.meals}
-                      onChange={(e) =>
-                        updateParticipant(
-                          index,
-                          "meals",
-                          Number(e.target.value)
-                        )
-                      }
-                      className="mb-2"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={methods.control}
-              name="weight"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Weight</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="number"
-                      placeholder="Weight"
-                      value={participant.weight}
-                      onChange={(e) =>
-                        updateParticipant(
-                          index,
-                          "weight",
-                          Number(e.target.value)
-                        )
-                      }
-                      className="mb-2"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={methods.control}
-              name="sex"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Sex</FormLabel>
-                  <FormControl>
-                    <ForwardedSelect
-                      {...field}
-                      value={participant.sex}
-                      onValueChange={(value: string) =>
-                        updateParticipant(index, "sex", value)
-                      }
-                    >
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                    </ForwardedSelect>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </form>
-        </FormProvider>
-      ))}
+      <h1 className="text-2xl font-bold my-4">Who are you cooking for?</h1>
+      <Accordion type="single" collapsible>
+        {participants.map((participant, index) => (
+          <AccordionItem key={index} value={`participant-${index}`}>
+            <AccordionTrigger>{participant.name}</AccordionTrigger>
+            <AccordionContent>
+              <FormProvider {...methods}>
+                <form>
+                  <FormField
+                    control={methods.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Name"
+                            value={participant.name}
+                            onChange={(e) =>
+                              updateParticipant(index, "name", e.target.value)
+                            }
+                            className="mb-2"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={methods.control}
+                    name="calories"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Calories</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            placeholder="Calories"
+                            value={participant.calories}
+                            onChange={(e) =>
+                              updateParticipant(
+                                index,
+                                "calories",
+                                Number(e.target.value)
+                              )
+                            }
+                            className="mb-2"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={methods.control}
+                    name="meals"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Meals Per Day</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            placeholder="Meals"
+                            value={participant.meals}
+                            onChange={(e) =>
+                              updateParticipant(
+                                index,
+                                "meals",
+                                Number(e.target.value)
+                              )
+                            }
+                            className="mb-2"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={methods.control}
+                    name="weight"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Weight</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            placeholder="Weight"
+                            value={participant.weight}
+                            onChange={(e) =>
+                              updateParticipant(
+                                index,
+                                "weight",
+                                Number(e.target.value)
+                              )
+                            }
+                            className="mb-2"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={methods.control}
+                    name="sex"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Sex</FormLabel>
+                        <FormControl>
+                          <ForwardedSelect
+                            {...field}
+                            value={participant.sex}
+                            onValueChange={(value: string) =>
+                              updateParticipant(index, "sex", value)
+                            }
+                          >
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                          </ForwardedSelect>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </FormProvider>
+              <Button onClick={() => deleteParticipant(index)} className="mt-2">
+                Delete User
+              </Button>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
       <Button onClick={addParticipant} className="mt-4">
         + Add Participant
       </Button>

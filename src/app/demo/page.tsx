@@ -1,11 +1,11 @@
 "use client";
 
-import { ParticipantForm } from "./participant-form";
+import { InfoCarousel } from "./info-carousel";
 
 export default function MealPlanner() {
   return (
     <div className="flex flex-col w-full py-5 mx-auto stretch">
-      <ParticipantForm />
+      <InfoCarousel />
     </div>
   );
 }
