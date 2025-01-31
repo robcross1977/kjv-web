@@ -32,7 +32,26 @@ const daySchema = z.object({
   meals: z.array(z.string().describe("The name of the recipe")),
 });
 
+const budgetSchema = z.object({
+  amount: z
+    .number()
+    .describe("The amount of money the user is willing to spend"),
+  spent: z.number().describe("The amount of money we have spent so far"),
+  remaining: z.number().describe("The amount of money we have left to spend"),
+  total: z
+    .number()
+    .describe(
+      "The total amount of money we project to spend to buy everything on our recipes"
+    ),
+  numberOfDays: z
+    .number()
+    .describe(
+      "The number of days we are planning for, this is not the day of the week"
+    ),
+});
+
 export const mealPlanSchema = z.object({
+  budget: budgetSchema,
   schedule: z.array(daySchema),
   recipes: z.array(recipeSchema),
   groceryList: z.array(groceryListItemSchema),

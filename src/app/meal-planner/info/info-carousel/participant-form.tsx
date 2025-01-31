@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef } from "react";
+"use client";
 import { useForm, FormProvider } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,45 +14,57 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useEffect } from "react";
 
 type Participant = {
   name: string;
   calories: number;
-  meals: number;
   weight: number;
   sex: "male" | "female";
 };
 
 const defaultParticipant: Participant = {
-  name: "",
-  calories: 2000,
-  meals: 3,
-  weight: 150,
-  sex: "male",
+  name: "Family Member #1",
+  calories: 2200,
+  weight: 185,
+  sex: "female",
 };
 
-// Create a wrapper component for the Select
-const ForwardedSelect = forwardRef<HTMLSelectElement, any>(
-  ({ children, onValueChange, ...props }, ref) => {
-    return (
-      <select
-        {...props}
-        ref={ref}
-        onChange={(e) => onValueChange(e.target.value)}
-        className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-      >
-        {children}
-      </select>
-    );
-  }
-);
+interface SelectProps {
+  children: React.ReactNode;
+  onValueChange: (value: string) => void;
+  [key: string]: any; // Allows for additional props
+}
+
+const Select = ({ children, onValueChange, ...props }: SelectProps) => {
+  return (
+    <select
+      {...props}
+      onChange={(e) => onValueChange(e.target.value)}
+      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+    >
+      {children}
+    </select>
+  );
+};
 
 export function ParticipantForm() {
-  const [participants, setParticipants] = useState<Participant[]>(() => {
-    // Load initial participants from local storage
-    const savedParticipants = localStorage.getItem("participants");
-    return savedParticipants ? JSON.parse(savedParticipants) : [];
-  });
+  const [participants, setParticipants] = useLocalStorage<Participant[]>(
+    "participants",
+    []
+  );
+  const [participantCount, setParticipantCount] = useLocalStorage<number>(
+    "participantCount",
+    participants.length
+  );
+
+  useEffect(() => {
+    if (participants.length === 0) {
+      setParticipants([defaultParticipant]);
+      setParticipantCount(1);
+    }
+  }, [participants, setParticipants, setParticipantCount]);
 
   const methods = useForm<Participant>({
     defaultValues:
@@ -60,12 +72,12 @@ export function ParticipantForm() {
   });
 
   const addParticipant = () => {
-    const randomId = Math.floor(Math.random() * 1000);
     const newParticipant = {
       ...defaultParticipant,
-      name: `Player #${randomId}`,
+      name: `Family Member #${participantCount + 1}`,
     };
     setParticipants([...participants, newParticipant]);
+    setParticipantCount(participantCount + 1);
   };
 
   const updateParticipant = (
@@ -82,21 +94,18 @@ export function ParticipantForm() {
   const deleteParticipant = (index: number) => {
     const updatedParticipants = participants.filter((_, i) => i !== index);
     setParticipants(updatedParticipants);
+    setParticipantCount(updatedParticipants.length);
   };
-
-  useEffect(() => {
-    // Save participants to local storage whenever they change
-    localStorage.setItem("participants", JSON.stringify(participants));
-  }, [participants]);
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold my-4">Who are you cooking for?</h1>
       <Accordion type="single" collapsible>
         {participants.map((participant, index) => (
           <AccordionItem key={index} value={`participant-${index}`}>
-            <AccordionTrigger>{participant.name}</AccordionTrigger>
-            <AccordionContent>
+            <AccordionTrigger className="text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 p-2 rounded-md">
+              {participant.name}
+            </AccordionTrigger>
+            <AccordionContent className="ml-8">
               <FormProvider {...methods}>
                 <form>
                   <FormField
@@ -146,31 +155,6 @@ export function ParticipantForm() {
                   />
                   <FormField
                     control={methods.control}
-                    name="meals"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Meals Per Day</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="number"
-                            placeholder="Meals"
-                            value={participant.meals}
-                            onChange={(e) =>
-                              updateParticipant(
-                                index,
-                                "meals",
-                                Number(e.target.value)
-                              )
-                            }
-                            className="mb-2"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={methods.control}
                     name="weight"
                     render={({ field }) => (
                       <FormItem>
@@ -201,7 +185,7 @@ export function ParticipantForm() {
                       <FormItem>
                         <FormLabel>Sex</FormLabel>
                         <FormControl>
-                          <ForwardedSelect
+                          <Select
                             {...field}
                             value={participant.sex}
                             onValueChange={(value: string) =>
@@ -210,7 +194,7 @@ export function ParticipantForm() {
                           >
                             <option value="male">Male</option>
                             <option value="female">Female</option>
-                          </ForwardedSelect>
+                          </Select>
                         </FormControl>
                       </FormItem>
                     )}
@@ -225,7 +209,7 @@ export function ParticipantForm() {
         ))}
       </Accordion>
       <Button onClick={addParticipant} className="mt-4">
-        + Add Participant
+        + Add Family Member
       </Button>
     </div>
   );

@@ -7,8 +7,8 @@ import Header from "@/components/header";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Ami's Meal Planner",
-  description: "By Ami Crossland",
+  title: "FamilyTable.AI",
+  description: "FamilyTable.AI",
 };
 
 type RootLayoutProps = {
