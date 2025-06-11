@@ -10,9 +10,9 @@ export default async function Auth() {
     <div className="lg:mr-5 items-center justify-center">
       {user ? (
         <div className="flex flex-row items-center justify-center gap-2">
-          <Link href="/auth/logout" data-testid="logout" className="lg:pr-3">
+          <a href="/auth/logout" data-testid="logout" className="lg:pr-3">
             Logout
-          </Link>
+          </a>
           {user.picture && (
             <Link href="/profile">
               <Image
@@ -26,9 +26,9 @@ export default async function Auth() {
           )}
         </div>
       ) : (
-        <Link href="/auth/login" data-testid="login">
+        <a href="/auth/login" data-testid="login">
           Login
-        </Link>
+        </a>
       )}
     </div>
   );
