@@ -28,6 +28,11 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Clear any existing theme storage
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("kjv-theme");
+      localStorage.removeItem("theme");
+    }
     setMounted(true);
   }, []);
 
@@ -36,7 +41,17 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
     O.fromPredicate((isMounted) => isMounted),
     O.fold(
       () => renderWithoutTheme(children),
-      () => renderWithTheme(props, children)
+      () =>
+        renderWithTheme(
+          {
+            ...props,
+            defaultTheme: "light",
+            enableSystem: false,
+            storageKey: "kjv-theme",
+            forcedTheme: "light",
+          },
+          children
+        )
     )
   );
 }
