@@ -2,7 +2,6 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SearchSheet } from "./search-sheet";
 
 const inter = Inter({ subsets: ["latin"] });
 
