@@ -10,6 +10,7 @@ export default async function Auth() {
     <div className="lg:mr-5 items-center justify-center">
       {user ? (
         <div className="flex flex-row items-center justify-center gap-2">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a href="/auth/logout" data-testid="logout" className="lg:pr-3">
             Logout
           </a>
@@ -26,9 +27,12 @@ export default async function Auth() {
           )}
         </div>
       ) : (
-        <a href="/auth/login" data-testid="login">
-          Login
-        </a>
+        <>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+          <a href="/auth/login" data-testid="login">
+            Login
+          </a>
+        </>
       )}
     </div>
   );
