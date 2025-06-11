@@ -137,10 +137,42 @@ export function useReadStatus() {
   }, []);
 
   /**
-   * Mark verses as unread (future implementation)
+   * Mark verses as unread
    */
   const markVersesAsUnread = useCallback(async (verses: VerseReference[]) => {
-    // TODO: Implement unmark API endpoint
+    setIsLoading(true);
+    setError(null);
+
+    const result = await pipe(
+      TE.tryCatch(
+        () =>
+          fetch("/api/verses/mark-read", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ verses, action: "unmark" }),
+          }),
+        (error) => `Network error: ${error}`
+      ),
+      TE.chain((response) =>
+        response.ok
+          ? TE.tryCatch(
+              () => response.json(),
+              (error) => `JSON parse error: ${error}`
+            )
+          : TE.left(`HTTP error: ${response.status}`)
+      )
+    )();
+
+    setIsLoading(false);
+
+    if (result._tag === "Left") {
+      setError(result.left);
+      return false;
+    }
+
+    // Update local state
     const statusUpdates: ReadStatusMap = {};
     verses.forEach(({ book, chapter, verse }) => {
       const key = createVerseKey(book, chapter, verse);

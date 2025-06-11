@@ -9,6 +9,7 @@ import {
 } from "react";
 import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
+import { useUser } from "@auth0/nextjs-auth0";
 import { useReadStatus } from "@/hooks/use-read-status";
 import { FloatingToolsButton } from "./floating-tools-button";
 import { VerseReference } from "@/types/read-status";
@@ -46,6 +47,9 @@ type ToolsContextValue = {
   isLoading: boolean;
   error: string | null;
   clearError: () => void;
+
+  // Auth state
+  isLoggedIn: boolean;
 };
 
 const ToolsContext = createContext<ToolsContextValue | null>(null);
@@ -57,10 +61,15 @@ type Props = {
 /**
  * Simplified tools provider that manages read status directly
  * No complex selection logic - just direct read/unread toggling
+ * Only available when user is logged in
  */
 export function ToolsProvider({ children }: Props) {
   const [isToolsActive, setIsToolsActive] = useState(false);
   const [currentVerses, setCurrentVerses] = useState<VerseReference[]>([]);
+
+  // Check if user is logged in
+  const { user, isLoading: userLoading } = useUser();
+  const isLoggedIn = !userLoading && !!user;
 
   const {
     isLoading,
@@ -73,8 +82,11 @@ export function ToolsProvider({ children }: Props) {
   } = useReadStatus();
 
   const toggleTools = useCallback(() => {
-    setIsToolsActive((prev) => !prev);
-  }, []);
+    // Only allow toggling tools if user is logged in
+    if (isLoggedIn) {
+      setIsToolsActive((prev) => !prev);
+    }
+  }, [isLoggedIn]);
 
   const closeTools = useCallback(() => {
     setIsToolsActive(false);
@@ -82,6 +94,8 @@ export function ToolsProvider({ children }: Props) {
 
   const toggleVerseReadStatus = useCallback(
     async (book: string, chapter: number, verse: number) => {
+      if (!isLoggedIn) return;
+
       const currentStatus = getVerseReadStatus(book, chapter, verse);
       const verseRef: VerseReference = { book, chapter, verse };
 
@@ -91,18 +105,18 @@ export function ToolsProvider({ children }: Props) {
         await markVersesAsRead([verseRef]);
       }
     },
-    [getVerseReadStatus, markVersesAsRead, markVersesAsUnread]
+    [isLoggedIn, getVerseReadStatus, markVersesAsRead, markVersesAsUnread]
   );
 
   const markAllAsRead = useCallback(async () => {
-    if (currentVerses.length > 0) {
-      await markVersesAsRead(currentVerses);
-    }
-  }, [currentVerses, markVersesAsRead]);
+    if (!isLoggedIn || currentVerses.length === 0) return;
+
+    await markVersesAsRead(currentVerses);
+  }, [isLoggedIn, currentVerses, markVersesAsRead]);
 
   const contextValue: ToolsContextValue = {
     // Tools state
-    isToolsActive,
+    isToolsActive: isLoggedIn && isToolsActive, // Only active if logged in
 
     // Tools actions
     toggleTools,
@@ -121,14 +135,19 @@ export function ToolsProvider({ children }: Props) {
     isLoading,
     error,
     clearError,
+
+    // Auth state
+    isLoggedIn,
   };
 
   return (
     <ToolsContext.Provider value={contextValue}>
       {children}
 
-      {/* Floating tools button */}
-      <FloatingToolsButton isActive={isToolsActive} onToggle={toggleTools} />
+      {/* Floating tools button - only show if logged in */}
+      {isLoggedIn && (
+        <FloatingToolsButton isActive={isToolsActive} onToggle={toggleTools} />
+      )}
     </ToolsContext.Provider>
   );
 }

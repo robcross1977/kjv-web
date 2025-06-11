@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { pipe } from "fp-ts/function";
 import * as TE from "fp-ts/TaskEither";
 import * as A from "fp-ts/Array";
+import { PrismaClient } from "@prisma/client";
+import { auth0 } from "@/lib/auth0";
+
+const prisma = new PrismaClient();
 
 /**
  * GET /api/verses/read-status
@@ -17,6 +21,9 @@ export async function GET(request: NextRequest) {
   const result = await pipe(
     TE.tryCatch(
       async () => {
+        // Temporarily use demo user for testing
+        // TODO: Re-enable authentication once Auth0 is working
+        const userId = "demo-user";
         const { searchParams } = new URL(request.url);
         const book = searchParams.get("book");
         const chapter = searchParams.get("chapter");
@@ -36,14 +43,30 @@ export async function GET(request: NextRequest) {
           throw new Error("Invalid verses parameter");
         }
 
-        // TODO: Query database for read status
-        // For now, return empty array (all verses unread)
+        // Query database for read verses
+        const readVerses = await prisma.readVerse.findMany({
+          where: {
+            userId,
+            book,
+            chapter: parseInt(chapter),
+            verse: {
+              in: verses,
+            },
+          },
+          select: {
+            book: true,
+            chapter: true,
+            verse: true,
+            readAt: true,
+          },
+        });
+
         return {
-          userId: "demo-user", // Temporary demo user
+          userId,
           book,
           chapter: parseInt(chapter),
           verses,
-          readVerses: [], // Will be populated from database
+          readVerses,
         };
       },
       (error) => `Error: ${error}`

@@ -62,7 +62,7 @@ export function SelectableVerse({
       O.fold(
         () => "font-semibold text-primary mr-2",
         () =>
-          "font-semibold text-green-600 mr-2 w-6 h-6 rounded-full border-2 border-green-600 flex items-center justify-center text-sm"
+          "font-semibold text-green-600 mr-2 inline-flex items-center justify-center w-5 h-5 rounded-full border border-green-600 text-xs"
       )
     );
   };
