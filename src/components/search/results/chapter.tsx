@@ -5,7 +5,6 @@ import { Ord, contramap } from "fp-ts/Ord";
 import * as A from "fp-ts/Array";
 import * as N from "fp-ts/number";
 import * as R from "fp-ts/Record";
-import Link from "next/link";
 import { useState } from "react";
 import React from "react";
 
@@ -26,25 +25,7 @@ function ChaptersContainer({ book, chapter, verses }: ChapterContainerProps) {
 
   return (
     <div key={`${book} ${chapter}`}>
-      <TitleDisplay book={book} chapter={chapter} />
       <VerseDisplay book={book} chapter={chapter} verses={verses} show={show} />
-    </div>
-  );
-}
-
-type TitleDisplayProps = {
-  book: ValidBookName;
-  chapter: string;
-};
-function TitleDisplay({ book, chapter }: TitleDisplayProps) {
-  return (
-    <div className="mt-5">
-      <Link
-        className="text-2xl font-semibold"
-        href={`/?book=${book}&chapter=${chapter}`}
-      >
-        Chapter {chapter}
-      </Link>
     </div>
   );
 }

@@ -7,8 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url = env("POSTGRES_URL")
 }
 
 model User {
@@ -16,6 +15,7 @@ model User {
   email    String   @unique
   name     String?
   bookmarks Bookmark[]
+  readVerses ReadVerse[]
   
   @@map("user")
 }
@@ -29,4 +29,17 @@ model Bookmark {
   userId  String
 
   @@map("bookmark")
+}
+
+model ReadVerse {
+  id      String   @id @default(cuid())
+  book    String
+  chapter Int
+  verse   Int
+  readAt  DateTime @default(now())
+  user    User     @relation(fields: [userId], references: [uid])
+  userId  String
+
+  @@unique([userId, book, chapter, verse])
+  @@map("read_verse")
 }

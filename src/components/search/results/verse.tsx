@@ -1,14 +1,18 @@
-import { ValidBookName, VerseRecords } from "kingjames";
+import React from "react";
 import { pipe } from "fp-ts/function";
 import { Ord, contramap } from "fp-ts/Ord";
 import * as A from "fp-ts/Array";
 import * as N from "fp-ts/number";
 import * as R from "fp-ts/Record";
 import Link from "next/link";
-import React from "react";
+import { ValidBookName, VerseRecords } from "kingjames";
+import { SelectableVerse } from "@/components/verse/selectable-verse";
+import { ChapterHeader } from "@/components/chapter/chapter-header";
+import { useTools } from "@/components/tools/tools-provider";
 
 // Types
 type VerseElement = [string, React.JSX.Element];
+
 const byVerseRecord: Ord<VerseElement> = contramap((element: VerseElement) =>
   Number(element[0])
 )(N.Ord);
@@ -19,6 +23,7 @@ type TitleDisplayProps = {
   chapter: string;
   verse: string;
 };
+
 function TitleDisplay({ book, chapter, verse }: TitleDisplayProps) {
   return (
     <div className="mr-4">
@@ -29,13 +34,6 @@ function TitleDisplay({ book, chapter, verse }: TitleDisplayProps) {
   );
 }
 
-type TextDisplayProps = {
-  text: string;
-};
-function TextDisplay({ text }: TextDisplayProps) {
-  return <div>{text}</div>;
-}
-
 type VersesContainerProps = {
   book: ValidBookName;
   chapter: string;
@@ -43,6 +41,7 @@ type VersesContainerProps = {
   text: string;
   show: boolean;
 };
+
 function VersesContainer({
   book,
   chapter,
@@ -50,10 +49,23 @@ function VersesContainer({
   text,
   show,
 }: VersesContainerProps) {
+  const { isToolsActive, toggleVerseReadStatus, getVerseReadStatus } =
+    useTools();
+
+  const chapterNum = parseInt(chapter);
+  const verseNum = parseInt(verse);
+
   return (
-    <div key={`${book} ${chapter}:${verse}`} className="my-4 flex flex-row">
-      <TitleDisplay book={book} chapter={chapter} verse={verse} />
-      <TextDisplay text={text} />
+    <div key={`${book} ${chapter}:${verse}`} className="my-2">
+      <SelectableVerse
+        book={book}
+        chapter={chapterNum}
+        verse={verseNum}
+        text={text}
+        readStatus={getVerseReadStatus(book, chapterNum, verseNum)}
+        isToolsActive={isToolsActive}
+        onToggleReadStatus={toggleVerseReadStatus}
+      />
     </div>
   );
 }
@@ -65,13 +77,38 @@ type Props = {
   verses: VerseRecords;
   show: boolean;
 };
+
 export default function VersesDisplay({
   book,
   chapter,
   verses,
   show = false,
 }: Props) {
-  return pipe(
+  const { fetchReadStatus, setCurrentVerses, isToolsActive, markAllAsRead } =
+    useTools();
+
+  // Fetch read status and set current verses when component mounts
+  React.useEffect(() => {
+    const verseNumbers = pipe(
+      verses,
+      R.keys,
+      A.map((v) => parseInt(v))
+    );
+
+    if (verseNumbers.length > 0) {
+      fetchReadStatus(book, parseInt(chapter), verseNumbers);
+
+      // Set current verses for mark-all functionality
+      const currentVerses = verseNumbers.map((verseNum) => ({
+        book,
+        chapter: parseInt(chapter),
+        verse: verseNum,
+      }));
+      setCurrentVerses(currentVerses);
+    }
+  }, [book, chapter, verses, fetchReadStatus, setCurrentVerses]);
+
+  const verseElements = pipe(
     verses,
     R.mapWithIndex((verse, text) => (
       <VersesContainer
@@ -86,5 +123,17 @@ export default function VersesDisplay({
     R.toArray,
     A.sort(byVerseRecord),
     A.map(([verse, element]) => element)
+  );
+
+  return (
+    <div className="space-y-1">
+      <ChapterHeader
+        book={book}
+        chapter={parseInt(chapter)}
+        isToolsActive={isToolsActive}
+        onMarkAllAsRead={markAllAsRead}
+      />
+      {verseElements}
+    </div>
   );
 }

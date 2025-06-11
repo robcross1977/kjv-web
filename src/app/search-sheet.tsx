@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -20,6 +21,7 @@ type Props = {
   verse?: number;
   open?: boolean;
 };
+
 export function SearchSheet({ book, chapter, verse }: Props) {
   const [open, setOpen] = useState(false);
 
@@ -33,6 +35,9 @@ export function SearchSheet({ book, chapter, verse }: Props) {
       <SheetContent side="right">
         <SheetHeader>
           <SheetTitle className="text-3xl pb-2">Search</SheetTitle>
+          <SheetDescription>
+            Search through the Bible using different methods and filters.
+          </SheetDescription>
         </SheetHeader>
         <div className="flex flex-col w-full space-y-5">
           <Separator />
