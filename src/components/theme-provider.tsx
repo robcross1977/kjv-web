@@ -16,9 +16,10 @@ const renderWithoutTheme = (children: React.ReactNode) => <>{children}</>;
 /**
  * Renders children with NextThemesProvider after client-side mounting
  */
-const renderWithTheme =
-  (props: ThemeProviderProps) => (children: React.ReactNode) =>
-    <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+const renderWithTheme = (
+  props: ThemeProviderProps,
+  children: React.ReactNode
+) => <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 
 /**
  * Theme provider that handles SSR/client hydration properly using fp-ts patterns
@@ -35,7 +36,7 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
     O.fromPredicate((isMounted) => isMounted),
     O.fold(
       () => renderWithoutTheme(children),
-      () => renderWithTheme(props)(children)
+      () => renderWithTheme(props, children)
     )
   );
 }
