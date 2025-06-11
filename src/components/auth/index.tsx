@@ -1,23 +1,16 @@
 import Link from "next/link";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import Image from "next/image";
+import { auth0 } from "@/lib/auth0";
 
-export default function Auth() {
-  const { user, isLoading } = useUser();
-
-  if (isLoading) {
-    return <div className="lg:mr-5">Loading...</div>;
-  }
+export default async function Auth() {
+  const session = await auth0.getSession();
+  const user = session?.user;
 
   return (
     <div className="lg:mr-5 items-center justify-center">
       {user ? (
         <div className="flex flex-row items-center justify-center gap-2">
-          <Link
-            href="/api/auth/logout"
-            data-testid="logout"
-            className="lg:pr-3"
-          >
+          <Link href="/auth/logout" data-testid="logout" className="lg:pr-3">
             Logout
           </Link>
           {user.picture && (
@@ -33,7 +26,7 @@ export default function Auth() {
           )}
         </div>
       ) : (
-        <Link href="/api/auth/login" data-testid="login">
+        <Link href="/auth/login" data-testid="login">
           Login
         </Link>
       )}

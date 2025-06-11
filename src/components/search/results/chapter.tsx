@@ -7,9 +7,10 @@ import * as N from "fp-ts/number";
 import * as R from "fp-ts/Record";
 import Link from "next/link";
 import { useState } from "react";
+import React from "react";
 
 // Types
-type ChapterElement = [string, JSX.Element];
+type ChapterElement = [string, React.JSX.Element];
 const byChapterRecord: Ord<ChapterElement> = contramap(
   (element: ChapterElement) => Number(element[0])
 )(N.Ord);
@@ -60,12 +61,15 @@ export default function ChaptersDisplay({
   return pipe(
     chapters,
     R.mapWithIndex((chapter, verses) => (
-      <ChaptersContainer book={book} chapter={chapter} verses={verses} />
+      <ChaptersContainer
+        key={`${book} ${chapter}`}
+        book={book}
+        chapter={chapter}
+        verses={verses}
+      />
     )),
     R.toArray,
     A.sort(byChapterRecord),
-    A.map(([chapter, element]) => {
-      return { ...element, key: `${book} ${chapter}` };
-    })
+    A.map(([_chapter, element]) => element)
   );
 }

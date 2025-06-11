@@ -1,5 +1,3 @@
-"use client";
-
 import Auth from "@components/auth";
 
 function Title() {

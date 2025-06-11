@@ -24,7 +24,7 @@ export function SearchSheet({ book, chapter, verse }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
-    <Sheet open={open}>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" onClick={() => setOpen(!open)}>
           Search

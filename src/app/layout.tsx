@@ -1,8 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { UserProvider } from "@auth0/nextjs-auth0/client";
 import { Analytics } from "@vercel/analytics/react";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "@/components/theme-provider";
 import { SearchSheet } from "./search-sheet";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,8 +19,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={`${inter.className} w-full h-full min-h-screen`}>
-        <ThemeProvider defaultTheme="system" attribute="class">
-          <UserProvider>{children}</UserProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
         </ThemeProvider>
         <Analytics />
       </body>

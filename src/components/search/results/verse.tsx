@@ -5,9 +5,10 @@ import * as A from "fp-ts/Array";
 import * as N from "fp-ts/number";
 import * as R from "fp-ts/Record";
 import Link from "next/link";
+import React from "react";
 
 // Types
-type VerseElement = [string, JSX.Element];
+type VerseElement = [string, React.JSX.Element];
 const byVerseRecord: Ord<VerseElement> = contramap((element: VerseElement) =>
   Number(element[0])
 )(N.Ord);
@@ -74,6 +75,7 @@ export default function VersesDisplay({
     verses,
     R.mapWithIndex((verse, text) => (
       <VersesContainer
+        key={`${book} ${chapter}:${verse}`}
         book={book}
         chapter={chapter}
         verse={verse}
@@ -83,8 +85,6 @@ export default function VersesDisplay({
     )),
     R.toArray,
     A.sort(byVerseRecord),
-    A.map(([verse, element]) => {
-      return { ...element, key: `${book} ${chapter}:${verse}` };
-    })
+    A.map(([verse, element]) => element)
   );
 }

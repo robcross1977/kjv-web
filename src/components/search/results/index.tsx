@@ -89,20 +89,18 @@ function TitleDisplay({ title }: TitleProps) {
 }
 
 // Controller Logic
-function mapSingleBookRecord(title: ValidBookName, chapters: ChapterRecords) {
-  return <BookContainer title={title} chapters={chapters} />;
-}
-
 function displayTopLevelBookRecords(results: WrappedRecords) {
   return pipe(
     results.records,
-    R.mapWithIndex((title, chapters) =>
-      mapSingleBookRecord(title as ValidBookName, chapters)
-    ),
+    R.mapWithIndex((title, chapters) => (
+      <BookContainer
+        key={title}
+        title={title as ValidBookName}
+        chapters={chapters}
+      />
+    )),
     R.toArray,
-    A.map(([book, element]) => {
-      return { ...element, key: book };
-    })
+    A.map(([book, element]) => element)
   );
 }
 
