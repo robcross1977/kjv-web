@@ -40,7 +40,7 @@ export default function FreeSearch({ setOpen }: Props) {
         Search by bible reference
       </div>
       <div className="flex flex-row gap-1">
-        <div className="relative">
+        <div className="relative flex-grow">
           <SearchIcon />
 
           <Input

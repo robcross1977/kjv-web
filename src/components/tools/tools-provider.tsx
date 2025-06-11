@@ -6,21 +6,27 @@ import {
   ReactNode,
   useState,
   useCallback,
+  useEffect,
 } from "react";
 import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useReadStatus } from "@/hooks/use-read-status";
 import { FloatingToolsButton } from "./floating-tools-button";
+import { ToolsSheet, ToolSection } from "./tools-sheet";
 import { VerseReference } from "@/types/read-status";
 
 type ToolsContextValue = {
   // Tools state
   isToolsActive: boolean;
+  isToolsSheetOpen: boolean;
+  activeToolSection: ToolSection;
 
   // Tools actions
   toggleTools: () => void;
   closeTools: () => void;
+  openToolsSheet: (section?: ToolSection) => void;
+  closeToolsSheet: () => void;
   toggleVerseReadStatus: (
     book: string,
     chapter: number,
@@ -65,6 +71,9 @@ type Props = {
  */
 export function ToolsProvider({ children }: Props) {
   const [isToolsActive, setIsToolsActive] = useState(false);
+  const [isToolsSheetOpen, setIsToolsSheetOpen] = useState(false);
+  const [activeToolSection, setActiveToolSection] =
+    useState<ToolSection>("search");
   const [currentVerses, setCurrentVerses] = useState<VerseReference[]>([]);
 
   // Check if user is logged in
@@ -92,6 +101,15 @@ export function ToolsProvider({ children }: Props) {
     setIsToolsActive(false);
   }, []);
 
+  const openToolsSheet = useCallback((section: ToolSection = "search") => {
+    setActiveToolSection(section);
+    setIsToolsSheetOpen(true);
+  }, []);
+
+  const closeToolsSheet = useCallback(() => {
+    setIsToolsSheetOpen(false);
+  }, []);
+
   const toggleVerseReadStatus = useCallback(
     async (book: string, chapter: number, verse: number) => {
       if (!isLoggedIn) return;
@@ -114,13 +132,50 @@ export function ToolsProvider({ children }: Props) {
     await markVersesAsRead(currentVerses);
   }, [isLoggedIn, currentVerses, markVersesAsRead]);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Only handle shortcuts if not typing in an input
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      switch (event.key.toLowerCase()) {
+        case "t":
+          if (isLoggedIn) {
+            event.preventDefault();
+            if (isToolsSheetOpen) {
+              closeToolsSheet();
+            } else {
+              openToolsSheet("reading");
+            }
+          }
+          break;
+        case "/":
+          event.preventDefault();
+          openToolsSheet("search");
+          break;
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isLoggedIn, isToolsSheetOpen, openToolsSheet, closeToolsSheet]);
+
   const contextValue: ToolsContextValue = {
     // Tools state
     isToolsActive: isLoggedIn && isToolsActive, // Only active if logged in
+    isToolsSheetOpen,
+    activeToolSection,
 
     // Tools actions
     toggleTools,
     closeTools,
+    openToolsSheet,
+    closeToolsSheet,
     toggleVerseReadStatus,
     markAllAsRead,
 
@@ -148,6 +203,18 @@ export function ToolsProvider({ children }: Props) {
       {isLoggedIn && (
         <FloatingToolsButton isActive={isToolsActive} onToggle={toggleTools} />
       )}
+
+      {/* Tools sheet */}
+      <ToolsSheet
+        isOpen={isToolsSheetOpen}
+        onOpenChange={setIsToolsSheetOpen}
+        defaultSection={activeToolSection}
+        currentContext={{
+          book: currentVerses[0]?.book,
+          chapter: currentVerses[0]?.chapter,
+          verses: currentVerses.map((v) => v.verse),
+        }}
+      />
     </ToolsContext.Provider>
   );
 }
