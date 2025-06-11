@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Settings, X } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { BookCheck } from "lucide-react";
 import { pipe } from "fp-ts/function";
 import * as O from "fp-ts/Option";
 import { useEffect, useState } from "react";
@@ -12,8 +12,8 @@ type Props = {
 };
 
 /**
- * Floating tools button that appears in bottom-right corner
- * Toggles tools mode on/off with keyboard shortcut support
+ * Floating mark-as-read toggle that appears in bottom-right corner
+ * Enables/disables interactive verse marking with keyboard shortcut support
  */
 export function FloatingToolsButton({ isActive, onToggle }: Props) {
   const [mounted, setMounted] = useState(false);
@@ -58,26 +58,18 @@ export function FloatingToolsButton({ isActive, onToggle }: Props) {
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <Button
-        onClick={onToggle}
-        size="lg"
-        variant={isActive ? "default" : "outline"}
-        className={`
-          rounded-full w-14 h-14 shadow-lg transition-all duration-200
-          ${
-            isActive
-              ? "bg-primary text-primary-foreground hover:bg-primary/90"
-              : "bg-background border-2 hover:bg-accent"
-          }
-        `}
-        title={`${isActive ? "Close" : "Open"} Tools (Press T)`}
-      >
-        {isActive ? (
-          <X className="h-6 w-6" />
-        ) : (
-          <Settings className="h-6 w-6" />
-        )}
-      </Button>
+      <div className="bg-background border border-border rounded-lg shadow-lg p-3 min-w-[160px]">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <BookCheck className="h-4 w-4 text-muted-foreground" />
+            <div className="text-sm">
+              <div className="font-medium">Mark as Read</div>
+              <div className="text-xs text-muted-foreground">Press T</div>
+            </div>
+          </div>
+          <Switch checked={isActive} onCheckedChange={onToggle} />
+        </div>
+      </div>
     </div>
   );
 }

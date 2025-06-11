@@ -1,5 +1,6 @@
 import Auth from "@components/auth";
 import Link from "next/link";
+import { MarkAsReadToggle } from "./mark-as-read-toggle";
 
 function Title() {
   return (
@@ -26,7 +27,8 @@ export default function Header() {
       <div className="flex lg:flex-col justify-between items-center lg:items-start w-11/12 lg:w-2/3 mx-auto">
         <div className="flex justify-between items-center w-full">
           <Title />
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex lg:items-center lg:gap-3">
+            <MarkAsReadToggle />
             <Auth />
           </div>
         </div>

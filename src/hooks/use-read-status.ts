@@ -90,98 +90,108 @@ export function useReadStatus() {
   );
 
   /**
-   * Mark verses as read
+   * Mark verses as read with optimistic updates
    */
-  const markVersesAsRead = useCallback(async (verses: VerseReference[]) => {
-    setIsLoading(true);
-    setError(null);
+  const markVersesAsRead = useCallback(
+    async (verses: VerseReference[]) => {
+      setError(null);
 
-    const result = await pipe(
-      TE.tryCatch(
-        () =>
-          fetch("/api/verses/mark-read", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ verses }),
-          }),
-        (error) => `Network error: ${error}`
-      ),
-      TE.chain((response) =>
-        response.ok
-          ? TE.tryCatch(
-              () => response.json(),
-              (error) => `JSON parse error: ${error}`
-            )
-          : TE.left(`HTTP error: ${response.status}`)
-      )
-    )();
+      // Optimistic update - immediately mark as read
+      const statusUpdates: ReadStatusMap = {};
+      verses.forEach(({ book, chapter, verse }) => {
+        const key = createVerseKey(book, chapter, verse);
+        statusUpdates[key] = "read";
+      });
 
-    setIsLoading(false);
+      const previousState = readStatusMap;
+      setReadStatusMap((prev) => ({ ...prev, ...statusUpdates }));
 
-    if (result._tag === "Left") {
-      setError(result.left);
-      return false;
-    }
+      // Make API call
+      const result = await pipe(
+        TE.tryCatch(
+          () =>
+            fetch("/api/verses/mark-read", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ verses }),
+            }),
+          (error) => `Network error: ${error}`
+        ),
+        TE.chain((response) =>
+          response.ok
+            ? TE.tryCatch(
+                () => response.json(),
+                (error) => `JSON parse error: ${error}`
+              )
+            : TE.left(`HTTP error: ${response.status}`)
+        )
+      )();
 
-    // Update local state
-    const statusUpdates: ReadStatusMap = {};
-    verses.forEach(({ book, chapter, verse }) => {
-      const key = createVerseKey(book, chapter, verse);
-      statusUpdates[key] = "read";
-    });
+      if (result._tag === "Left") {
+        // Revert optimistic update on error
+        setReadStatusMap(previousState);
+        setError(result.left);
+        return false;
+      }
 
-    setReadStatusMap((prev) => ({ ...prev, ...statusUpdates }));
-    return true;
-  }, []);
+      return true;
+    },
+    [readStatusMap]
+  );
 
   /**
-   * Mark verses as unread
+   * Mark verses as unread with optimistic updates
    */
-  const markVersesAsUnread = useCallback(async (verses: VerseReference[]) => {
-    setIsLoading(true);
-    setError(null);
+  const markVersesAsUnread = useCallback(
+    async (verses: VerseReference[]) => {
+      setError(null);
 
-    const result = await pipe(
-      TE.tryCatch(
-        () =>
-          fetch("/api/verses/mark-read", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ verses, action: "unmark" }),
-          }),
-        (error) => `Network error: ${error}`
-      ),
-      TE.chain((response) =>
-        response.ok
-          ? TE.tryCatch(
-              () => response.json(),
-              (error) => `JSON parse error: ${error}`
-            )
-          : TE.left(`HTTP error: ${response.status}`)
-      )
-    )();
+      // Optimistic update - immediately mark as unread
+      const statusUpdates: ReadStatusMap = {};
+      verses.forEach(({ book, chapter, verse }) => {
+        const key = createVerseKey(book, chapter, verse);
+        statusUpdates[key] = "unread";
+      });
 
-    setIsLoading(false);
+      const previousState = readStatusMap;
+      setReadStatusMap((prev) => ({ ...prev, ...statusUpdates }));
 
-    if (result._tag === "Left") {
-      setError(result.left);
-      return false;
-    }
+      // Make API call
+      const result = await pipe(
+        TE.tryCatch(
+          () =>
+            fetch("/api/verses/mark-read", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ verses, action: "unmark" }),
+            }),
+          (error) => `Network error: ${error}`
+        ),
+        TE.chain((response) =>
+          response.ok
+            ? TE.tryCatch(
+                () => response.json(),
+                (error) => `JSON parse error: ${error}`
+              )
+            : TE.left(`HTTP error: ${response.status}`)
+        )
+      )();
 
-    // Update local state
-    const statusUpdates: ReadStatusMap = {};
-    verses.forEach(({ book, chapter, verse }) => {
-      const key = createVerseKey(book, chapter, verse);
-      statusUpdates[key] = "unread";
-    });
+      if (result._tag === "Left") {
+        // Revert optimistic update on error
+        setReadStatusMap(previousState);
+        setError(result.left);
+        return false;
+      }
 
-    setReadStatusMap((prev) => ({ ...prev, ...statusUpdates }));
-    return true;
-  }, []);
+      return true;
+    },
+    [readStatusMap]
+  );
 
   /**
    * Get read status for a specific verse

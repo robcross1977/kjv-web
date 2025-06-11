@@ -12,7 +12,6 @@ import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useReadStatus } from "@/hooks/use-read-status";
-import { FloatingToolsButton } from "./floating-tools-button";
 import { ToolsSheet, ToolSection } from "./tools-sheet";
 import { VerseReference } from "@/types/read-status";
 
@@ -198,11 +197,6 @@ export function ToolsProvider({ children }: Props) {
   return (
     <ToolsContext.Provider value={contextValue}>
       {children}
-
-      {/* Floating tools button - only show if logged in */}
-      {isLoggedIn && (
-        <FloatingToolsButton isActive={isToolsActive} onToggle={toggleTools} />
-      )}
 
       {/* Tools sheet */}
       <ToolsSheet

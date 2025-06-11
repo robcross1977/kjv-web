@@ -88,8 +88,8 @@ export function ToolsSheet({
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-2xl">
-        <SheetHeader className="bg-gray-100 rounded-lg p-4 mb-6">
-          <SheetTitle className="flex items-center gap-2 text-xl font-bold">
+        <SheetHeader className="bg-gray-100 rounded-lg p-4 mb-6 mt-4 border-l-4 border-primary">
+          <SheetTitle className="flex items-center gap-2 text-xl font-bold text-primary">
             <Wrench className="h-6 w-6" />
             Bible Study Tools
           </SheetTitle>

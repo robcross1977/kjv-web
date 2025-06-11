@@ -2,8 +2,6 @@
 
 import { pipe } from "fp-ts/function";
 import * as O from "fp-ts/Option";
-import * as A from "fp-ts/Array";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,8 +10,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { BookOpen, CheckCircle, Circle, RotateCcw } from "lucide-react";
+import { BookOpen, BarChart3 } from "lucide-react";
 import { useTools } from "./tools-provider";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   currentContext?: {
@@ -25,10 +24,10 @@ type Props = {
 
 /**
  * Reading section for the unified tools sheet
- * Contains mark-as-read functionality and reading progress tracking
+ * Contains current chapter context and reading progress tracking
  */
 export function ReadingSection({ currentContext }: Props) {
-  const { markAllAsRead, isLoading, error, clearError } = useTools();
+  const { isToolsActive, isLoggedIn, toggleTools } = useTools();
 
   const getCurrentChapterInfo = () => {
     return pipe(
@@ -53,10 +52,21 @@ export function ReadingSection({ currentContext }: Props) {
     return `${capitalizedBook} ${chapter}`;
   };
 
-  const handleMarkAllAsRead = async () => {
-    if (error) clearError();
-    await markAllAsRead();
-  };
+  if (!isLoggedIn) {
+    return (
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <BookOpen className="h-4 w-4" />
+            Reading Tools
+          </CardTitle>
+          <CardDescription>
+            Sign in to access reading tools and track your progress
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -69,10 +79,10 @@ export function ReadingSection({ currentContext }: Props) {
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <BookOpen className="h-4 w-4" />
-                  No Chapter Selected
+                  Current Chapter
                 </CardTitle>
                 <CardDescription>
-                  Navigate to a chapter to see reading tools
+                  Navigate to a chapter to see context
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -88,41 +98,24 @@ export function ReadingSection({ currentContext }: Props) {
                   {verseCount} verses in this chapter
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex flex-col gap-2">
+              <CardContent>
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    {isToolsActive
+                      ? "Mark as Read mode is active - click verses to toggle their status"
+                      : "Enable Mark as Read mode to interact with verses"}
+                  </p>
                   <Button
-                    onClick={handleMarkAllAsRead}
-                    disabled={isLoading}
+                    onClick={toggleTools}
+                    variant={isToolsActive ? "default" : "outline"}
+                    size="sm"
                     className="w-full"
-                    variant="default"
                   >
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    {isLoading ? "Marking..." : "Mark All as Read"}
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    disabled={true} // TODO: Implement mark all as unread
-                  >
-                    <RotateCcw className="h-4 w-4 mr-2" />
-                    Mark All as Unread
+                    {isToolsActive
+                      ? "Disable Mark as Read Mode"
+                      : "Enable Mark as Read Mode"}
                   </Button>
                 </div>
-
-                {error && (
-                  <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-                    <p className="text-sm text-destructive">{error}</p>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={clearError}
-                      className="mt-2 h-auto p-0 text-destructive hover:text-destructive"
-                    >
-                      Dismiss
-                    </Button>
-                  </div>
-                )}
               </CardContent>
             </Card>
           )
@@ -132,7 +125,10 @@ export function ReadingSection({ currentContext }: Props) {
       {/* Reading Progress */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Reading Progress</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <BarChart3 className="h-4 w-4" />
+            Reading Progress
+          </CardTitle>
           <CardDescription>Track your Bible reading journey</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -146,27 +142,6 @@ export function ReadingSection({ currentContext }: Props) {
               Coming soon: Track your reading across all books
             </p>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Quick Actions</CardTitle>
-          <CardDescription>Common reading tasks</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <Button variant="outline" className="w-full justify-start" disabled>
-            <Circle className="h-4 w-4 mr-2" />
-            Mark Verse as Read
-          </Button>
-          <Button variant="outline" className="w-full justify-start" disabled>
-            <BookOpen className="h-4 w-4 mr-2" />
-            Reading Plan
-          </Button>
-          <p className="text-xs text-muted-foreground mt-2">
-            More features coming soon
-          </p>
         </CardContent>
       </Card>
     </div>
