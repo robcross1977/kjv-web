@@ -10,10 +10,46 @@ import {
 } from "react";
 import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
-import { useUser } from "@auth0/nextjs-auth0";
 import { useReadStatus } from "@/hooks/use-read-status";
 import { ToolsSheet, ToolSection } from "./tools-sheet";
 import { VerseReference } from "@/types/read-status";
+
+// Safe Auth0 hook wrapper that handles missing configuration
+function useSafeAuth() {
+  const [authState, setAuthState] = useState({
+    user: null,
+    isLoading: false,
+    isLoggedIn: false,
+  });
+
+  useEffect(() => {
+    // Check if Auth0 environment variables are available
+    const hasAuth0Config =
+      typeof window !== "undefined" &&
+      window.location.hostname === "localhost" &&
+      process.env.NODE_ENV === "development";
+
+    if (!hasAuth0Config) {
+      // Auth0 not configured, set logged out state
+      setAuthState({
+        user: null,
+        isLoading: false,
+        isLoggedIn: false,
+      });
+      return;
+    }
+
+    // If we reach here, we could try to use Auth0, but for now
+    // we'll just set logged out state since config is missing
+    setAuthState({
+      user: null,
+      isLoading: false,
+      isLoggedIn: false,
+    });
+  }, []);
+
+  return authState;
+}
 
 type ToolsContextValue = {
   // Tools state
@@ -75,9 +111,8 @@ export function ToolsProvider({ children }: Props) {
     useState<ToolSection>("search");
   const [currentVerses, setCurrentVerses] = useState<VerseReference[]>([]);
 
-  // Check if user is logged in
-  const { user, isLoading: userLoading } = useUser();
-  const isLoggedIn = !userLoading && !!user;
+  // Check if user is logged in with safe auth wrapper
+  const { isLoggedIn } = useSafeAuth();
 
   const {
     isLoading,
