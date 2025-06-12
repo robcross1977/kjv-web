@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, BookOpen, Bookmark, Wrench } from "lucide-react";
 import { SearchSection } from "./search-section";
 import { ReadingSection } from "./reading-section";
+import { BookmarksSection } from "../bookmarks/bookmarks-section";
 
 export type ToolSection = "search" | "reading" | "bookmarks";
 
@@ -161,15 +162,7 @@ export function ToolsSheet({
                     Save and organize your favorite passages
                   </p>
                 </div>
-                <div className="flex items-center justify-center py-12 text-muted-foreground">
-                  <div className="text-center">
-                    <Bookmark className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p className="text-lg font-medium">Bookmarks Coming Soon</p>
-                    <p className="text-sm">
-                      Save your favorite verses and passages for quick access
-                    </p>
-                  </div>
-                </div>
+                <BookmarksSection currentContext={currentContext} />
               </TabsContent>
             </div>
           </Tabs>

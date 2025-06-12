@@ -21,13 +21,37 @@ model User {
 }
 
 model Bookmark {
-  id      Int      @id @default(autoincrement())
-  book    String
-  chapter String
-  verse   String
-  user    User     @relation(fields: [userId], references: [uid])
-  userId  String
+  id          String   @id @default(cuid())
+  name        String   // User-defined bookmark name
+  description String?  // Optional description
 
+  // Reference components (normalized)
+  book        String   // Normalized book name
+  startChapter Int     // Starting chapter
+  endChapter   Int?    // Ending chapter (for ranges)
+  startVerse   Int?    // Starting verse (null for entire chapters)
+  endVerse     Int?    // Ending verse (for ranges)
+
+  // Original reference for display
+  originalRef String   // Original user input
+  normalizedRef String // Normalized reference for display
+
+  // Organization
+  tags        String[] // Array of tags for categorization
+  category    String?  // Primary category
+  color       String?  // Color coding
+
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  accessCount Int      @default(0) // Track usage frequency
+  lastAccessed DateTime? // Last time bookmark was used
+
+  // User relationship
+  user        User     @relation(fields: [userId], references: [uid])
+  userId      String
+
+  @@unique([userId, name]) // Unique bookmark names per user
   @@map("bookmark")
 }
 

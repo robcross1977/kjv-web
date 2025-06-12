@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { ValidBookName } from "kingjames";
+import { BookmarkButton } from "@/components/bookmarks/bookmark-button";
 
 type Props = {
   book: ValidBookName;
@@ -35,9 +36,18 @@ export function ChapterHeader({
         {formatBookName(book)} {chapter}
       </h1>
 
-      {/* Mark all as read button - aligned with verse circles */}
-      {isToolsActive && (
-        <div className="ml-2 mb-2">
+      {/* Action buttons - aligned with verse circles */}
+      <div className="ml-2 mb-2 flex items-center gap-2">
+        {/* Bookmark button - always visible */}
+        <BookmarkButton
+          book={book}
+          chapter={chapter}
+          variant="outline"
+          size="sm"
+        />
+
+        {/* Mark all as read button - only when tools active */}
+        {isToolsActive && (
           <Button
             onClick={onMarkAllAsRead}
             variant="outline"
@@ -47,8 +57,8 @@ export function ChapterHeader({
             <CheckCircle className="h-4 w-4" />
             Mark All as Read
           </Button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
