@@ -3,6 +3,7 @@
 import * as E from "fp-ts/Either";
 import { useState } from "react";
 import { useBookmarks } from "@/hooks/use-bookmarks";
+import { useTools } from "@/components/tools/tools-provider";
 import { BookmarkSearch } from "./bookmark-search";
 import { BookmarksList } from "./bookmarks-list";
 import { CreateBookmarkForm } from "./create-bookmark-form";
@@ -23,6 +24,7 @@ type Props = {
  */
 export function BookmarksSection({ currentContext }: Props) {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const { isLoggedIn } = useTools();
   const {
     bookmarks,
     loading,
@@ -38,7 +40,7 @@ export function BookmarksSection({ currentContext }: Props) {
     updateSearch,
     goToPage,
     refresh,
-  } = useBookmarks();
+  } = useBookmarks(undefined, isLoggedIn);
 
   const handleCreateBookmark = async (data: any) => {
     const result = await createBookmark(data);
@@ -98,7 +100,7 @@ export function BookmarksSection({ currentContext }: Props) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 bg-white text-gray-900">
       {/* Search and Controls */}
       <div className="space-y-3">
         <BookmarkSearch searchParams={searchParams} onSearch={updateSearch} />

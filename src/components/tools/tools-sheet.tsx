@@ -88,7 +88,7 @@ export function ToolsSheet({
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-2xl">
+      <SheetContent className="w-full sm:max-w-2xl bg-white">
         <SheetHeader className="bg-gray-100 rounded-lg p-4 mb-6 mt-4 border-l-4 border-primary">
           <SheetTitle className="flex items-center gap-2 text-xl font-bold text-primary">
             <Wrench className="h-6 w-6" />
@@ -107,18 +107,24 @@ export function ToolsSheet({
             }
             className="w-full"
           >
-            <TabsList className="grid w-full grid-cols-3 mb-6">
-              <TabsTrigger value="search" className="flex items-center gap-2">
+            <TabsList className="grid w-full grid-cols-3 mb-6 bg-gray-100">
+              <TabsTrigger
+                value="search"
+                className="flex items-center gap-2 text-gray-700 data-[state=active]:text-primary data-[state=active]:bg-white"
+              >
                 {getSectionIcon("search")}
                 <span className="hidden sm:inline">Search</span>
               </TabsTrigger>
-              <TabsTrigger value="reading" className="flex items-center gap-2">
+              <TabsTrigger
+                value="reading"
+                className="flex items-center gap-2 text-gray-700 data-[state=active]:text-primary data-[state=active]:bg-white"
+              >
                 {getSectionIcon("reading")}
                 <span className="hidden sm:inline">Reading</span>
               </TabsTrigger>
               <TabsTrigger
                 value="bookmarks"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-gray-700 data-[state=active]:text-primary data-[state=active]:bg-white"
               >
                 {getSectionIcon("bookmarks")}
                 <span className="hidden sm:inline">Bookmarks</span>

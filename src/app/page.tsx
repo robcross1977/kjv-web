@@ -1,5 +1,6 @@
 import Search from "@/components/search";
 import Header from "@components/shared/header";
+import LastReferenceNavigator from "@/components/last-reference-navigator";
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/lib/function";
 import {
@@ -55,6 +56,10 @@ export default async function Home(props: Props) {
   const searchParams = await props.searchParams;
   const { query, book, chapter, verse } = searchParams ?? {};
 
+  // Check if user has any current search parameters
+  const hasCurrentSearch = !!(query || book || chapter || verse);
+  // Force cache bust
+
   return pipe(
     O.Do,
     O.apS("finalQuery", getFinalQueryFromString(book, chapter, verse, query)),
@@ -63,11 +68,13 @@ export default async function Home(props: Props) {
       return pipe(
         <div>
           <Header />
+          <LastReferenceNavigator hasCurrentSearch={hasCurrentSearch} />
           <main className="w-full flex flex-col mx-auto">
             <Search
               book={book}
               chapter={chapter}
               verse={verse}
+              query={query}
               results={results}
             />
           </main>
@@ -88,12 +95,10 @@ function getBasicBook(book?: ValidBookName) {
 }
 
 function getBasicChapter(book: ValidBookName, chapter?: number) {
-  return pipe(
-    chapter,
-    O.fromNullable,
-    O.chain(O.fromPredicate((c) => c >= 1 && c <= chapterCountFrom(book))),
-    O.map(Number)
-  );
+  if (!chapter) return O.none;
+  const totalChapters = chapterCountFrom(book.toLowerCase() as ValidBookName);
+  if (chapter < 1 || chapter > totalChapters) return O.none;
+  return O.some(chapter);
 }
 
 function verseInBookChapter(
@@ -101,22 +106,21 @@ function verseInBookChapter(
   chapter: number,
   verse: number
 ) {
-  return pipe(
-    O.Do,
-    O.apS("maxVerseCount", verseCountFrom(book, chapter)),
-    O.map(({ maxVerseCount }) => verse >= 1 && verse <= maxVerseCount),
-    O.getOrElse(() => false)
+  const verseCountOption = verseCountFrom(
+    book.toLowerCase() as ValidBookName,
+    chapter
   );
+  if (O.isNone(verseCountOption)) return false;
+  const maxVerses = verseCountOption.value;
+  return verse >= 1 && verse <= maxVerses;
 }
 
 function getBasicVerse(book: ValidBookName, chapter: number, verse?: number) {
-  return pipe(
-    verse,
-    O.fromNullable,
-    O.chain(O.fromPredicate((v) => verseInBookChapter(book, chapter, v))),
-    O.map((v) => `:${v}`),
-    O.alt(() => O.some(""))
-  );
+  if (!verse) return O.some("");
+  if (verseInBookChapter(book, chapter, verse)) {
+    return O.some(`:${verse}`);
+  }
+  return O.some("");
 }
 
 function getBasicQuery(book?: ValidBookName, chapter?: number, verse?: number) {

@@ -1,9 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Wrench } from "lucide-react";
 import { ValidBookName } from "kingjames";
 import { BookmarkButton } from "@/components/bookmarks/bookmark-button";
+import { useTools } from "@/components/tools/tools-provider";
 
 type Props = {
   book: ValidBookName;
@@ -22,6 +23,8 @@ export function ChapterHeader({
   isToolsActive,
   onMarkAllAsRead,
 }: Props) {
+  const { openToolsSheet } = useTools();
+
   const formatBookName = (book: string) => {
     return book
       .split(" ")
@@ -38,7 +41,19 @@ export function ChapterHeader({
 
       {/* Action buttons - aligned with verse circles */}
       <div className="ml-2 mb-2 flex items-center gap-2">
-        {/* Bookmark button - always visible */}
+        {/* Tools button - opens unified tools sheet */}
+        <Button
+          onClick={() => openToolsSheet("search")}
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2"
+          title="Open Bible study tools (Press T for reading tools, / for search)"
+        >
+          <Wrench className="h-4 w-4" />
+          <span className="hidden sm:inline">Tools</span>
+        </Button>
+
+        {/* Bookmark button - authentication-aware */}
         <BookmarkButton
           book={book}
           chapter={chapter}

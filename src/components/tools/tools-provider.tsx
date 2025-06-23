@@ -8,44 +8,74 @@ import {
   useCallback,
   useEffect,
 } from "react";
-import { pipe } from "fp-ts/function";
-import * as A from "fp-ts/Array";
 import { useReadStatus } from "@/hooks/use-read-status";
 import { ToolsSheet, ToolSection } from "./tools-sheet";
 import { VerseReference } from "@/types/read-status";
 
 // Safe Auth0 hook wrapper that handles missing configuration
+// NOTE: Auth0 v4 has compatibility issues with Next.js 15 causing "Headers.append" errors
+// Using development fallback until Auth0 fixes the compatibility issue
 function useSafeAuth() {
-  const [authState, setAuthState] = useState({
+  const [authState, setAuthState] = useState<{
+    user: { sub: string } | null;
+    isLoading: boolean;
+    isLoggedIn: boolean;
+  }>({
     user: null,
-    isLoading: false,
+    isLoading: true, // Start with loading state
     isLoggedIn: false,
   });
 
   useEffect(() => {
-    // Check if Auth0 environment variables are available
-    const hasAuth0Config =
-      typeof window !== "undefined" &&
-      window.location.hostname === "localhost" &&
-      process.env.NODE_ENV === "development";
+    const checkAuth = async () => {
+      console.log("AUTH DEBUG: Starting authentication check...");
 
-    if (!hasAuth0Config) {
-      // Auth0 not configured, set logged out state
-      setAuthState({
-        user: null,
-        isLoading: false,
-        isLoggedIn: false,
-      });
-      return;
-    }
+      try {
+        // Check if user is actually authenticated by making a lightweight request
+        const response = await fetch("/api/user/last-reference", {
+          method: "HEAD", // Just check headers, don't need response body
+        });
 
-    // If we reach here, we could try to use Auth0, but for now
-    // we'll just set logged out state since config is missing
-    setAuthState({
-      user: null,
-      isLoading: false,
-      isLoggedIn: false,
-    });
+        if (response.status === 401) {
+          // User is not authenticated
+          console.log("AUTH DEBUG: User is NOT authenticated (401)");
+          setAuthState({
+            user: null,
+            isLoading: false,
+            isLoggedIn: false,
+          });
+        } else if (response.ok) {
+          // User is authenticated
+          console.log("AUTH DEBUG: User is authenticated (200)");
+          setAuthState({
+            user: { sub: "authenticated-user" },
+            isLoading: false,
+            isLoggedIn: true,
+          });
+        } else {
+          // Some other error - assume not authenticated to be safe
+          console.log(
+            "AUTH DEBUG: Authentication error, status:",
+            response.status
+          );
+          setAuthState({
+            user: null,
+            isLoading: false,
+            isLoggedIn: false,
+          });
+        }
+      } catch (error) {
+        // Network error - assume not authenticated
+        console.log("AUTH DEBUG: Network error during auth check:", error);
+        setAuthState({
+          user: null,
+          isLoading: false,
+          isLoggedIn: false,
+        });
+      }
+    };
+
+    checkAuth();
   }, []);
 
   return authState;
@@ -91,6 +121,7 @@ type ToolsContextValue = {
 
   // Auth state
   isLoggedIn: boolean;
+  isAuthLoading: boolean;
 };
 
 const ToolsContext = createContext<ToolsContextValue | null>(null);
@@ -112,7 +143,7 @@ export function ToolsProvider({ children }: Props) {
   const [currentVerses, setCurrentVerses] = useState<VerseReference[]>([]);
 
   // Check if user is logged in with safe auth wrapper
-  const { isLoggedIn } = useSafeAuth();
+  const { isLoggedIn, isLoading: isAuthLoading } = useSafeAuth();
 
   const {
     isLoading,
@@ -227,6 +258,7 @@ export function ToolsProvider({ children }: Props) {
 
     // Auth state
     isLoggedIn,
+    isAuthLoading,
   };
 
   return (

@@ -12,8 +12,9 @@ datasource db {
 
 model User {
   uid      String   @id @unique
-  email    String   @unique
+  email    String?   @unique
   name     String?
+  lastReference String? // Last Bible reference user visited (e.g., "John 3:16")
   bookmarks Bookmark[]
   readVerses ReadVerse[]
   
