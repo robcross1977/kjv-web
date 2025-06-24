@@ -14,6 +14,7 @@ import {
 import { Bookmark, BookmarkPlus } from "lucide-react";
 import { CreateBookmarkForm } from "./create-bookmark-form";
 import { useBookmarks } from "@/hooks/use-bookmarks";
+import { useTools } from "@/components/tools/tools-provider";
 import { type CreateBookmarkRequest } from "@/types/bookmark";
 
 type Props = {
@@ -39,7 +40,8 @@ export function BookmarkButton({
   showText = true,
 }: Props) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { createBookmark } = useBookmarks();
+  const { isLoggedIn } = useTools();
+  const { createBookmark } = useBookmarks(undefined, isLoggedIn);
 
   const reference =
     verses && verses.length > 0
@@ -59,6 +61,11 @@ export function BookmarkButton({
     }
   };
 
+  // Don't render bookmark button if user is not authenticated
+  if (!isLoggedIn) {
+    return null;
+  }
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
@@ -72,7 +79,7 @@ export function BookmarkButton({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Bookmark className="h-5 w-5" />

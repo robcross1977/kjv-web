@@ -22,8 +22,13 @@ type BookmarkState = {
 
 /**
  * Custom hook for managing bookmarks
+ * @param initialParams - Initial search parameters
+ * @param enabled - Whether to fetch data automatically (default: true)
  */
-export function useBookmarks(initialParams?: Partial<BookmarkSearchParams>) {
+export function useBookmarks(
+  initialParams?: Partial<BookmarkSearchParams>,
+  enabled: boolean = true
+) {
   const [state, setState] = useState<BookmarkState>({
     bookmarks: [],
     loading: false,
@@ -67,7 +72,20 @@ export function useBookmarks(initialParams?: Partial<BookmarkSearchParams>) {
           searchParams.set("page", params.page.toString());
           searchParams.set("limit", params.limit.toString());
 
-          const response = await fetch(`/api/bookmarks?${searchParams}`);
+          const response = await fetch(`/api/bookmarks?${searchParams}`, {
+            credentials: "include",
+          });
+
+          // 401 Unauthorized is normal when user is not logged in
+          if (response.status === 401) {
+            return {
+              bookmarks: [],
+              total: 0,
+              page: 1,
+              limit: params.limit,
+              totalPages: 0,
+            } as BookmarkListResponse;
+          }
 
           if (!response.ok) {
             const errorData = await response.json();
@@ -113,6 +131,7 @@ export function useBookmarks(initialParams?: Partial<BookmarkSearchParams>) {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(data),
+              credentials: "include",
             });
 
             if (!response.ok) {
@@ -151,6 +170,7 @@ export function useBookmarks(initialParams?: Partial<BookmarkSearchParams>) {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(data),
+              credentials: "include",
             });
 
             if (!response.ok) {
@@ -189,6 +209,7 @@ export function useBookmarks(initialParams?: Partial<BookmarkSearchParams>) {
           async () => {
             const response = await fetch(`/api/bookmarks/${id}`, {
               method: "DELETE",
+              credentials: "include",
             });
 
             if (!response.ok) {
@@ -224,7 +245,9 @@ export function useBookmarks(initialParams?: Partial<BookmarkSearchParams>) {
       const result = await pipe(
         TE.tryCatch(
           async () => {
-            const response = await fetch(`/api/bookmarks/${id}`);
+            const response = await fetch(`/api/bookmarks/${id}`, {
+              credentials: "include",
+            });
 
             if (!response.ok) {
               const errorData = await response.json();
@@ -283,11 +306,13 @@ export function useBookmarks(initialParams?: Partial<BookmarkSearchParams>) {
     fetchBookmarks(searchParams);
   }, [searchParams, fetchBookmarks]);
 
-  // Initial fetch
+  // Initial fetch - only if enabled
   useEffect(() => {
-    fetchBookmarks(searchParams);
+    if (enabled) {
+      fetchBookmarks(searchParams);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run once on mount
+  }, [enabled]); // Run when enabled changes or on mount
 
   return {
     // State

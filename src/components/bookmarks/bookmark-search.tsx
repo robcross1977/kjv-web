@@ -74,7 +74,7 @@ export function BookmarkSearch({ searchParams, onSearch }: Props) {
   );
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4 bg-white">
       {/* Search Input */}
       <div className="flex gap-2">
         <div className="relative flex-1">

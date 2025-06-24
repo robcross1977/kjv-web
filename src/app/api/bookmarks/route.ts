@@ -23,6 +23,7 @@ import {
  * GET /api/bookmarks - List user bookmarks with search and filtering
  */
 export async function GET(request: NextRequest) {
+  console.log("BOOKMARKS API ROUTE HIT - GET");
   const result = await pipe(
     getAuthenticatedUserId(request),
     TE.chain((userId) =>
@@ -51,6 +52,7 @@ export async function GET(request: NextRequest) {
  * POST /api/bookmarks - Create a new bookmark
  */
 export async function POST(request: NextRequest) {
+  console.log("BOOKMARKS API ROUTE HIT - POST");
   const result = await pipe(
     getAuthenticatedUserId(request),
     TE.chain((userId) =>

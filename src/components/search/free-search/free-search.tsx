@@ -34,6 +34,23 @@ export default function FreeSearch({ setOpen }: Props) {
   const router = useRouter();
   const newQuery = useRef<HTMLInputElement>(null);
 
+  const handleSearch = () => {
+    const query = newQuery.current?.value?.trim();
+    if (!query) return;
+
+    console.log("FREE SEARCH: Searching for query:", query);
+
+    // Clear input and close
+    if (newQuery.current) {
+      newQuery.current.value = "";
+    }
+    setOpen(false);
+
+    const url = `/?query=${encodeURIComponent(query)}`;
+    console.log("FREE SEARCH: Navigating to:", url);
+    router.push(url);
+  };
+
   return (
     <div className="flex flex-col">
       <div className="self-center pb-4 font-semibold text-lg">
@@ -52,14 +69,7 @@ export default function FreeSearch({ setOpen }: Props) {
             ref={newQuery}
             onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
               if (e.key === "Enter") {
-                setOpen(false);
-
-                const query = newQuery.current?.value;
-                if (newQuery.current) {
-                  newQuery.current.value = "";
-                }
-
-                router.push(`/?query=${query}`);
+                handleSearch();
               }
             }}
           />
@@ -67,16 +77,7 @@ export default function FreeSearch({ setOpen }: Props) {
         <Button
           type="submit"
           className="font-small rounded-lg text-sm p-2"
-          onClick={() => {
-            setOpen(false);
-
-            const query = newQuery.current?.value;
-            if (newQuery.current) {
-              newQuery.current.value = "";
-            }
-
-            router.push(`/?query=${query}`);
-          }}
+          onClick={handleSearch}
         >
           Search
         </Button>

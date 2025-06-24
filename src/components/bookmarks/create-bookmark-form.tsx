@@ -194,7 +194,7 @@ export function CreateBookmarkForm({
           <SelectTrigger>
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white shadow-lg border border-gray-200">
             <SelectItem value="none">No category</SelectItem>
             {BOOKMARK_CATEGORIES.map((category) => (
               <SelectItem key={category} value={category}>

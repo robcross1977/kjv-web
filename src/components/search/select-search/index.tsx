@@ -121,6 +121,13 @@ export default function SelectSearch({ book, chapter, verse, setOpen }: Props) {
                 verse ? `&verse=${verse}` : ""
               }`;
 
+              console.log("SELECT SEARCH: Navigation triggered", {
+                book,
+                chapter,
+                verse,
+                url: `/${q}`,
+              });
+
               setOpen(false);
 
               router.push(`/${q}`);

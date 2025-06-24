@@ -92,7 +92,7 @@ function BookmarkItem({
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-md transition-shadow bg-white">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
@@ -287,7 +287,7 @@ export function BookmarksList({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 bg-white">
       <div className="space-y-3">
         {bookmarks.map((bookmark) => (
           <BookmarkItem
