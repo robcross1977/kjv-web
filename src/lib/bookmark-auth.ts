@@ -11,19 +11,15 @@ export const getAuthenticatedUserId = (
 ): TE.TaskEither<string, string> =>
   TE.tryCatch(
     async () => {
-      console.log("AUTH DEBUG: Starting NextAuth.js v5 authentication check");
-
       const session = await auth();
 
       if (!session?.user?.id) {
         throw new Error("No authenticated user session found");
       }
 
-      console.log("AUTH DEBUG: User authenticated:", session.user.id);
       return session.user.id;
     },
     (error) => {
-      console.log("AUTH DEBUG: Authentication failed:", error);
       return `Authentication failed: ${error}`;
     }
   );

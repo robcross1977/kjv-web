@@ -34,49 +34,88 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { book, chapter, verses } = body;
+    const { verses, action = "mark" } = body;
 
-    if (!book || !chapter || !Array.isArray(verses)) {
+    if (!Array.isArray(verses) || verses.length === 0) {
       return NextResponse.json(
-        { error: "Missing required fields: book, chapter, verses" },
+        { error: "Missing required field: verses (array of verse references)" },
+        { status: 400 }
+      );
+    }
+
+    // Validate verse reference format
+    const isValidVerseRef = (ref: any): ref is VerseReference =>
+      ref &&
+      typeof ref.book === "string" &&
+      typeof ref.chapter === "number" &&
+      typeof ref.verse === "number";
+
+    if (!verses.every(isValidVerseRef)) {
+      return NextResponse.json(
+        {
+          error:
+            "Invalid verse reference format. Expected: { book: string, chapter: number, verse: number }",
+        },
         { status: 400 }
       );
     }
 
     const userId = session.user.id;
 
-    // Mark verses as read
-    const readVerses = pipe(
-      verses,
-      A.map((verse: number) =>
-        prisma.readVerse.upsert({
-          where: {
-            userId_book_chapter_verse: {
-              userId,
-              book: book.toLowerCase(),
-              chapter,
-              verse,
+    // Process verses based on action
+    if (action === "mark") {
+      // Mark verses as read
+      const readVerses = pipe(
+        verses,
+        A.map((verseRef: VerseReference) =>
+          prisma.readVerse.upsert({
+            where: {
+              userId_book_chapter_verse: {
+                userId,
+                book: verseRef.book.toLowerCase(),
+                chapter: verseRef.chapter,
+                verse: verseRef.verse,
+              },
             },
-          },
-          update: {
-            readAt: new Date(),
-          },
-          create: {
-            userId,
-            book: book.toLowerCase(),
-            chapter,
-            verse,
-            readAt: new Date(),
-          },
-        })
-      )
-    );
+            update: {
+              readAt: new Date(),
+            },
+            create: {
+              userId,
+              book: verseRef.book.toLowerCase(),
+              chapter: verseRef.chapter,
+              verse: verseRef.verse,
+              readAt: new Date(),
+            },
+          })
+        )
+      );
 
-    await Promise.all(readVerses);
+      await Promise.all(readVerses);
+    } else if (action === "unmark") {
+      // Unmark verses as read (delete records)
+      const deletePromises = pipe(
+        verses,
+        A.map((verseRef: VerseReference) =>
+          prisma.readVerse.deleteMany({
+            where: {
+              userId,
+              book: verseRef.book.toLowerCase(),
+              chapter: verseRef.chapter,
+              verse: verseRef.verse,
+            },
+          })
+        )
+      );
+
+      await Promise.all(deletePromises);
+    }
 
     return NextResponse.json({
       success: true,
-      message: `Marked ${verses.length} verses as read`,
+      message: `${action === "mark" ? "Marked" : "Unmarked"} ${
+        verses.length
+      } verses as ${action === "mark" ? "read" : "unread"}`,
     });
   } catch (error) {
     console.error("Error marking verses as read:", error);

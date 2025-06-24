@@ -27,6 +27,7 @@ export function useReadStatus() {
    */
   const fetchReadStatus = useCallback(
     async (book: string, chapter: number, verses: number[]) => {
+      console.log("📖 FETCHING READ STATUS:", { book, chapter, verses });
       setIsLoading(true);
       setError(null);
 
@@ -84,6 +85,7 @@ export function useReadStatus() {
         return;
       }
 
+      console.log("📖 FETCH SUCCESS - SETTING STATUS MAP:", result.right);
       setReadStatusMap((prev) => ({ ...prev, ...result.right }));
     },
     []
@@ -94,6 +96,7 @@ export function useReadStatus() {
    */
   const markVersesAsRead = useCallback(
     async (verses: VerseReference[]) => {
+      console.log("🔄 MARKING VERSES AS READ:", verses);
       setError(null);
 
       // Optimistic update - immediately mark as read
@@ -107,6 +110,9 @@ export function useReadStatus() {
       setReadStatusMap((prev) => ({ ...prev, ...statusUpdates }));
 
       // Make API call
+      console.log("📡 MAKING API CALL to /api/verses/mark-read with:", {
+        verses,
+      });
       const result = await pipe(
         TE.tryCatch(
           () =>
@@ -117,7 +123,10 @@ export function useReadStatus() {
               },
               body: JSON.stringify({ verses }),
             }),
-          (error) => `Network error: ${error}`
+          (error) => {
+            console.error("📡 NETWORK ERROR:", error);
+            return `Network error: ${error}`;
+          }
         ),
         TE.chain((response) =>
           response.ok
@@ -129,13 +138,17 @@ export function useReadStatus() {
         )
       )();
 
+      console.log("📡 API CALL COMPLETED. Result:", result);
+
       if (result._tag === "Left") {
         // Revert optimistic update on error
+        console.error("❌ MARK AS READ FAILED:", result.left);
         setReadStatusMap(previousState);
         setError(result.left);
         return false;
       }
 
+      console.log("✅ MARK AS READ SUCCESS");
       return true;
     },
     [readStatusMap]

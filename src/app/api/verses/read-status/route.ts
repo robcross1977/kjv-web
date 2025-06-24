@@ -63,23 +63,20 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Create a map of verse number to read status
-    const readStatus = pipe(
-      verses,
-      A.map((verse) => {
-        const readVerse = readVerses.find((rv) => rv.verse === verse);
-        return {
-          verse,
-          isRead: !!readVerse,
-          readAt: readVerse?.readAt?.toISOString() || null,
-        };
-      })
+    // Create array of read verses in the format expected by frontend
+    const readVersesList = pipe(
+      readVerses,
+      A.map((rv) => ({
+        book: book.toLowerCase(),
+        chapter,
+        verse: rv.verse,
+        readAt: rv.readAt?.toISOString() || null,
+      }))
     );
 
     return NextResponse.json({
-      book,
-      chapter,
-      verses: readStatus,
+      success: true,
+      readVerses: readVersesList,
     });
   } catch (error) {
     console.error("Error getting read status:", error);

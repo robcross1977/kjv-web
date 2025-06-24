@@ -63,8 +63,6 @@ const updateLastReference = (
  * Retrieves the user's last visited Bible reference
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  console.log("LAST REFERENCE API ROUTE HIT - GET");
-
   const result = await pipe(
     getAuthenticatedUserId(request),
     TE.chain(getLastReference)
@@ -103,8 +101,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
  * Updates the user's last visited Bible reference
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  console.log("LAST REFERENCE API ROUTE HIT - POST");
-
   const result = await pipe(
     getAuthenticatedUserId(request),
     TE.chain((userId) =>
