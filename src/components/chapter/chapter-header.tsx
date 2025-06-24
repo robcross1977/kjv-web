@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Wrench } from "lucide-react";
 import { ValidBookName } from "kingjames";
 import { BookmarkButton } from "@/components/bookmarks/bookmark-button";
+import { MarkAsReadToggle } from "@/components/shared/header/mark-as-read-toggle";
 import { useTools } from "@/components/tools/tools-provider";
 
 type Props = {
@@ -52,6 +53,9 @@ export function ChapterHeader({
           <Wrench className="h-4 w-4" />
           <span className="hidden sm:inline">Tools</span>
         </Button>
+
+        {/* Mark mode toggle - authentication-aware */}
+        <MarkAsReadToggle />
 
         {/* Bookmark button - authentication-aware */}
         <BookmarkButton

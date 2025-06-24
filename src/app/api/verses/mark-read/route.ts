@@ -3,7 +3,7 @@ import { pipe } from "fp-ts/function";
 import * as TE from "fp-ts/TaskEither";
 import * as A from "fp-ts/Array";
 import { PrismaClient } from "@prisma/client";
-import { auth0 } from "@/lib/auth0";
+import { auth } from "../../../../../auth";
 
 const prisma = new PrismaClient();
 
@@ -26,106 +26,102 @@ type MarkReadRequest = {
  * Marks or unmarks the specified verses as read for the authenticated user
  */
 export async function POST(request: NextRequest) {
-  const result = await pipe(
-    TE.tryCatch(
-      async () => {
-        // Temporarily use demo user for testing
-        // TODO: Re-enable authentication once Auth0 is working
-        const userId = "demo-user";
-        const body = (await request.json()) as MarkReadRequest;
-        console.log("Request body:", body);
+  try {
+    const session = await auth();
 
-        if (!body.verses || !Array.isArray(body.verses)) {
-          throw new Error("Missing or invalid verses array");
-        }
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-        const action = body.action || "mark";
+    const body = await request.json();
+    const { verses, action = "mark" } = body;
 
-        const validVerses = pipe(
-          body.verses,
-          A.filter(
-            (v): v is VerseReference =>
-              typeof v.book === "string" &&
-              typeof v.chapter === "number" &&
-              typeof v.verse === "number" &&
-              v.book.length > 0 &&
-              v.chapter > 0 &&
-              v.verse > 0
-          )
-        );
+    if (!Array.isArray(verses) || verses.length === 0) {
+      return NextResponse.json(
+        { error: "Missing required field: verses (array of verse references)" },
+        { status: 400 }
+      );
+    }
 
-        if (validVerses.length === 0) {
-          throw new Error("No valid verses provided");
-        }
+    // Validate verse reference format
+    const isValidVerseRef = (ref: any): ref is VerseReference =>
+      ref &&
+      typeof ref.book === "string" &&
+      typeof ref.chapter === "number" &&
+      typeof ref.verse === "number";
 
-        // Ensure user exists
-        await prisma.user.upsert({
-          where: { uid: userId },
-          update: {},
-          create: {
-            uid: userId,
-            email: "demo@example.com",
-            name: "Demo User",
-          },
-        });
+    if (!verses.every(isValidVerseRef)) {
+      return NextResponse.json(
+        {
+          error:
+            "Invalid verse reference format. Expected: { book: string, chapter: number, verse: number }",
+        },
+        { status: 400 }
+      );
+    }
 
-        if (action === "mark") {
-          // Mark verses as read (upsert to handle duplicates)
-          await Promise.all(
-            validVerses.map((verse) =>
-              prisma.readVerse.upsert({
-                where: {
-                  userId_book_chapter_verse: {
-                    userId,
-                    book: verse.book,
-                    chapter: verse.chapter,
-                    verse: verse.verse,
-                  },
-                },
-                update: {
-                  readAt: new Date(),
-                },
-                create: {
-                  userId,
-                  book: verse.book,
-                  chapter: verse.chapter,
-                  verse: verse.verse,
-                },
-              })
-            )
-          );
-        } else {
-          // Unmark verses (delete from database)
-          await prisma.readVerse.deleteMany({
+    const userId = session.user.id;
+
+    // Process verses based on action
+    if (action === "mark") {
+      // Mark verses as read
+      const readVerses = pipe(
+        verses,
+        A.map((verseRef: VerseReference) =>
+          prisma.readVerse.upsert({
+            where: {
+              userId_book_chapter_verse: {
+                userId,
+                book: verseRef.book.toLowerCase(),
+                chapter: verseRef.chapter,
+                verse: verseRef.verse,
+              },
+            },
+            update: {
+              readAt: new Date(),
+            },
+            create: {
+              userId,
+              book: verseRef.book.toLowerCase(),
+              chapter: verseRef.chapter,
+              verse: verseRef.verse,
+              readAt: new Date(),
+            },
+          })
+        )
+      );
+
+      await Promise.all(readVerses);
+    } else if (action === "unmark") {
+      // Unmark verses as read (delete records)
+      const deletePromises = pipe(
+        verses,
+        A.map((verseRef: VerseReference) =>
+          prisma.readVerse.deleteMany({
             where: {
               userId,
-              OR: validVerses.map((verse) => ({
-                book: verse.book,
-                chapter: verse.chapter,
-                verse: verse.verse,
-              })),
+              book: verseRef.book.toLowerCase(),
+              chapter: verseRef.chapter,
+              verse: verseRef.verse,
             },
-          });
-        }
+          })
+        )
+      );
 
-        return {
-          userId,
-          action,
-          processedCount: validVerses.length,
-          verses: validVerses,
-          timestamp: new Date().toISOString(),
-        };
-      },
-      (error) => {
-        console.error("API Error:", error);
-        return `Error: ${error}`;
-      }
-    )
-  )();
+      await Promise.all(deletePromises);
+    }
 
-  if (result._tag === "Left") {
-    return NextResponse.json({ error: result.left }, { status: 400 });
+    return NextResponse.json({
+      success: true,
+      message: `${action === "mark" ? "Marked" : "Unmarked"} ${
+        verses.length
+      } verses as ${action === "mark" ? "read" : "unread"}`,
+    });
+  } catch (error) {
+    console.error("Error marking verses as read:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json(result.right, { status: 200 });
 }

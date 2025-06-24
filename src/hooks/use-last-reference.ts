@@ -22,16 +22,12 @@ const fetchLastReference = (): TE.TaskEither<
 > =>
   TE.tryCatch(
     async () => {
-      console.log("API CALL: Fetching last reference from server...");
-
       const response = await fetch("/api/user/last-reference", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
-
-      console.log("API CALL: Response status:", response.status);
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -41,18 +37,16 @@ const fetchLastReference = (): TE.TaskEither<
       }
 
       const data: LastReferenceResponse = await response.json();
-      console.log("API CALL: Response data:", data);
 
       if (!data.success) {
         throw new Error(data.message || "Unknown error");
       }
 
       const reference = data.lastReference;
-      console.log("API CALL: Returning last reference:", reference);
       return reference;
     },
     (error) => {
-      console.error("API CALL: Error:", error);
+      console.error("Failed to fetch last reference:", error);
       if (error instanceof Error) {
         if (error.message === "USER_NOT_AUTHENTICATED") {
           return "USER_NOT_AUTHENTICATED" as LastReferenceError;
@@ -242,10 +236,8 @@ export const useAutoSaveReference = (
   useSWR(
     enabled && currentReference ? ["auto-save", currentReference] : null,
     async () => {
-      console.log("AUTO-SAVE: Saving reference:", currentReference);
       if (currentReference) {
         const result = await saveLastReference(currentReference)();
-        console.log("AUTO-SAVE: Save result:", result);
         return result;
       }
       return null;

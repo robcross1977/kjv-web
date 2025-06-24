@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { pipe } from "fp-ts/function";
 import * as TE from "fp-ts/TaskEither";
 import * as A from "fp-ts/Array";
+import { auth } from "../../../../../auth";
 import { PrismaClient } from "@prisma/client";
-import { auth0 } from "@/lib/auth0";
 
 const prisma = new PrismaClient();
 
@@ -18,64 +18,71 @@ const prisma = new PrismaClient();
  * Returns array of read verse objects for the authenticated user
  */
 export async function GET(request: NextRequest) {
-  const result = await pipe(
-    TE.tryCatch(
-      async () => {
-        // Temporarily use demo user for testing
-        // TODO: Re-enable authentication once Auth0 is working
-        const userId = "demo-user";
-        const { searchParams } = new URL(request.url);
-        const book = searchParams.get("book");
-        const chapter = searchParams.get("chapter");
-        const versesParam = searchParams.get("verses");
+  try {
+    const session = await auth();
 
-        if (!book || !chapter || !versesParam) {
-          throw new Error("Missing required parameters: book, chapter, verses");
-        }
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-        const verses = pipe(
-          versesParam.split(","),
-          A.map((v) => parseInt(v.trim())),
-          A.filter((v) => !isNaN(v))
-        );
+    const { searchParams } = new URL(request.url);
+    const book = searchParams.get("book");
+    const chapterStr = searchParams.get("chapter");
+    const versesStr = searchParams.get("verses");
 
-        if (verses.length === 0) {
-          throw new Error("Invalid verses parameter");
-        }
+    if (!book || !chapterStr || !versesStr) {
+      return NextResponse.json(
+        { error: "Missing required parameters: book, chapter, verses" },
+        { status: 400 }
+      );
+    }
 
-        // Query database for read verses
-        const readVerses = await prisma.readVerse.findMany({
-          where: {
-            userId,
-            book,
-            chapter: parseInt(chapter),
-            verse: {
-              in: verses,
-            },
-          },
-          select: {
-            book: true,
-            chapter: true,
-            verse: true,
-            readAt: true,
-          },
-        });
+    const chapter = parseInt(chapterStr);
+    const verses = versesStr.split(",").map(Number);
 
-        return {
-          userId,
-          book,
-          chapter: parseInt(chapter),
-          verses,
-          readVerses,
-        };
+    if (isNaN(chapter) || verses.some(isNaN)) {
+      return NextResponse.json(
+        { error: "Invalid chapter or verse numbers" },
+        { status: 400 }
+      );
+    }
+
+    const userId = session.user.id;
+
+    // Get read status for all requested verses
+    const readVerses = await prisma.readVerse.findMany({
+      where: {
+        userId,
+        book: book.toLowerCase(),
+        chapter,
+        verse: { in: verses },
       },
-      (error) => `Error: ${error}`
-    )
-  )();
+      select: {
+        verse: true,
+        readAt: true,
+      },
+    });
 
-  if (result._tag === "Left") {
-    return NextResponse.json({ error: result.left }, { status: 400 });
+    // Create array of read verses in the format expected by frontend
+    const readVersesList = pipe(
+      readVerses,
+      A.map((rv) => ({
+        book: book.toLowerCase(),
+        chapter,
+        verse: rv.verse,
+        readAt: rv.readAt?.toISOString() || null,
+      }))
+    );
+
+    return NextResponse.json({
+      success: true,
+      readVerses: readVersesList,
+    });
+  } catch (error) {
+    console.error("Error getting read status:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json(result.right, { status: 200 });
 }

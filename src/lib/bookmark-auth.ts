@@ -1,28 +1,25 @@
 import { NextRequest } from "next/server";
 import * as TE from "fp-ts/TaskEither";
-import { auth0 } from "@/lib/auth0";
+import { auth } from "../../auth";
 
 /**
- * Gets authenticated user ID from Auth0 session
+ * Gets authenticated user ID from NextAuth.js v5 session
+ * Compatible with Next.js 15 and uses functional programming patterns
  */
 export const getAuthenticatedUserId = (
   request: NextRequest
 ): TE.TaskEither<string, string> =>
   TE.tryCatch(
     async () => {
-      console.log("AUTH DEBUG: Starting authentication check");
+      const session = await auth();
 
-      const session = await auth0.getSession();
-
-      if (!session?.user?.sub) {
+      if (!session?.user?.id) {
         throw new Error("No authenticated user session found");
       }
 
-      console.log("AUTH DEBUG: User authenticated:", session.user.sub);
-      return session.user.sub;
+      return session.user.id;
     },
     (error) => {
-      console.log("AUTH DEBUG: Authentication failed:", error);
       return `Authentication failed: ${error}`;
     }
   );
