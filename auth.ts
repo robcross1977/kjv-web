@@ -2,19 +2,6 @@ import NextAuth from "next-auth";
 import Auth0 from "next-auth/providers/auth0";
 import type { NextAuthConfig } from "next-auth";
 
-// Debug environment variables
-console.log("AUTH DEBUG - Environment variables:");
-console.log("AUTH0_DOMAIN:", process.env.AUTH0_DOMAIN);
-console.log(
-  "AUTH0_CLIENT_ID:",
-  process.env.AUTH0_CLIENT_ID ? "SET" : "NOT SET"
-);
-console.log(
-  "AUTH0_CLIENT_SECRET:",
-  process.env.AUTH0_CLIENT_SECRET ? "SET" : "NOT SET"
-);
-console.log("AUTH_SECRET:", process.env.AUTH_SECRET ? "SET" : "NOT SET");
-
 export const config = {
   providers: [
     Auth0({
