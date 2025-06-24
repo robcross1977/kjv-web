@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import { auth0 } from "@/lib/auth0";
+import { auth } from "../../../auth";
 
 export default async function Auth() {
-  const session = await auth0.getSession();
+  const session = await auth();
   const user = session?.user;
 
   return (
@@ -11,13 +11,13 @@ export default async function Auth() {
       {user ? (
         <div className="flex flex-row items-center justify-center gap-2">
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/auth/logout" data-testid="logout" className="lg:pr-3">
+          <a href="/api/auth/signout" data-testid="logout" className="lg:pr-3">
             Logout
           </a>
-          {user.picture && (
+          {user.image && (
             <Link href="/profile">
               <Image
-                src={user.picture}
+                src={user.image}
                 alt={user.name ?? "Profile Picture"}
                 width={30}
                 height={30}
@@ -29,7 +29,7 @@ export default async function Auth() {
       ) : (
         <>
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/auth/login" data-testid="login">
+          <a href="/api/auth/signin" data-testid="login">
             Login
           </a>
         </>

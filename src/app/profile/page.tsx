@@ -1,51 +1,46 @@
-import Header from "@components/shared/header";
-import Image from "next/image";
-import { auth0 } from "@/lib/auth0";
+import { redirect } from "next/navigation";
+import { auth } from "../../../auth";
 
 export default async function Profile() {
-  const session = await auth0.getSession();
-  const user = session?.user;
+  const session = await auth();
 
-  if (!user) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Not Authenticated</h1>
-            <p>Please log in to view your profile.</p>
-          </div>
-        </main>
-      </div>
-    );
+  if (!session?.user) {
+    redirect("/api/auth/signin");
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1 flex items-center justify-center p-8">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6">
-          <div className="text-center">
-            {user.picture && (
-              <Image
-                src={user.picture}
-                alt={user.name ?? "Profile Picture"}
-                width={100}
-                height={100}
-                className="rounded-full mx-auto mb-4"
-              />
-            )}
-            <h1 className="text-2xl font-bold mb-2">{user.name}</h1>
-            <p className="text-gray-600 mb-4">{user.email}</p>
-            <div className="text-left">
-              <h2 className="text-lg font-semibold mb-2">User Information</h2>
-              <pre className="bg-gray-100 p-3 rounded text-sm overflow-auto">
-                {JSON.stringify(user, null, 2)}
-              </pre>
-            </div>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">Profile</h1>
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex items-center space-x-4 mb-4">
+          {session.user.image && (
+            <img
+              src={session.user.image}
+              alt="Profile"
+              className="w-16 h-16 rounded-full"
+            />
+          )}
+          <div>
+            <h2 className="text-xl font-semibold">{session.user.name}</h2>
+            <p className="text-gray-600">{session.user.email}</p>
           </div>
         </div>
-      </main>
+        <div className="space-y-2">
+          <p>
+            <strong>User ID:</strong> {session.user.id}
+          </p>
+          {session.user.name && (
+            <p>
+              <strong>Name:</strong> {session.user.name}
+            </p>
+          )}
+          {session.user.email && (
+            <p>
+              <strong>Email:</strong> {session.user.email}
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

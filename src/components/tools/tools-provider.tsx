@@ -8,78 +8,10 @@ import {
   useCallback,
   useEffect,
 } from "react";
+import { useSession } from "next-auth/react";
 import { useReadStatus } from "@/hooks/use-read-status";
 import { ToolsSheet, ToolSection } from "./tools-sheet";
 import { VerseReference } from "@/types/read-status";
-
-// Safe Auth0 hook wrapper that handles missing configuration
-// NOTE: Auth0 v4 has compatibility issues with Next.js 15 causing "Headers.append" errors
-// Using development fallback until Auth0 fixes the compatibility issue
-function useSafeAuth() {
-  const [authState, setAuthState] = useState<{
-    user: { sub: string } | null;
-    isLoading: boolean;
-    isLoggedIn: boolean;
-  }>({
-    user: null,
-    isLoading: true, // Start with loading state
-    isLoggedIn: false,
-  });
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      console.log("AUTH DEBUG: Starting authentication check...");
-
-      try {
-        // Check if user is actually authenticated by making a lightweight request
-        const response = await fetch("/api/user/last-reference", {
-          method: "HEAD", // Just check headers, don't need response body
-        });
-
-        if (response.status === 401) {
-          // User is not authenticated
-          console.log("AUTH DEBUG: User is NOT authenticated (401)");
-          setAuthState({
-            user: null,
-            isLoading: false,
-            isLoggedIn: false,
-          });
-        } else if (response.ok) {
-          // User is authenticated
-          console.log("AUTH DEBUG: User is authenticated (200)");
-          setAuthState({
-            user: { sub: "authenticated-user" },
-            isLoading: false,
-            isLoggedIn: true,
-          });
-        } else {
-          // Some other error - assume not authenticated to be safe
-          console.log(
-            "AUTH DEBUG: Authentication error, status:",
-            response.status
-          );
-          setAuthState({
-            user: null,
-            isLoading: false,
-            isLoggedIn: false,
-          });
-        }
-      } catch (error) {
-        // Network error - assume not authenticated
-        console.log("AUTH DEBUG: Network error during auth check:", error);
-        setAuthState({
-          user: null,
-          isLoading: false,
-          isLoggedIn: false,
-        });
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  return authState;
-}
 
 type ToolsContextValue = {
   // Tools state
@@ -134,6 +66,7 @@ type Props = {
  * Simplified tools provider that manages read status directly
  * No complex selection logic - just direct read/unread toggling
  * Only available when user is logged in
+ * Uses NextAuth.js v5 for authentication
  */
 export function ToolsProvider({ children }: Props) {
   const [isToolsActive, setIsToolsActive] = useState(false);
@@ -142,8 +75,10 @@ export function ToolsProvider({ children }: Props) {
     useState<ToolSection>("search");
   const [currentVerses, setCurrentVerses] = useState<VerseReference[]>([]);
 
-  // Check if user is logged in with safe auth wrapper
-  const { isLoggedIn, isLoading: isAuthLoading } = useSafeAuth();
+  // Use NextAuth.js v5 session
+  const { data: session, status } = useSession();
+  const isLoggedIn = !!session?.user;
+  const isAuthLoading = status === "loading";
 
   const {
     isLoading,
