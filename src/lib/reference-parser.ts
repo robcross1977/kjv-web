@@ -18,18 +18,23 @@ export type ParsedReference = {
 /**
  * Parse a reference using kingjames library and return bookmark-compatible structure
  */
-export const parseReference = (input: string): E.Either<string, ParsedReference> => {
+export const parseReference = (
+  input: string
+): E.Either<string, ParsedReference> => {
   const trimmed = input.trim();
-  
+
   if (!trimmed) {
     return E.left("Reference cannot be empty");
   }
 
   // Use kingjames search function
   const searchResults = search(trimmed);
-  
-  if (searchResults.type === "none" || Object.keys(searchResults.records).length === 0) {
-    return E.left(`Invalid reference format: \${trimmed}`);
+
+  if (
+    searchResults.type === "none" ||
+    Object.keys(searchResults.records).length === 0
+  ) {
+    return E.left(`Invalid reference format: ${trimmed}`);
   }
 
   // Extract the first result to create ParsedReference structure
@@ -37,13 +42,15 @@ export const parseReference = (input: string): E.Either<string, ParsedReference>
   const firstBook = books[0];
   const chapters = Object.keys(searchResults.records[firstBook]);
   const firstChapter = parseInt(chapters[0]);
-  
+
   const verses = Object.keys(searchResults.records[firstBook][firstChapter]);
   const firstVerse = verses.length > 0 ? parseInt(verses[0]) : undefined;
-  const lastVerse = verses.length > 1 ? parseInt(verses[verses.length - 1]) : undefined;
+  const lastVerse =
+    verses.length > 1 ? parseInt(verses[verses.length - 1]) : undefined;
 
   // For multiple chapters, find the range
-  const lastChapter = chapters.length > 1 ? parseInt(chapters[chapters.length - 1]) : undefined;
+  const lastChapter =
+    chapters.length > 1 ? parseInt(chapters[chapters.length - 1]) : undefined;
 
   return E.right({
     book: firstBook,
@@ -59,7 +66,9 @@ export const parseReference = (input: string): E.Either<string, ParsedReference>
 /**
  * Basic validation (kingjames already validates, so this is mostly a pass-through)
  */
-export const validateReference = (parsed: ParsedReference): E.Either<string, ParsedReference> => {
+export const validateReference = (
+  parsed: ParsedReference
+): E.Either<string, ParsedReference> => {
   // kingjames library already validated this, so we can trust it
   return E.right(parsed);
 };
@@ -76,9 +85,12 @@ export const isBibleReference = (input: string): boolean => {
 
   // Use kingjames search function to determine if it's a valid reference
   const searchResults = search(trimmed);
-  
+
   // If search returns results with records, it's a valid reference
-  return searchResults.type !== "none" && Object.keys(searchResults.records).length > 0;
+  return (
+    searchResults.type !== "none" &&
+    Object.keys(searchResults.records).length > 0
+  );
 };
 
 /**
