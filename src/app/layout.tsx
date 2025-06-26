@@ -1,12 +1,12 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { EB_Garamond } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToolsProvider } from "@/components/tools/tools-provider";
 import { AuthSessionProvider } from "@/components/auth/session-provider";
 import { SWRProvider } from "@/components/swr-provider";
 
-const inter = Inter({ subsets: ["latin"] });
+const font = EB_Garamond({ subsets: ["latin"], weight: ["400", "700"] });
 
 export const metadata = {
   title: "Bible Buddy",
@@ -18,13 +18,19 @@ type RootLayoutProps = {
 };
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  const bodyClasses = `${font.className} w-full min-h-screen bg-[#9F9F9F]`;
+  const containerClasses =
+    "border-2 shadow-2xl border-black flex flex-col w-full md:w-10/12 mx-auto bg-background rounded-lg md:my-4 p-1 pb-8 max-w-6xl";
+
   return (
     <html lang="en">
-      <body className={`${inter.className} w-full h-full min-h-screen`}>
+      <body className={bodyClasses}>
         <SWRProvider>
           <AuthSessionProvider>
             <ThemeProvider>
-              <ToolsProvider>{children}</ToolsProvider>
+              <ToolsProvider>
+                <div className={containerClasses}>{children}</div>
+              </ToolsProvider>
             </ThemeProvider>
           </AuthSessionProvider>
         </SWRProvider>
