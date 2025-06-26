@@ -37,7 +37,7 @@ export function ChapterHeader({
     <div className="mb-6">
       {/* Chapter title */}
       <h1 className="text-4xl font-bold text-foreground mb-4 pb-4 border-b">
-        {formatBookName(book)} {chapter}
+        Chapter {chapter}
       </h1>
 
       {/* Action buttons - aligned with verse circles */}

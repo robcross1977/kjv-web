@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pipe } from "fp-ts/function";
-import * as TE from "fp-ts/TaskEither";
 import * as A from "fp-ts/Array";
 import { PrismaClient } from "@prisma/client";
 import { auth } from "../../../../../auth";
@@ -11,11 +10,6 @@ type VerseReference = {
   book: string;
   chapter: number;
   verse: number;
-};
-
-type MarkReadRequest = {
-  verses: VerseReference[];
-  action?: "mark" | "unmark"; // Default to "mark" for backward compatibility
 };
 
 /**

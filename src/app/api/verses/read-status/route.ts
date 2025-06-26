@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pipe } from "fp-ts/function";
-import * as TE from "fp-ts/TaskEither";
 import * as A from "fp-ts/Array";
 import { auth } from "../../../../../auth";
 import { PrismaClient } from "@prisma/client";
