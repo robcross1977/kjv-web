@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
+import useSWR from "swr";
 import { pipe } from "fp-ts/function";
 import * as E from "fp-ts/Either";
 import { WrappedRecords, ValidBookName } from "kingjames";
@@ -48,7 +49,30 @@ function convertAiResultsToWrappedRecords(
 }
 
 /**
+ * SWR fetcher for AI search results
+ */
+const fetcher = async (
+  url: string
+): Promise<{ verses: any[]; context: string; query: string }> => {
+  const [, queryParam] = url.split("?query=");
+  const query = decodeURIComponent(queryParam);
+
+  const response = await fetch("/api/bible-search", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query, limit: 20 }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch AI search results");
+  }
+
+  return response.json();
+};
+
+/**
  * Client-side AI search component that fetches results and displays them
+ * Uses SWR for caching to avoid duplicate AI token usage
  */
 export default function AiSearchClient({
   aiQuery,
@@ -57,49 +81,25 @@ export default function AiSearchClient({
   verse,
   query,
 }: Props) {
-  const [results, setResults] = useState<WrappedRecords>({
-    type: "none",
-    records: {},
+  // Create cache key for SWR
+  const swrKey = `ai-search?query=${encodeURIComponent(aiQuery)}`;
+
+  // Use SWR for cached fetching
+  const { data, error, isLoading } = useSWR(swrKey, fetcher, {
+    // Cache for 1 hour to avoid repeated AI calls for same queries
+    dedupingInterval: 60 * 60 * 1000,
+    // Keep data fresh for 30 minutes
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
   });
-  const [context, setContext] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchAiResults = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const response = await fetch("/api/bible-search", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: aiQuery, limit: 20 }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch AI search results");
-        }
-
-        const data = await response.json();
-        const wrappedResults = convertAiResultsToWrappedRecords(
-          data.verses || []
-        );
-
-        setResults(wrappedResults);
-        setContext(data.context || "");
-      } catch (err) {
-        console.error("Error fetching AI search results:", err);
-        setError(err instanceof Error ? err.message : "Unknown error");
-        setResults({ type: "none", records: {} });
-        setContext("");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAiResults();
-  }, [aiQuery]);
+  // Memoize the conversion to WrappedRecords format
+  const results = useMemo((): WrappedRecords => {
+    if (!data?.verses) {
+      return { type: "none", records: {} };
+    }
+    return convertAiResultsToWrappedRecords(data.verses);
+  }, [data?.verses]);
 
   if (isLoading) {
     return (
@@ -123,7 +123,9 @@ export default function AiSearchClient({
           <div className="w-11/12 lg:w-2/3 mx-auto flex items-center justify-center">
             <div className="text-center">
               <p className="text-destructive mb-2">Search Error</p>
-              <p className="text-muted-foreground text-sm">{error}</p>
+              <p className="text-muted-foreground text-sm">
+                {error instanceof Error ? error.message : "Unknown error"}
+              </p>
             </div>
           </div>
         </div>
@@ -138,7 +140,7 @@ export default function AiSearchClient({
       verse={verse}
       query={aiQuery}
       results={results}
-      aiContext={context}
+      aiContext={data?.context || ""}
     />
   );
 }

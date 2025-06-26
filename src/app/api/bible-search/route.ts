@@ -1,12 +1,111 @@
 import { NextRequest, NextResponse } from "next/server";
 import { bibleSearchAgent } from "@/mastra/agents/bible-search-agent";
 import { z } from "zod";
+import { pipe } from "fp-ts/function";
+import * as A from "fp-ts/Array";
+import * as O from "fp-ts/Option";
+import * as E from "fp-ts/Either";
 
 // Input validation schema
 const BibleSearchSchema = z.object({
   query: z.string().min(1, "Query is required").max(500, "Query too long"),
   limit: z.number().min(1).max(50).optional().default(20),
 });
+
+// Types
+type MastraVerse = {
+  reference: string;
+  text: string;
+  relevance: number;
+};
+
+type ToolResult = {
+  result: unknown;
+};
+
+type Step = {
+  stepType: string;
+  toolResults?: ToolResult[];
+};
+
+type AgentResponse = {
+  text: string;
+  steps: Step[];
+};
+
+/**
+ * Parse tool result to extract verse data
+ */
+const parseToolResult = (toolResult: ToolResult): O.Option<MastraVerse[]> =>
+  pipe(
+    toolResult.result,
+    O.fromNullable,
+    O.chain((result) => {
+      if (typeof result === "string") {
+        return pipe(
+          E.tryCatch(
+            () => JSON.parse(result),
+            () => "Parse error"
+          ),
+          E.fold(
+            () => O.none,
+            (parsed) => O.some(parsed)
+          )
+        );
+      }
+      return typeof result === "object" ? O.some(result) : O.none;
+    }),
+    O.chain((parsed: any) =>
+      parsed?.verses && Array.isArray(parsed.verses)
+        ? O.some(
+            pipe(
+              parsed.verses,
+              A.map((v: any) => ({
+                reference: v.reference,
+                text: v.text,
+                relevance: v.relevance || 1,
+              }))
+            )
+          )
+        : O.none
+    )
+  );
+
+/**
+ * Extract verses from all tool results in a step
+ */
+const extractVersesFromStep = (step: Step): MastraVerse[] =>
+  pipe(
+    step.toolResults,
+    O.fromNullable,
+    O.fold(
+      () => [],
+      (toolResults) =>
+        pipe(toolResults, A.filterMap(parseToolResult), A.flatten)
+    )
+  );
+
+/**
+ * Extract all verses from agent response steps
+ */
+const extractAllVerses = (response: AgentResponse): MastraVerse[] =>
+  pipe(response.steps, A.map(extractVersesFromStep), A.flatten);
+
+/**
+ * Extract context from agent response text
+ */
+const extractContext = (response: AgentResponse): string =>
+  pipe(
+    response.text.split("\n\n"),
+    A.last,
+    O.getOrElse(() => response.text)
+  );
+
+/**
+ * Generate agent prompt for spiritual query
+ */
+const generatePrompt = (query: string, limit: number): string =>
+  `I need help finding Bible verses about: "${query}". Please find the most relevant verses that address this topic or question. Limit the results to ${limit} verses total.`;
 
 /**
  * Bible search API endpoint
@@ -17,137 +116,92 @@ const BibleSearchSchema = z.object({
  * @param request - Contains query (spiritual question/topic) and optional limit
  * @returns Bible references that can be used with kingjames library
  */
-export async function POST(request: NextRequest) {
+/**
+ * Validate request body using Zod schema
+ */
+const validateRequestBody = (
+  body: unknown
+): E.Either<z.ZodError, { query: string; limit: number }> =>
+  E.tryCatch(
+    () => BibleSearchSchema.parse(body),
+    (error) => error as z.ZodError
+  );
+
+/**
+ * Create success response
+ */
+const createSuccessResponse = (
+  verses: MastraVerse[],
+  context: string,
+  query: string,
+  limit: number
+) => ({
+  verses: verses.slice(0, limit),
+  context,
+  query,
+});
+
+/**
+ * Handle validation errors
+ */
+const handleValidationError = (error: z.ZodError): NextResponse =>
+  NextResponse.json(
+    {
+      success: false,
+      error: "Invalid input",
+      details: error.errors,
+    },
+    { status: 400 }
+  );
+
+/**
+ * Handle general errors
+ */
+const handleGeneralError = (error: Error): NextResponse => {
+  console.error("Bible search API error:", error);
+  return NextResponse.json(
+    {
+      success: false,
+      error: "Failed to search Bible verses",
+      message: error.message,
+    },
+    { status: 500 }
+  );
+};
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const body = await request.json();
-    console.log("Bible search API: Received request:", body);
+    const requestBody = await request.json();
 
-    // Validate input
-    const validatedInput = BibleSearchSchema.parse(body);
-    const { query, limit } = validatedInput;
+    // Validate input using functional approach
+    const validationResult = validateRequestBody(requestBody);
 
-    console.log(
-      "Bible search API: Processing query:",
-      query,
-      "with limit:",
-      limit
-    );
+    if (E.isLeft(validationResult)) {
+      return handleValidationError(validationResult.left);
+    }
 
-    // Use Mastra agent to process the spiritual query
-    // The agent will:
-    // 1. Understand the spiritual topic/question
-    // 2. Generate relevant Bible references
-    // Frontend will use kingjames library to fetch actual verse text
-    const response = await bibleSearchAgent.generate(
+    const { query, limit } = validationResult.right;
+
+    // Execute agent search
+    const agentResponse = (await bibleSearchAgent.generate(
       [
         {
           role: "user",
-          content: `I need help finding Bible verses about: "${query}". Please find the most relevant verses that address this topic or question. Limit the results to ${limit} verses total.`,
+          content: generatePrompt(query, limit),
         },
       ],
-      {
-        maxSteps: 3, // Allow the agent to use tools
-      }
-    );
+      { maxSteps: 3 }
+    )) as AgentResponse;
 
-    console.log("Bible search API: Agent response:", response);
+    // Extract verses and context using functional approach
+    const verses = extractAllVerses(agentResponse);
+    const context = extractContext(agentResponse);
+    const result = createSuccessResponse(verses, context, query, limit);
 
-    // Extract verses from tool results (including text)
-    const verses: Array<{
-      reference: string;
-      text: string;
-      relevance: number;
-    }> = [];
-
-    // Look through tool results to find verse data
-    console.log("Bible search API: Total steps:", response.steps.length);
-    for (let i = 0; i < response.steps.length; i++) {
-      const step = response.steps[i];
-      console.log(`Bible search API: Step ${i} type:`, step.stepType);
-      console.log(
-        `Bible search API: Step ${i} toolResults:`,
-        step.toolResults?.length || 0
-      );
-
-      if (step.toolResults) {
-        for (let j = 0; j < step.toolResults.length; j++) {
-          const toolResult = step.toolResults[j];
-          console.log(
-            `Bible search API: Tool result ${j} type:`,
-            typeof toolResult.result
-          );
-          console.log(
-            `Bible search API: Tool result ${j} content:`,
-            toolResult.result
-          );
-
-          // Handle both string and object results
-          let parsedResult: any;
-          if (typeof toolResult.result === "string") {
-            try {
-              parsedResult = JSON.parse(toolResult.result);
-            } catch (e) {
-              console.log(
-                "Bible search API: Tool result not JSON:",
-                toolResult.result
-              );
-              continue;
-            }
-          } else if (typeof toolResult.result === "object") {
-            parsedResult = toolResult.result;
-          } else {
-            continue;
-          }
-
-          console.log("Bible search API: Parsed tool result:", parsedResult);
-
-          if (parsedResult.verses && Array.isArray(parsedResult.verses)) {
-            verses.push(
-              ...parsedResult.verses.map((v: any) => ({
-                reference: v.reference,
-                text: v.text,
-                relevance: v.relevance || 1,
-              }))
-            );
-          }
-        }
-      }
-    }
-
-    console.log("Bible search API: Extracted verses:", verses);
-
-    // Return in the format expected by frontend components
-    const result = {
-      verses: verses.slice(0, limit), // Respect the limit
-      context: response.text.split("\n\n").pop() || response.text, // Use the last paragraph as context
-      query,
-    };
-
-    console.log("Bible search API: Final response:", result);
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Bible search API error:", error);
-
-    // Handle validation errors
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Invalid input",
-          details: error.errors,
-        },
-        { status: 400 }
-      );
-    }
-
-    // Handle other errors
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to search Bible verses",
-        message: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 }
+    return handleGeneralError(
+      error instanceof Error ? error : new Error("Unknown error")
     );
   }
 }
