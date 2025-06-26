@@ -20,7 +20,7 @@ type RootLayoutProps = {
 export default function RootLayout({ children }: RootLayoutProps) {
   const bodyClasses = `${font.className} w-full min-h-screen bg-[#9F9F9F]`;
   const containerClasses =
-    "border-2 shadow-2xl border-black flex flex-col w-full md:w-10/12 mx-auto bg-background rounded-lg md:my-4 p-1 pb-8 max-w-6xl";
+    "border-2 shadow-2xl border-black flex flex-col w-full md:w-10/12 mx-auto bg-background rounded-lg md:my-4 p-1 pb-4 max-w-6xl min-h-[calc(100vh-2rem)]";
 
   return (
     <html lang="en">

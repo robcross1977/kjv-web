@@ -19,7 +19,7 @@ type Props = {
 function convertAiResultsToWrappedRecords(
   verses: Array<{ reference: string; text: string; relevance: number }>
 ): WrappedRecords {
-  const records: WrappedRecords['records'] = {};
+  const records: WrappedRecords["records"] = {};
 
   verses.forEach((verse) => {
     // Use kingjames search to parse each reference
@@ -104,8 +104,8 @@ export default function AiSearchClient({
 
   if (isLoading) {
     return (
-      <div className="flex flex-col w-full mx-auto h-screen">
-        <div className="flex flex-grow w-full pt-2">
+      <div className="flex flex-col w-full mx-auto min-h-screen">
+        <div className="flex flex-grow w-full pt-2 pb-4">
           <div className="w-11/12 lg:w-2/3 mx-auto flex items-center justify-center">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
@@ -119,8 +119,8 @@ export default function AiSearchClient({
 
   if (error) {
     return (
-      <div className="flex flex-col w-full mx-auto h-screen">
-        <div className="flex flex-grow w-full pt-2">
+      <div className="flex flex-col w-full mx-auto min-h-screen">
+        <div className="flex flex-grow w-full pt-2 pb-4">
           <div className="w-11/12 lg:w-2/3 mx-auto flex items-center justify-center">
             <div className="text-center">
               <p className="text-destructive mb-2">Search Error</p>

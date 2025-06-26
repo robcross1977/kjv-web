@@ -87,8 +87,8 @@ export default function Search({
   useAutoSaveReference(currentReference, isLoggedIn);
 
   return (
-    <div className="flex flex-col w-full mx-auto h-screen">
-      <div className="flex flex-grow w-full pt-2">
+    <div className="flex flex-col w-full mx-auto min-h-screen">
+      <div className="flex flex-grow w-full pt-2 pb-4">
         <div className="w-11/12 lg:w-2/3 mx-auto space-y-4">
           {/* AI Search Context Header */}
           {aiContext && (
