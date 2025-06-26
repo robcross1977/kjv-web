@@ -2,10 +2,7 @@
 
 import { useMemo } from "react";
 import useSWR from "swr";
-import { pipe } from "fp-ts/function";
-import * as E from "fp-ts/Either";
-import { WrappedRecords, ValidBookName } from "kingjames";
-import { parseReference } from "@/lib/reference-parser";
+import { WrappedRecords, ValidBookName, search } from "kingjames";
 import Search from "@/components/search";
 
 type Props = {
@@ -25,21 +22,25 @@ function convertAiResultsToWrappedRecords(
   const records: any = {};
 
   verses.forEach((verse) => {
-    pipe(
-      parseReference(verse.reference),
-      E.fold(
-        () => {}, // Skip verses that can't be parsed
-        (parsed) => {
-          const book = parsed.book.toLowerCase();
-          const chapter = parsed.startChapter;
-          const verseNum = parsed.startVerse || 1;
+    // Use kingjames search to parse each reference
+    const searchResult = search(verse.reference);
 
-          if (!records[book]) records[book] = {};
-          if (!records[book][chapter]) records[book][chapter] = {};
-          records[book][chapter][verseNum] = verse.text;
-        }
-      )
-    );
+    // If kingjames can parse it, merge the results
+    if (
+      searchResult.type !== "none" &&
+      Object.keys(searchResult.records).length > 0
+    ) {
+      // Copy the structure from kingjames but replace with AI verse text
+      Object.entries(searchResult.records).forEach(([book, chapters]) => {
+        Object.entries(chapters).forEach(([chapter, versesInChapter]) => {
+          Object.keys(versesInChapter).forEach((verseNum) => {
+            if (!records[book]) records[book] = {};
+            if (!records[book][chapter]) records[book][chapter] = {};
+            records[book][chapter][verseNum] = verse.text;
+          });
+        });
+      });
+    }
   });
 
   return {
