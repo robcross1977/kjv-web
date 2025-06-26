@@ -6,13 +6,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, Heart } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { pipe } from "fp-ts/function";
 import * as A from "fp-ts/Array";
+import { getSearchType } from "@/lib/reference-parser";
 
 interface MastraVerse {
   reference: string;
+  text: string;
   relevance: number;
 }
 
@@ -23,7 +25,7 @@ interface MastraResponse {
 }
 
 function AiIcon() {
-  return <Sparkles className="w-5 h-5 text-purple-500" />;
+  return <Search className="w-5 h-5 text-muted-foreground" />;
 }
 
 type Props = {
@@ -39,7 +41,6 @@ export default function MastraSearch({ setOpen }: Props) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<MastraResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleSearch = async () => {
@@ -48,28 +49,24 @@ export default function MastraSearch({ setOpen }: Props) {
 
     setIsLoading(true);
     setError(null);
-    setResults(null);
 
     try {
-      const response = await fetch("/api/bible-search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: trimmedQuery,
-          limit: 8,
-        }),
-      });
+      // Smart routing: detect if it's a Bible reference or free-form question
+      const searchType = getSearchType(trimmedQuery);
 
-      if (!response.ok) {
-        throw new Error(`Search failed: ${response.statusText}`);
+      let url: string;
+      if (searchType === "reference") {
+        // Direct Bible reference search
+        url = `/?query=${encodeURIComponent(trimmedQuery)}`;
+      } else {
+        // AI-powered spiritual search
+        url = `/?ai_query=${encodeURIComponent(trimmedQuery)}`;
       }
 
-      const data: MastraResponse = await response.json();
-      setResults(data);
+      setOpen(false);
+      router.push(url);
     } catch (err) {
-      console.error("Mastra search error:", err);
+      console.error("Search error:", err);
       setError(err instanceof Error ? err.message : "Search failed");
     } finally {
       setIsLoading(false);
@@ -83,71 +80,19 @@ export default function MastraSearch({ setOpen }: Props) {
     router.push(url);
   };
 
-  const clearResults = () => {
-    setResults(null);
+  const clearSearch = () => {
     setError(null);
     setQuery("");
   };
 
-  if (results) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <AiIcon />
-            <span className="font-semibold text-lg">AI Search Results</span>
-          </div>
-          <Button variant="outline" size="sm" onClick={clearResults}>
-            New Search
-          </Button>
-        </div>
-
-        <Card className="border-purple-200 bg-purple-50">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Heart className="w-4 h-4 text-purple-600" />
-              &ldquo;{results.query}&rdquo;
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-700 mb-4">{results.context}</p>
-            <div className="space-y-2">
-              {results.verses && results.verses.length > 0 ? (
-                pipe(
-                  results.verses,
-                  A.map((verse) => (
-                    <button
-                      key={verse.reference}
-                      onClick={() => handleVerseClick(verse.reference)}
-                      className="flex items-center justify-between w-full p-3 bg-white rounded-lg border border-purple-200 hover:border-purple-300 hover:bg-purple-25 transition-all duration-200 text-left"
-                    >
-                      <span className="font-medium text-purple-700">
-                        {verse.reference}
-                      </span>
-                      <Badge variant="outline" className="text-xs">
-                        {Math.round(verse.relevance * 100)}% match
-                      </Badge>
-                    </button>
-                  ))
-                )
-              ) : (
-                <div className="p-4 text-center text-gray-500">
-                  No verses found
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // Results are now shown in main content area, so this component only shows the search form
 
   return (
     <div className="space-y-4">
       <div className="text-center pb-2">
         <div className="flex items-center justify-center gap-2 font-semibold text-lg mb-2">
           <AiIcon />
-          AI Spiritual Search
+          Spiritual Search
         </div>
         <p className="text-sm text-gray-600">
           Ask questions about faith, life, or spiritual topics
@@ -171,7 +116,7 @@ export default function MastraSearch({ setOpen }: Props) {
         <Button
           onClick={handleSearch}
           disabled={!query.trim() || isLoading}
-          className="w-full bg-purple-600 hover:bg-purple-700"
+          className="w-full"
         >
           {isLoading ? (
             <>

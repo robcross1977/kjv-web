@@ -8,6 +8,8 @@ import { useMemo } from "react";
 import { parseReference } from "@/lib/reference-parser";
 import { pipe } from "fp-ts/function";
 import * as E from "fp-ts/Either";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search as SearchIcon } from "lucide-react";
 
 type Props = {
   book?: ValidBookName;
@@ -15,6 +17,7 @@ type Props = {
   verse?: number;
   query?: string;
   results?: WrappedRecords;
+  aiContext?: string;
 };
 
 export default function Search({
@@ -23,6 +26,7 @@ export default function Search({
   verse,
   query,
   results,
+  aiContext,
 }: Props) {
   // Format current reference for auto-saving
   const currentReference = useMemo(() => {
@@ -85,7 +89,27 @@ export default function Search({
   return (
     <div className="flex flex-col w-full mx-auto h-screen">
       <div className="flex flex-grow w-full pt-2">
-        <div className="w-11/12 lg:w-2/3 mx-auto">
+        <div className="w-11/12 lg:w-2/3 mx-auto space-y-4">
+          {/* AI Search Context Header */}
+          {aiContext && (
+            <Card className="border">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <SearchIcon className="w-5 h-5 text-muted-foreground" />
+                  AI Search Results
+                </CardTitle>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="font-medium text-foreground">
+                    &ldquo;{query}&rdquo;
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{aiContext}</p>
+              </CardContent>
+            </Card>
+          )}
+
           <BooksDisplay results={results} />
         </div>
       </div>

@@ -1,6 +1,7 @@
 import Search from "@/components/search";
 import Header from "@components/shared/header";
 import LastReferenceNavigator from "@/components/last-reference-navigator";
+import AiSearchClient from "@/components/search/ai-search-client";
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/lib/function";
 import {
@@ -17,6 +18,7 @@ type Props = {
     book?: ValidBookName;
     chapter?: number;
     verse?: number;
+    ai_query?: string;
   }>;
 };
 
@@ -54,12 +56,31 @@ function getSearchResults(query: string) {
 
 export default async function Home(props: Props) {
   const searchParams = await props.searchParams;
-  const { query, book, chapter, verse } = searchParams ?? {};
+  const { query, book, chapter, verse, ai_query } = searchParams ?? {};
 
   // Check if user has any current search parameters
-  const hasCurrentSearch = !!(query || book || chapter || verse);
-  // Force cache bust
+  const hasCurrentSearch = !!(query || book || chapter || verse || ai_query);
 
+  // Handle AI search queries
+  if (ai_query) {
+    return (
+      <div>
+        <Header />
+        <LastReferenceNavigator hasCurrentSearch={hasCurrentSearch} />
+        <main className="w-full flex flex-col mx-auto">
+          <AiSearchClient
+            aiQuery={ai_query}
+            book={book}
+            chapter={chapter}
+            verse={verse}
+            query={query}
+          />
+        </main>
+      </div>
+    );
+  }
+
+  // Handle regular search queries
   return pipe(
     O.Do,
     O.apS("finalQuery", getFinalQueryFromString(book, chapter, verse, query)),

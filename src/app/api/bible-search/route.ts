@@ -52,13 +52,14 @@ export async function POST(request: NextRequest) {
 
     console.log("Bible search API: Agent response:", response);
 
-    // Extract references from tool results (frontend will fetch verse text via kingjames)
-    const references: Array<{
+    // Extract verses from tool results (including text)
+    const verses: Array<{
       reference: string;
+      text: string;
       relevance: number;
     }> = [];
 
-    // Look through tool results to find reference data
+    // Look through tool results to find verse data
     console.log("Bible search API: Total steps:", response.steps.length);
     for (let i = 0; i < response.steps.length; i++) {
       const step = response.steps[i];
@@ -80,37 +81,44 @@ export async function POST(request: NextRequest) {
             toolResult.result
           );
 
-          if (toolResult.result && typeof toolResult.result === "string") {
+          // Handle both string and object results
+          let parsedResult: any;
+          if (typeof toolResult.result === "string") {
             try {
-              const parsedResult = JSON.parse(toolResult.result);
-              console.log(
-                "Bible search API: Parsed tool result:",
-                parsedResult
-              );
-              if (parsedResult.verses && Array.isArray(parsedResult.verses)) {
-                references.push(
-                  ...parsedResult.verses.map((v: any) => ({
-                    reference: v.reference,
-                    relevance: v.relevance || 1,
-                  }))
-                );
-              }
+              parsedResult = JSON.parse(toolResult.result);
             } catch (e) {
               console.log(
                 "Bible search API: Tool result not JSON:",
                 toolResult.result
               );
+              continue;
             }
+          } else if (typeof toolResult.result === "object") {
+            parsedResult = toolResult.result;
+          } else {
+            continue;
+          }
+
+          console.log("Bible search API: Parsed tool result:", parsedResult);
+
+          if (parsedResult.verses && Array.isArray(parsedResult.verses)) {
+            verses.push(
+              ...parsedResult.verses.map((v: any) => ({
+                reference: v.reference,
+                text: v.text,
+                relevance: v.relevance || 1,
+              }))
+            );
           }
         }
       }
     }
 
-    console.log("Bible search API: Extracted references:", references);
+    console.log("Bible search API: Extracted verses:", verses);
 
     // Return in the format expected by frontend components
     const result = {
-      verses: references.slice(0, limit), // Respect the limit
+      verses: verses.slice(0, limit), // Respect the limit
       context: response.text.split("\n\n").pop() || response.text, // Use the last paragraph as context
       query,
     };

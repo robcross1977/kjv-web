@@ -365,3 +365,58 @@ export const getBookSuggestions = (input: string): string[] => {
   // Limit to 10 suggestions
   return suggestions.slice(0, 10);
 };
+
+/**
+ * Determine if input is a Bible reference or free-form question
+ * Returns true if it's a valid Bible reference, false if it's a question/topic
+ */
+export const isBibleReference = (input: string): boolean => {
+  const trimmed = input.trim();
+
+  // Empty input is not a reference
+  if (!trimmed) return false;
+
+  // Very short inputs (1-2 chars) are unlikely to be references
+  if (trimmed.length <= 2) return false;
+
+  // If it contains question words/marks, it's likely a question
+  const questionIndicators = [
+    "?",
+    "what",
+    "how",
+    "why",
+    "who",
+    "when",
+    "where",
+    "which",
+    "tell me",
+    "show me",
+    "find",
+    "about",
+    "help",
+    "explain",
+  ];
+
+  const lowerInput = trimmed.toLowerCase();
+  const hasQuestionIndicators = questionIndicators.some((indicator) =>
+    lowerInput.includes(indicator)
+  );
+
+  if (hasQuestionIndicators) return false;
+
+  // Try to parse as a reference
+  return pipe(
+    parseReference(trimmed),
+    E.fold(
+      () => false, // Parse failed, likely not a reference
+      () => true // Parse succeeded, it's a reference
+    )
+  );
+};
+
+/**
+ * Smart search router: returns 'reference' for Bible references, 'ai' for questions
+ */
+export const getSearchType = (input: string): "reference" | "ai" => {
+  return isBibleReference(input) ? "reference" : "ai";
+};
