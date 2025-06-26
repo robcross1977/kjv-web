@@ -1,28 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Loader2, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { pipe } from "fp-ts/function";
-import * as A from "fp-ts/Array";
 import { getSearchType } from "@/lib/reference-parser";
-
-interface MastraVerse {
-  reference: string;
-  text: string;
-  relevance: number;
-}
-
-interface MastraResponse {
-  verses: MastraVerse[];
-  context: string;
-  query: string;
-}
 
 function AiIcon() {
   return <Search className="w-5 h-5 text-muted-foreground" />;
@@ -72,20 +56,6 @@ export default function MastraSearch({ setOpen }: Props) {
       setIsLoading(false);
     }
   };
-
-  const handleVerseClick = (reference: string) => {
-    // Convert reference to URL format and navigate
-    const url = `/?query=${encodeURIComponent(reference)}`;
-    setOpen(false);
-    router.push(url);
-  };
-
-  const clearSearch = () => {
-    setError(null);
-    setQuery("");
-  };
-
-  // Results are now shown in main content area, so this component only shows the search form
 
   return (
     <div className="space-y-4">
