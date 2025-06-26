@@ -19,7 +19,7 @@ type Props = {
 function convertAiResultsToWrappedRecords(
   verses: Array<{ reference: string; text: string; relevance: number }>
 ): WrappedRecords {
-  const records: any = {};
+  const records: WrappedRecords['records'] = {};
 
   verses.forEach((verse) => {
     // Use kingjames search to parse each reference
