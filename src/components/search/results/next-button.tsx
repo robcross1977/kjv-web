@@ -36,6 +36,7 @@ export default function NextButton() {
       <ChevronRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-0.5" />
     </button>
   ) : (
-    <div className="w-[88px] sm:w-[108px]"></div> // Placeholder to maintain layout spacing
+    {/* Placeholder to maintain layout spacing */}
+    <div className="w-[88px] sm:w-[108px]"></div>
   );
 }
