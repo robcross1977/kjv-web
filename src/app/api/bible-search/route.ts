@@ -6,6 +6,7 @@ import * as A from "fp-ts/Array";
 import * as O from "fp-ts/Option";
 import * as E from "fp-ts/Either";
 import { search } from "kingjames";
+import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
 
 // Input validation schema
 const BibleSearchSchema = z.object({
@@ -141,7 +142,7 @@ const fallbackSearch = (query: string, limit: number): MastraVerse[] => {
                   Object.entries(verses),
                   A.map(
                     ([verseNum, verseText]): MastraVerse => ({
-                      reference: `${capitalizeBookName(
+                      reference: `${capitalizeFirstAlphabeticCharacter(
                         bookName
                       )} ${chapterNum}:${verseNum}`,
                       text: verseText as string,
@@ -161,15 +162,6 @@ const fallbackSearch = (query: string, limit: number): MastraVerse[] => {
     A.takeLeft(limit)
   );
 };
-
-/**
- * Capitalize book names for proper display
- */
-const capitalizeBookName = (bookName: string): string =>
-  bookName
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
 
 /**
  * Parse tool result to extract verse data

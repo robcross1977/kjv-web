@@ -1,11 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Wrench } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { ValidBookName } from "kingjames";
 import { BookmarkButton } from "@/components/bookmarks/bookmark-button";
-import { MarkAsReadToggle } from "@/components/shared/header/mark-as-read-toggle";
-import { useTools } from "@/components/tools/tools-provider";
 
 type Props = {
   book: ValidBookName;
@@ -24,39 +22,15 @@ export function ChapterHeader({
   isToolsActive,
   onMarkAllAsRead,
 }: Props) {
-  const { openToolsSheet } = useTools();
-
-  const formatBookName = (book: string) => {
-    return book
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
   return (
     <div className="mb-6">
       {/* Chapter title */}
-      <h1 className="text-4xl font-bold text-foreground mb-4 pb-4 border-b">
+      <h1 className="text-4xl font-bold text-foreground mb-4 pb-4 border-b leading-tight py-2">
         Chapter {chapter}
       </h1>
 
       {/* Action buttons - aligned with verse circles */}
       <div className="ml-2 mb-2 flex items-center gap-2">
-        {/* Tools button - opens unified tools sheet */}
-        <Button
-          onClick={() => openToolsSheet("search")}
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2"
-          title="Open Bible study tools (Press T for reading tools, / for search)"
-        >
-          <Wrench className="h-4 w-4" />
-          <span className="hidden sm:inline">Tools</span>
-        </Button>
-
-        {/* Mark mode toggle - authentication-aware */}
-        <MarkAsReadToggle />
-
         {/* Bookmark button - authentication-aware */}
         <BookmarkButton
           book={book}

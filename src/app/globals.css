@@ -53,6 +53,9 @@
   --animate-fade-in: fade-in 0.5s ease-in;
   --animate-fade-out: fade-out 0.5s ease-out;
   --animate-glow: glow 4.5s infinite alternate;
+  --animate-fade-up: fade-up 0.6s ease-out;
+  --animate-bounce-gentle: bounce-gentle 2s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 3s ease-in-out infinite;
 
   --text-color: #3b3816;
   --radius: 0.5rem;
@@ -70,6 +73,38 @@
         0 0 25px rgba(210, 210, 240, 0.7);
     }
   }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes bounce-gentle {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      box-shadow: 0 0 5px rgba(112, 0, 17, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(112, 0, 17, 0.6), 0 0 30px rgba(112, 0, 17, 0.4);
+    }
+  }
+
   @keyframes accordion-down {
     from {
       height: 0;
@@ -193,5 +228,35 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Enhanced visual styles matching portfolio */
+@layer components {
+  .animate-fade-up {
+    animation: var(--animate-fade-up);
+  }
+
+  .animate-bounce-gentle {
+    animation: var(--animate-bounce-gentle);
+  }
+
+  .animate-pulse-glow {
+    animation: var(--animate-pulse-glow);
+  }
+
+  /* Enhanced card hover effects */
+  .card-enhanced {
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  }
+
+  /* Gradient text utilities */
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-red-600 bg-clip-text text-transparent;
+  }
+
+  /* Section band styling */
+  .section-band {
+    @apply bg-gradient-to-r py-6 mb-8;
   }
 }

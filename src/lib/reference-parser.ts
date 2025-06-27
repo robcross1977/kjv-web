@@ -27,8 +27,8 @@ export const parseReference = (
     return E.left("Reference cannot be empty");
   }
 
-  // Use kingjames search function
-  const searchResults = search(trimmed);
+  // Use kingjames search function (must be lowercase)
+  const searchResults = search(trimmed.toLowerCase());
 
   if (
     searchResults.type === "none" ||
@@ -83,8 +83,8 @@ export const isBibleReference = (input: string): boolean => {
   // Empty input is not a reference
   if (!trimmed) return false;
 
-  // Use kingjames search function to determine if it's a valid reference
-  const searchResults = search(trimmed);
+  // Use kingjames search function to determine if it's a valid reference (must be lowercase)
+  const searchResults = search(trimmed.toLowerCase());
 
   // If search returns results with records, it's a valid reference
   return (

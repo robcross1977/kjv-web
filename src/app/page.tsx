@@ -19,6 +19,7 @@ type Props = {
     chapter?: number;
     verse?: number;
     ai_query?: string;
+    clear?: string;
   }>;
 };
 
@@ -56,17 +57,22 @@ function getSearchResults(query: string) {
 
 export default async function Home(props: Props) {
   const searchParams = await props.searchParams;
-  const { query, book, chapter, verse, ai_query } = searchParams ?? {};
+  const { query, book, chapter, verse, ai_query, clear } = searchParams ?? {};
 
-  // Check if user has any current search parameters
+  // Check if user has any current search parameters (excluding clear flag)
   const hasCurrentSearch = !!(query || book || chapter || verse || ai_query);
+
+  // Check if user explicitly wants to see search interface
+  const showSearchInterface = clear === "true";
 
   // Handle AI search queries
   if (ai_query) {
     return (
       <div>
         <Header />
-        <LastReferenceNavigator hasCurrentSearch={hasCurrentSearch} />
+        <LastReferenceNavigator
+          hasCurrentSearch={hasCurrentSearch || showSearchInterface}
+        />
         <main className="w-full flex flex-col mx-auto">
           <AiSearchClient
             aiQuery={ai_query}
@@ -89,7 +95,9 @@ export default async function Home(props: Props) {
       return pipe(
         <div>
           <Header />
-          <LastReferenceNavigator hasCurrentSearch={hasCurrentSearch} />
+          <LastReferenceNavigator
+            hasCurrentSearch={hasCurrentSearch || showSearchInterface}
+          />
           <main className="w-full flex flex-col mx-auto">
             <Search
               book={book}

@@ -11,8 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { BookOpen, BarChart3 } from "lucide-react";
-import { useTools } from "./tools-provider";
-import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
 
 type Props = {
   currentContext?: {
@@ -27,7 +26,10 @@ type Props = {
  * Contains current chapter context and reading progress tracking
  */
 export function ReadingSection({ currentContext }: Props) {
-  const { isToolsActive, isLoggedIn, toggleTools } = useTools();
+  // Get actual authentication status from NextAuth
+  const { data: session, status } = useSession();
+  const isLoggedIn = !!session?.user;
+  const isAuthLoading = status === "loading";
 
   const getCurrentChapterInfo = () => {
     return pipe(
@@ -51,6 +53,20 @@ export function ReadingSection({ currentContext }: Props) {
     const capitalizedBook = book.charAt(0).toUpperCase() + book.slice(1);
     return `${capitalizedBook} ${chapter}`;
   };
+
+  if (isAuthLoading) {
+    return (
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <BookOpen className="h-4 w-4" />
+            Reading Tools
+          </CardTitle>
+          <CardDescription>Loading...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
 
   if (!isLoggedIn) {
     return (
@@ -99,23 +115,9 @@ export function ReadingSection({ currentContext }: Props) {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <p className="text-sm text-muted-foreground">
-                    {isToolsActive
-                      ? "Mark as Read mode is active - click verses to toggle their status"
-                      : "Enable Mark as Read mode to interact with verses"}
-                  </p>
-                  <Button
-                    onClick={toggleTools}
-                    variant={isToolsActive ? "default" : "outline"}
-                    size="sm"
-                    className="w-full"
-                  >
-                    {isToolsActive
-                      ? "Disable Mark as Read Mode"
-                      : "Enable Mark as Read Mode"}
-                  </Button>
-                </div>
+                <p className="text-sm text-muted-foreground">
+                  Chapter context for reading tools
+                </p>
               </CardContent>
             </Card>
           )
