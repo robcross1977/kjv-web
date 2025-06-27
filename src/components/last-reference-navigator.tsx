@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLastReference } from "@/hooks/use-last-reference";
 import { useTools } from "@/components/tools/tools-provider";
 import { parseReference } from "@/lib/reference-parser";
+import LoadingSpinner from "@/components/ui/loading-spinner";
 import { pipe } from "fp-ts/function";
 import * as O from "fp-ts/Option";
 import * as E from "fp-ts/Either";
@@ -64,6 +65,15 @@ export default function LastReferenceNavigator({
       )
     );
   }, [hasCurrentSearch, lastReference, isLoading, isAuthLoading, router]);
+
+  // Show loading spinner when we're loading last reference and have no current search
+  if (!hasCurrentSearch && (isAuthLoading || isLoading)) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <LoadingSpinner size="md" showMessages={true} className="text-center" />
+      </div>
+    );
+  }
 
   return null;
 }

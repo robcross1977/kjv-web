@@ -6,6 +6,7 @@ import * as R from "fp-ts/Record";
 import * as Ord from "fp-ts/Ord";
 import * as S from "fp-ts/string";
 import { search, WrappedRecords } from "kingjames";
+import { capitalizeFirstAlphabeticCharacter } from "@/util/string-util";
 
 interface BibleVerse {
   reference: string;
@@ -104,7 +105,7 @@ async function fetchBibleVerses(
                   R.toArray,
                   A.map(
                     ([verseNum, verseText]): BibleVerse => ({
-                      reference: `${capitalizeBookName(
+                      reference: `${capitalizeFirstAlphabeticCharacter(
                         bookName
                       )} ${chapterNum}:${verseNum}`,
                       text: verseText,
@@ -162,14 +163,4 @@ async function fetchBibleVerses(
       searchedReferences: references,
     };
   }
-}
-
-/**
- * Capitalize book names for proper display
- */
-function capitalizeBookName(bookName: string): string {
-  return bookName
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
 }

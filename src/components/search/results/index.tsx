@@ -23,11 +23,26 @@ type ResultDisplayProps = {
   results: WrappedRecords;
 };
 function ResultDisplay({ results }: ResultDisplayProps) {
-  return <div className="w-full">{displayTopLevelBookRecords(results)}</div>;
+  return (
+    <div className="w-full animate-fade-up">
+      {displayTopLevelBookRecords(results)}
+    </div>
+  );
 }
 
 function NoResultsFoundResult() {
-  return <div>No Result Found</div>;
+  return (
+    <div className="text-center py-16 animate-fade-up">
+      <div className="bg-gradient-to-br from-muted/20 to-muted/40 rounded-2xl p-8 border-2 border-dashed border-muted-foreground/30">
+        <h3 className="text-xl font-semibold text-muted-foreground mb-2">
+          No Results Found
+        </h3>
+        <p className="text-muted-foreground">
+          Try adjusting your search terms or browse by book and chapter.
+        </p>
+      </div>
+    </div>
+  );
 }
 
 function EmptyResult() {
@@ -45,15 +60,17 @@ function BookContainer({ title, chapters }: BookContainerProps) {
   return (
     <div
       key={title}
-      className="flex flex-col w-full h-full border rounded-md p-2"
+      className="flex flex-col w-full h-full bg-gradient-to-br from-card to-card/95 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-up"
     >
       <TitleDisplay title={title} />
-      <ChaptersDisplay book={title} chapters={chapters} />
+      <div className="flex-1 mt-6">
+        <ChaptersDisplay book={title} chapters={chapters} />
+      </div>
 
       {O.isNone(verse) ? (
         <>
-          <Separator className="my-4" />
-          <div className="w-full flex justify-between">
+          <Separator className="my-6 bg-gradient-to-r from-transparent via-border to-transparent" />
+          <div className="w-full flex justify-between items-center bg-gradient-to-r from-muted/20 via-muted/30 to-muted/20 rounded-xl p-4">
             <PrevButton />
             <NextButton />
           </div>
@@ -70,18 +87,19 @@ type TitleProps = {
 };
 function TitleDisplay({ title }: TitleProps) {
   return (
-    <div className="w-full flex justify-between items-center rounded-md shadow-lg">
-      <div className="ml-2 my-2">
+    <div className="w-full flex justify-between items-center bg-gradient-to-r from-header/20 via-header/30 to-header/20 rounded-xl p-4 shadow-sm">
+      <div className="flex-shrink-0">
         <PrevButton />
       </div>
 
-      <div>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
+      <div className="flex-1 text-center">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-primary via-red-600 to-primary bg-clip-text text-transparent hover:from-red-700 hover:via-primary hover:to-red-700 transition-all duration-500 leading-tight py-2">
           {capitalizeFirstAlphabeticCharacter(title)}
         </h1>
+        <div className="h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mt-2 transform scale-x-0 hover:scale-x-100 transition-transform duration-300"></div>
       </div>
 
-      <div className="mr-2 my-2">
+      <div className="flex-shrink-0">
         <NextButton />
       </div>
     </div>

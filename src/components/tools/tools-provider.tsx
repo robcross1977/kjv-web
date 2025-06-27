@@ -72,7 +72,7 @@ export function ToolsProvider({ children }: Props) {
   const [isToolsActive, setIsToolsActive] = useState(false);
   const [isToolsSheetOpen, setIsToolsSheetOpen] = useState(false);
   const [activeToolSection, setActiveToolSection] =
-    useState<ToolSection>("search");
+    useState<ToolSection>("reading");
   const [currentVerses, setCurrentVerses] = useState<VerseReference[]>([]);
 
   // Use NextAuth.js v5 session
@@ -101,7 +101,7 @@ export function ToolsProvider({ children }: Props) {
     setIsToolsActive(false);
   }, []);
 
-  const openToolsSheet = useCallback((section: ToolSection = "search") => {
+  const openToolsSheet = useCallback((section: ToolSection = "reading") => {
     setActiveToolSection(section);
     setIsToolsSheetOpen(true);
   }, []);
@@ -156,7 +156,7 @@ export function ToolsProvider({ children }: Props) {
           break;
         case "/":
           event.preventDefault();
-          openToolsSheet("search");
+          openToolsSheet("reading");
           break;
       }
     };

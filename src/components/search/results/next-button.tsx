@@ -5,7 +5,7 @@ import {
 } from "next/navigation";
 import { getNext } from "kingjames";
 import * as O from "fp-ts/Option";
-import { Button } from "@/components/ui/button";
+import { ChevronRight } from "lucide-react";
 
 function getParams(searchParams: ReadonlyURLSearchParams) {
   const book = searchParams.get("book");
@@ -26,27 +26,16 @@ export default function NextButton() {
   const router = useRouter();
 
   return O.isSome(next) ? (
-    <Button
+    <button
       type="button"
-      className="border font-medium rounded-lg text-sm p-2.5 inline-flex items-center"
+      className="group bg-gradient-to-r from-primary/10 to-primary/20 hover:from-primary/20 hover:to-primary/30 border-2 border-primary/30 hover:border-primary/50 text-primary hover:text-primary font-medium rounded-xl p-3 inline-flex items-center gap-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
       onClick={() => router.push(`/?${next.value}`)}
+      aria-label="Go to next chapter or verse"
     >
-      <svg
-        aria-hidden="true"
-        className="w-4 h-4"
-        fill="currentColor"
-        viewBox="0 0 18 18"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          fillRule="evenodd"
-          d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-          clipRule="evenodd"
-        ></path>
-      </svg>
-      <span className="sr-only">Icon description</span>
-    </Button>
+      <span className="hidden sm:inline text-sm font-semibold">Next</span>
+      <ChevronRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-0.5" />
+    </button>
   ) : (
-    <div></div>
+    <div className="w-[88px] sm:w-[108px]"></div> // Placeholder to maintain layout spacing
   );
 }

@@ -26,8 +26,11 @@ type TitleDisplayProps = {
 
 function TitleDisplay({ book, chapter, verse }: TitleDisplayProps) {
   return (
-    <div className="mr-4">
-      <Link href={`/?book=${book}&chapter=${chapter}&verse=${verse}`}>
+    <div className="mr-4 group">
+      <Link
+        href={`/?book=${book}&chapter=${chapter}&verse=${verse}`}
+        className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-primary/10 to-primary/20 hover:from-primary/20 hover:to-primary/30 rounded-lg border border-primary/20 hover:border-primary/40 transition-all duration-200 text-primary hover:text-primary font-semibold"
+      >
         {verse}
       </Link>
     </div>
@@ -56,7 +59,7 @@ function VersesContainer({
   const verseNum = parseInt(verse);
 
   return (
-    <div key={`${book} ${chapter}:${verse}`} className="my-2">
+    <div key={`${book} ${chapter}:${verse}`} className="my-1">
       <SelectableVerse
         book={book}
         chapter={chapterNum}
@@ -126,14 +129,16 @@ export default function VersesDisplay({
   );
 
   return (
-    <div className="space-y-1">
-      <ChapterHeader
-        book={book}
-        chapter={parseInt(chapter)}
-        isToolsActive={isToolsActive}
-        onMarkAllAsRead={markAllAsRead}
-      />
-      {verseElements}
+    <div className="space-y-4">
+      <div className="bg-gradient-to-r from-header/10 via-header/20 to-header/10 rounded-xl p-4 border border-header/30">
+        <ChapterHeader
+          book={book}
+          chapter={parseInt(chapter)}
+          isToolsActive={isToolsActive}
+          onMarkAllAsRead={markAllAsRead}
+        />
+      </div>
+      <div className="space-y-2">{verseElements}</div>
     </div>
   );
 }

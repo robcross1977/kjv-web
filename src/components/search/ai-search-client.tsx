@@ -22,8 +22,8 @@ function convertAiResultsToWrappedRecords(
   const records: WrappedRecords["records"] = {};
 
   verses.forEach((verse) => {
-    // Use kingjames search to parse each reference
-    const searchResult = search(verse.reference);
+    // Use kingjames search to parse each reference (must be lowercase)
+    const searchResult = search(verse.reference.toLowerCase());
 
     // If kingjames can parse it, merge the results
     if (
