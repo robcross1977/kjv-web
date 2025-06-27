@@ -78,13 +78,9 @@ export default function LoadingSpinner({
   // Use a fixed initial index to prevent hydration mismatch
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
-  const [isClient, setIsClient] = useState(false);
 
   // Set up client-side only effects
   useEffect(() => {
-    // Mark that we're on the client
-    setIsClient(true);
-
     // Set a random message index only after hydration is complete
     setCurrentMessageIndex(Math.floor(Math.random() * messages.length));
 
