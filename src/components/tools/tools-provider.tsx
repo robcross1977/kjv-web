@@ -156,7 +156,13 @@ export function ToolsProvider({ children }: Props) {
           break;
         case "/":
           event.preventDefault();
-          openToolsSheet("reading");
+          // Focus the unified search bar instead of opening tools
+          const searchInput = document.querySelector(
+            'input[placeholder*="search"], input[placeholder*="Search"]'
+          ) as HTMLInputElement;
+          if (searchInput) {
+            searchInput.focus();
+          }
           break;
       }
     };
