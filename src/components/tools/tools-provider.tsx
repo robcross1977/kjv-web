@@ -158,7 +158,7 @@ export function ToolsProvider({ children }: Props) {
           event.preventDefault();
           // Focus the unified search bar instead of opening tools
           const searchInput = document.querySelector(
-            'input[placeholder*="search"], input[placeholder*="Search"]'
+            'input[data-search-input]'
           ) as HTMLInputElement;
           if (searchInput) {
             searchInput.focus();
