@@ -36,6 +36,7 @@ export default function PrevButton() {
       <span className="hidden sm:inline text-sm font-semibold">Previous</span>
     </button>
   ) : (
-    <div className="w-[88px] sm:w-[108px]"></div> // Placeholder to maintain layout spacing
+    // Placeholder to maintain layout spacing
+    <div className="w-[88px] sm:w-[108px]"></div>
   );
 }
