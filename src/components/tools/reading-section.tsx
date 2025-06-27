@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { BookOpen, BarChart3 } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 type Props = {
   currentContext?: {
@@ -25,8 +26,10 @@ type Props = {
  * Contains current chapter context and reading progress tracking
  */
 export function ReadingSection({ currentContext }: Props) {
-  // For now, assume user is logged in for reading progress
-  const isLoggedIn = true;
+  // Get actual authentication status from NextAuth
+  const { data: session, status } = useSession();
+  const isLoggedIn = !!session?.user;
+  const isAuthLoading = status === "loading";
 
   const getCurrentChapterInfo = () => {
     return pipe(
@@ -50,6 +53,20 @@ export function ReadingSection({ currentContext }: Props) {
     const capitalizedBook = book.charAt(0).toUpperCase() + book.slice(1);
     return `${capitalizedBook} ${chapter}`;
   };
+
+  if (isAuthLoading) {
+    return (
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <BookOpen className="h-4 w-4" />
+            Reading Tools
+          </CardTitle>
+          <CardDescription>Loading...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
 
   if (!isLoggedIn) {
     return (
