@@ -109,7 +109,12 @@ export default function LoadingSpinner({
       <div
         className={`relative inline-flex items-center justify-center p-4 ${finalWidth} ${finalHeight} aspect-square`}
       >
-        <div className="absolute inset-0 animate-spin rounded-full border-t-2 border-b-4 border-primary/30">
+        <div
+          className="absolute inset-0 animate-spin rounded-full border-t-2 border-b-4 border-primary/30"
+          role="status"
+          aria-live="polite"
+          aria-label="Loading"
+        >
           <div className="bg-background rounded-full w-full h-full z-10 bg-opacity-100"></div>
         </div>
         {shouldShowMessages && (
