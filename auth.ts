@@ -41,8 +41,11 @@ export const config = {
   ],
   callbacks: {
     session({ session, token }) {
-      // Ensure the user ID is available in the session
-      if (token.sub) {
+      // Use email as consistent user ID to avoid Auth0 sub changes
+      // This ensures the same user always gets the same ID
+      if (session.user?.email) {
+        session.user.id = session.user.email;
+      } else if (token.sub) {
         session.user.id = token.sub;
       }
       return session;

@@ -1,6 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Wrench } from "lucide-react";
 import { useTools } from "@/components/tools/tools-provider";
 
@@ -11,16 +17,27 @@ import { useTools } from "@/components/tools/tools-provider";
 export function ToolsButton() {
   const { openToolsSheet, isToolsSheetOpen } = useTools();
 
+  const tooltipText = "Open Bible study tools (Press T)";
+
   return (
-    <Button
-      variant={isToolsSheetOpen ? "default" : "outline"}
-      size="sm"
-      onClick={() => openToolsSheet("reading")}
-      className="flex items-center gap-2"
-      title="Open Bible study tools (Press T)"
-    >
-      <Wrench className="h-4 w-4" />
-      <span className="hidden sm:inline">Tools</span>
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant={isToolsSheetOpen ? "default" : "outline"}
+            size="sm"
+            onClick={() => openToolsSheet("reading")}
+            className="flex items-center gap-2"
+            title={tooltipText}
+          >
+            <Wrench className="h-4 w-4" />
+            <span className="hidden sm:inline">Tools</span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltipText}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
