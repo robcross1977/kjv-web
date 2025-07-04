@@ -8,7 +8,7 @@ function Title() {
   return (
     <Link href="/" className="group cursor-pointer">
       <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-primary via-red-600 to-primary bg-clip-text text-transparent hover:from-red-700 hover:via-primary hover:to-red-700 transition-all duration-500 transform hover:scale-105 font-serif leading-tight py-2">
-        Bible Buddy
+        Verse Vibe
       </h1>
       <div className="h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center"></div>
     </Link>
@@ -29,11 +29,11 @@ export default function Header() {
       </div>
 
       <div className="container mx-auto px-6 py-4 relative z-10">
-        <div className="flex flex-col justify-center items-center lg:items-start w-full space-y-6">
+        <div className="flex flex-col justify-center items-center lg:items-start w-full space-y-4">
           {/* Title and Auth Row */}
-          <div className="flex justify-between items-center w-full">
+          <div className="flex flex-col sm:flex-row justify-between items-center w-full gap-4">
             <Title />
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 justify-center sm:justify-end">
               <ToolsButton />
               <MarkAsReadToggle />
               <Auth />

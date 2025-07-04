@@ -276,6 +276,48 @@ export function useBookmarks(
   );
 
   /**
+   * Move bookmark to folder
+   */
+  const moveToFolder = useCallback(
+    async (bookmarkId: string, folderId: string | null): Promise<boolean> => {
+      const result = await pipe(
+        TE.tryCatch(
+          async () => {
+            const response = await fetch(`/api/bookmarks/${bookmarkId}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ folderId }),
+              credentials: "include",
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || "Failed to move bookmark");
+            }
+
+            return (await response.json()) as Bookmark;
+          },
+          (error) => `Error moving bookmark: ${error}`
+        )
+      )();
+
+      if (E.isRight(result)) {
+        // Update the bookmark in local state
+        setState((prev) => ({
+          ...prev,
+          bookmarks: prev.bookmarks.map((bookmark) =>
+            bookmark.id === bookmarkId ? result.right : bookmark
+          ),
+        }));
+        return true;
+      }
+
+      return false;
+    },
+    []
+  );
+
+  /**
    * Update search parameters and fetch bookmarks
    */
   const updateSearch = useCallback(
@@ -329,6 +371,7 @@ export function useBookmarks(
     updateBookmark,
     deleteBookmark,
     navigateToBookmark,
+    moveToFolder,
     updateSearch,
     goToPage,
     refresh,

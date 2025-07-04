@@ -3,13 +3,22 @@
 import * as E from "fp-ts/Either";
 import { useState } from "react";
 import { useBookmarks } from "@/hooks/use-bookmarks";
+import { useBookmarkFolders } from "@/hooks/use-bookmark-folders";
 import { useTools } from "@/components/tools/tools-provider";
 import { BookmarkSearch } from "./bookmark-search";
-import { BookmarksList } from "./bookmarks-list";
+import { FolderBrowser } from "./folder-browser";
 import { CreateBookmarkForm } from "./create-bookmark-form";
+import { CreateFolderForm } from "./create-folder-form";
 import { Button } from "@/components/ui/button";
-import { Plus, Bookmark } from "lucide-react";
+import { Plus, FolderPlus } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type Props = {
   currentContext?: {
@@ -24,6 +33,7 @@ type Props = {
  */
 export function BookmarksSection({ currentContext }: Props) {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showCreateFolderDialog, setShowCreateFolderDialog] = useState(false);
   const { isLoggedIn } = useTools();
   const {
     bookmarks,
@@ -37,10 +47,19 @@ export function BookmarksSection({ currentContext }: Props) {
     updateBookmark,
     deleteBookmark,
     navigateToBookmark,
+    moveToFolder,
     updateSearch,
     goToPage,
     refresh,
   } = useBookmarks(undefined, isLoggedIn);
+
+  const {
+    folders,
+    loading: foldersLoading,
+    error: foldersError,
+    createFolder,
+    folderTree,
+  } = useBookmarkFolders(isLoggedIn);
 
   const handleCreateBookmark = async (data: any) => {
     const result = await createBookmark(data);
@@ -53,20 +72,13 @@ export function BookmarksSection({ currentContext }: Props) {
     }
   };
 
-  const handleQuickBookmark = () => {
-    if (currentContext?.book && currentContext?.chapter) {
-      const reference =
-        currentContext.verses && currentContext.verses.length > 0
-          ? `${currentContext.book} ${
-              currentContext.chapter
-            }:${currentContext.verses.join(",")}`
-          : `${currentContext.book} ${currentContext.chapter}`;
-
-      setShowCreateForm(true);
-      // The form will pre-populate with this reference
-    } else {
-      setShowCreateForm(true);
+  const handleCreateFolder = async (data: any) => {
+    const result = await createFolder(data);
+    if (E.isRight(result)) {
+      setShowCreateFolderDialog(false);
+      return true;
     }
+    return false;
   };
 
   if (showCreateForm) {
@@ -85,6 +97,7 @@ export function BookmarksSection({ currentContext }: Props) {
         <CreateBookmarkForm
           onSubmit={handleCreateBookmark}
           onCancel={() => setShowCreateForm(false)}
+          folders={folders}
           initialReference={
             currentContext?.book && currentContext?.chapter
               ? currentContext.verses && currentContext.verses.length > 0
@@ -113,17 +126,15 @@ export function BookmarksSection({ currentContext }: Props) {
           </div>
 
           <div className="flex gap-2">
-            {currentContext?.book && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleQuickBookmark}
-                className="flex items-center gap-2"
-              >
-                <Bookmark className="h-4 w-4" />
-                Quick Bookmark
-              </Button>
-            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowCreateFolderDialog(true)}
+              className="flex items-center gap-2"
+            >
+              <FolderPlus className="h-4 w-4" />
+              New Folder
+            </Button>
             <Button
               variant="default"
               size="sm"
@@ -144,9 +155,18 @@ export function BookmarksSection({ currentContext }: Props) {
         </Alert>
       )}
 
-      {/* Bookmarks List */}
-      <BookmarksList
+      {/* Folders Error Display */}
+      {foldersError && (
+        <Alert variant="destructive">
+          <AlertDescription>Folders: {foldersError}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Folder Browser */}
+      <FolderBrowser
         bookmarks={bookmarks}
+        folders={folders}
+        folderTree={folderTree}
         loading={loading}
         page={page}
         totalPages={totalPages}
@@ -155,7 +175,32 @@ export function BookmarksSection({ currentContext }: Props) {
         onNavigate={navigateToBookmark}
         onPageChange={goToPage}
         onRefresh={refresh}
+        onMoveToFolder={moveToFolder}
       />
+
+      {/* Create Folder Dialog */}
+      <Dialog
+        open={showCreateFolderDialog}
+        onOpenChange={setShowCreateFolderDialog}
+      >
+        <DialogContent className="sm:max-w-md bg-white">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FolderPlus className="h-5 w-5" />
+              Create New Folder
+            </DialogTitle>
+            <DialogDescription>
+              Create a new folder to organize your bookmarks.
+            </DialogDescription>
+          </DialogHeader>
+
+          <CreateFolderForm
+            onSubmit={handleCreateFolder}
+            onCancel={() => setShowCreateFolderDialog(false)}
+            folders={folders}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -17,6 +17,7 @@ export const BookmarkSchema = z.object({
   tags: z.array(z.string()),
   category: z.string().nullable().optional(),
   color: z.string().nullable().optional(),
+  folderId: z.string().nullable().optional(),
   createdAt: z.string(), // ISO date string
   updatedAt: z.string(), // ISO date string
   accessCount: z.number(),
@@ -36,6 +37,7 @@ export const CreateBookmarkSchema = z.object({
   tags: z.array(z.string()).default([]),
   category: z.string().optional(),
   color: z.string().optional(),
+  folderId: z.string().optional(), // New field for folder assignment
 });
 
 export type CreateBookmarkRequest = z.infer<typeof CreateBookmarkSchema>;
@@ -50,6 +52,7 @@ export const UpdateBookmarkSchema = z.object({
   tags: z.array(z.string()).optional(),
   category: z.string().optional(),
   color: z.string().optional(),
+  folderId: z.string().optional(), // New field for folder assignment
 });
 
 export type UpdateBookmarkRequest = z.infer<typeof UpdateBookmarkSchema>;

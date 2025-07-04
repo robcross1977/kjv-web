@@ -139,6 +139,7 @@ export const createBookmarkInDb = (
           tags: data.tags,
           category: data.category,
           color: data.color,
+          folderId: data.folderId,
         },
       });
 

@@ -80,6 +80,9 @@ const buildUpdateData = (
       ...(validatedData.color !== undefined && {
         color: validatedData.color,
       }),
+      ...(validatedData.folderId !== undefined && {
+        folderId: validatedData.folderId,
+      }),
     }))
   );
 

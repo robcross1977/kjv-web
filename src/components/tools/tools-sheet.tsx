@@ -91,25 +91,27 @@ export function ToolsSheet({
         <SheetOverlay className="bg-black/30 backdrop-blur-sm" />
         <SheetPrimitive.Content
           className={cn(
-            "fixed z-50 gap-4 bg-white p-6 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out",
-            "inset-y-0 right-0 h-full w-full sm:max-w-2xl border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right"
+            "fixed z-50 gap-4 bg-white shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out",
+            "inset-y-0 right-0 h-full w-full sm:max-w-2xl border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
+            "flex flex-col overflow-hidden"
           )}
         >
-          <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </SheetPrimitive.Close>
-          <SheetHeader className="bg-gray-100 rounded-lg p-4 mb-6 mt-4 border-l-4 border-primary">
-            <SheetTitle className="flex items-center gap-2 text-xl font-bold text-primary">
-              <Wrench className="h-6 w-6" />
-              Bible Study Tools
-            </SheetTitle>
-            <SheetDescription className="text-base">
-              Manage reading progress and organize bookmarks
-            </SheetDescription>
-          </SheetHeader>
+          {/* Fixed Header */}
+          <div className="flex-shrink-0 p-6 pb-0">
+            <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </SheetPrimitive.Close>
+            <SheetHeader className="bg-gray-100 rounded-lg p-4 mb-6 mt-4 border-l-4 border-primary">
+              <SheetTitle className="flex items-center gap-2 text-xl font-bold text-primary">
+                <Wrench className="h-6 w-6" />
+                Bible Study Tools
+              </SheetTitle>
+              <SheetDescription className="text-base">
+                Manage reading progress and organize bookmarks
+              </SheetDescription>
+            </SheetHeader>
 
-          <div className="mt-6">
             <Tabs
               value={activeSection}
               onValueChange={(value: string) =>
@@ -133,9 +135,20 @@ export function ToolsSheet({
                   <span className="hidden sm:inline">Bookmarks</span>
                 </TabsTrigger>
               </TabsList>
+            </Tabs>
+          </div>
 
-              <div className="space-y-6">
-                <TabsContent value="reading" className="space-y-4 mt-0">
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto px-6 pb-6">
+            <Tabs
+              value={activeSection}
+              onValueChange={(value: string) =>
+                setActiveSection(value as ToolSection)
+              }
+              className="w-full h-full"
+            >
+              <div className="space-y-6 h-full">
+                <TabsContent value="reading" className="space-y-4 mt-0 h-full">
                   <div className="bg-gray-100 rounded-lg p-4 border-l-4 border-primary">
                     <h3 className="text-lg font-bold flex items-center gap-2 text-primary">
                       {getSectionIcon("reading")}
@@ -148,7 +161,10 @@ export function ToolsSheet({
                   <ReadingSection currentContext={currentContext} />
                 </TabsContent>
 
-                <TabsContent value="bookmarks" className="space-y-4 mt-0">
+                <TabsContent
+                  value="bookmarks"
+                  className="space-y-4 mt-0 h-full"
+                >
                   <div className="bg-gray-100 rounded-lg p-4 border-l-4 border-primary">
                     <h3 className="text-lg font-bold flex items-center gap-2 text-primary">
                       {getSectionIcon("bookmarks")}

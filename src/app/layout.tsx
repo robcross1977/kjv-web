@@ -9,7 +9,7 @@ import { SWRProvider } from "@/components/swr-provider";
 const font = EB_Garamond({ subsets: ["latin"], weight: ["400", "700"] });
 
 export const metadata = {
-  title: "Bible Buddy",
+  title: "Verse Vibe",
   description: "By Robert Crossland",
 };
 

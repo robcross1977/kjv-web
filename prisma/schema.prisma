@@ -16,9 +16,34 @@ model User {
   name     String?
   lastReference String? // Last Bible reference user visited (e.g., "John 3:16")
   bookmarks Bookmark[]
+  bookmarkFolders BookmarkFolder[]
   readVerses ReadVerse[]
   
   @@map("user")
+}
+
+model BookmarkFolder {
+  id          String   @id @default(cuid())
+  name        String   // Folder name
+  description String?  // Optional description
+  color       String?  // Color coding
+  
+  // Hierarchy support
+  parentId    String?  // Parent folder ID for nested folders
+  parent      BookmarkFolder? @relation("FolderHierarchy", fields: [parentId], references: [id])
+  children    BookmarkFolder[] @relation("FolderHierarchy")
+  
+  // Relationships
+  bookmarks   Bookmark[]
+  user        User     @relation(fields: [userId], references: [uid])
+  userId      String
+
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, name, parentId]) // Unique folder names per user and parent
+  @@map("bookmark_folder")
 }
 
 model Bookmark {
@@ -39,8 +64,12 @@ model Bookmark {
 
   // Organization
   tags        String[] // Array of tags for categorization
-  category    String?  // Primary category
+  category    String?  // Primary category (deprecated - use folder instead)
   color       String?  // Color coding
+  
+  // Folder relationship
+  folderId    String?  // Optional folder assignment
+  folder      BookmarkFolder? @relation(fields: [folderId], references: [id])
 
   // Metadata
   createdAt   DateTime @default(now())

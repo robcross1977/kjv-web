@@ -8,6 +8,13 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -25,13 +32,16 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { type Bookmark, type UpdateBookmarkRequest } from "@/types/bookmark";
+import { type BookmarkFolder } from "@/types/bookmark-folder";
 import { formatDistanceToNow } from "date-fns";
+import { EditBookmarkForm } from "./edit-bookmark-form";
 
 type Props = {
   bookmarks: Bookmark[];
   loading: boolean;
   page: number;
   totalPages: number;
+  folders?: BookmarkFolder[];
   onUpdate: (
     id: string,
     data: UpdateBookmarkRequest
@@ -50,8 +60,10 @@ function BookmarkItem({
   onUpdate,
   onDelete,
   onNavigate,
+  folders,
 }: {
   bookmark: Bookmark;
+  folders?: BookmarkFolder[];
   onUpdate: (
     id: string,
     data: UpdateBookmarkRequest
@@ -61,6 +73,7 @@ function BookmarkItem({
 }) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const handleNavigate = async () => {
     const result = await onNavigate(bookmark.id);
@@ -81,6 +94,15 @@ function BookmarkItem({
       await onDelete(bookmark.id);
       setIsDeleting(false);
     }
+  };
+
+  const handleEdit = async (data: UpdateBookmarkRequest): Promise<boolean> => {
+    const result = await onUpdate(bookmark.id, data);
+    if (E.isRight(result)) {
+      setIsEditDialogOpen(false);
+      return true;
+    }
+    return false;
   };
 
   const formatDate = (dateString: string) => {
@@ -118,7 +140,7 @@ function BookmarkItem({
                 <ExternalLink className="h-4 w-4 mr-2" />
                 Go to passage
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
               </DropdownMenuItem>
@@ -174,6 +196,28 @@ function BookmarkItem({
           </div>
         </div>
       </CardContent>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-md bg-white">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Edit className="h-5 w-5" />
+              Edit Bookmark
+            </DialogTitle>
+            <DialogDescription>
+              Update the details of your bookmark.
+            </DialogDescription>
+          </DialogHeader>
+
+          <EditBookmarkForm
+            bookmark={bookmark}
+            onSubmit={handleEdit}
+            onCancel={() => setIsEditDialogOpen(false)}
+            folders={folders}
+          />
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
@@ -258,6 +302,7 @@ export function BookmarksList({
   loading,
   page,
   totalPages,
+  folders,
   onUpdate,
   onDelete,
   onNavigate,
@@ -293,6 +338,7 @@ export function BookmarksList({
           <BookmarkItem
             key={bookmark.id}
             bookmark={bookmark}
+            folders={folders}
             onUpdate={onUpdate}
             onDelete={onDelete}
             onNavigate={onNavigate}

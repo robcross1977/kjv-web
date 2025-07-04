@@ -263,6 +263,7 @@ export default function UnifiedSearch({
               placeholder={placeholder}
               className="pl-10 pr-12 h-10 bg-background/80 border-border/50 focus:border-primary/50 focus:bg-background transition-all duration-200 cursor-pointer"
               onClick={() => setIsOpen(true)}
+              data-search-input
             />
             <Button
               variant="ghost"
@@ -275,8 +276,12 @@ export default function UnifiedSearch({
           </div>
         </PopoverTrigger>
 
-        <PopoverContent className="w-[400px] p-0" align="start">
-          <div className="border-b border-border p-3">
+        <PopoverContent
+          className="w-[400px] p-0 max-h-[80vh] overflow-hidden flex flex-col"
+          align="start"
+        >
+          {/* Fixed Header */}
+          <div className="flex-shrink-0 border-b border-border p-3">
             <div className="flex items-center justify-between mb-3">
               <div className="flex gap-2 flex-1">
                 <Button
@@ -307,7 +312,10 @@ export default function UnifiedSearch({
                 <X className="w-4 h-4" />
               </Button>
             </div>
+          </div>
 
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto p-3">
             {mode === "text" ? (
               <div className="space-y-3">
                 <div>
@@ -488,7 +496,8 @@ export default function UnifiedSearch({
             )}
           </div>
 
-          <div className="p-3 bg-muted/20">
+          {/* Fixed Footer */}
+          <div className="flex-shrink-0 p-3 bg-muted/20">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <MessageSquare className="w-3 h-3" />
               <span>

@@ -18,19 +18,22 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Folder } from "lucide-react";
 import {
   CreateBookmarkSchema,
   type CreateBookmarkRequest,
   BOOKMARK_CATEGORIES,
   BOOKMARK_COLORS,
 } from "@/types/bookmark";
+import { type BookmarkFolder } from "@/types/bookmark-folder";
 import { parseReference, validateReference } from "@/lib/reference-parser";
 
 type Props = {
   onSubmit: (data: CreateBookmarkRequest) => Promise<boolean>;
   onCancel: () => void;
   initialReference?: string;
+  folders?: BookmarkFolder[];
+  selectedFolderId?: string;
 };
 
 type FormData = {
@@ -39,6 +42,7 @@ type FormData = {
   reference: string;
   category?: string;
   color?: string;
+  folderId?: string;
 };
 
 /**
@@ -48,6 +52,8 @@ export function CreateBookmarkForm({
   onSubmit,
   onCancel,
   initialReference,
+  folders = [],
+  selectedFolderId,
 }: Props) {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -68,6 +74,7 @@ export function CreateBookmarkForm({
       reference: initialReference || "",
       category: undefined,
       color: undefined,
+      folderId: selectedFolderId || undefined,
     },
   });
 
@@ -181,6 +188,35 @@ export function CreateBookmarkForm({
           rows={3}
           {...register("description")}
         />
+      </div>
+
+      {/* Folder */}
+      <div className="space-y-2">
+        <Label>Folder (Optional)</Label>
+        <Select
+          value={watch("folderId") || "none"}
+          onValueChange={(value) =>
+            setValue("folderId", value === "none" ? undefined : value)
+          }
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a folder" />
+          </SelectTrigger>
+          <SelectContent className="bg-white shadow-lg border border-gray-200">
+            <SelectItem value="none">No folder</SelectItem>
+            {folders.map((folder) => (
+              <SelectItem key={folder.id} value={folder.id}>
+                <div className="flex items-center gap-2">
+                  <Folder
+                    className="h-4 w-4"
+                    style={{ color: folder.color || "#6b7280" }}
+                  />
+                  {folder.name}
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Category */}

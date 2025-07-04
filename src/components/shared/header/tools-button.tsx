@@ -31,7 +31,7 @@ export function ToolsButton() {
             title={tooltipText}
           >
             <Wrench className="h-4 w-4" />
-            <span className="hidden sm:inline">Tools</span>
+            <span className="hidden min-[480px]:inline">Tools</span>
           </Button>
         </TooltipTrigger>
         <TooltipContent>
