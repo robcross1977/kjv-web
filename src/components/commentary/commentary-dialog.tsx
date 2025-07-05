@@ -13,9 +13,10 @@ import {
   Link,
   BookText,
   X,
+  GripVertical,
 } from "lucide-react";
 import { StrongsWord } from "@/types/commentary";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
 type Props = {
@@ -29,6 +30,7 @@ type Props = {
 /**
  * Commentary aside panel - semantic HTML for supplementary content
  * Responsive design that works on both desktop and mobile
+ * Resizable on desktop via drag handle
  */
 export function CommentaryDialog({
   book,
@@ -47,12 +49,59 @@ export function CommentaryDialog({
     startCommentary,
   } = useStreamingCommentary(book, chapter, verse);
 
+  // Resize functionality
+  const [width, setWidth] = useState(448); // Default lg:w-[28rem] = 448px
+  const [isResizing, setIsResizing] = useState(false);
+  const asideRef = useRef<HTMLElement>(null);
+
   // Start commentary when panel opens
   useEffect(() => {
     if (isOpen && !hasStarted) {
       startCommentary();
     }
   }, [isOpen, hasStarted, startCommentary]);
+
+  // Handle mouse resize
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  }, []);
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isResizing) return;
+
+      const newWidth = window.innerWidth - e.clientX;
+      // Constrain width between 300px and 60% of screen width
+      const minWidth = 300;
+      const maxWidth = Math.floor(window.innerWidth * 0.6);
+      const constrainedWidth = Math.max(minWidth, Math.min(maxWidth, newWidth));
+
+      setWidth(constrainedWidth);
+    },
+    [isResizing]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  // Add global mouse events for resizing
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "ew-resize";
+      document.body.style.userSelect = "none";
+
+      return () => {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      };
+    }
+  }, [isResizing, handleMouseMove, handleMouseUp]);
 
   const isVerseCommentary = verse !== undefined;
   const title = isVerseCommentary
@@ -335,13 +384,29 @@ export function CommentaryDialog({
         />
       )}
 
-      {/* Simple Commentary Aside - Always visible when open */}
+      {/* Resizable Commentary Aside */}
       {isOpen && (
         <aside
-          className="fixed top-0 right-0 h-full w-full sm:w-96 lg:w-[28rem] bg-background border-l shadow-lg z-50"
+          ref={asideRef}
+          className="fixed top-0 right-0 h-full bg-background border-l shadow-lg z-50 w-full sm:w-96"
+          style={{
+            width: window.innerWidth >= 1024 ? `${width}px` : undefined,
+          }}
           aria-label="Bible Commentary"
           role="complementary"
         >
+          {/* Resize Handle - only on desktop */}
+          <div
+            className="absolute left-0 top-0 h-full w-1 cursor-ew-resize hover:bg-primary/20 transition-colors hidden lg:block group"
+            onMouseDown={handleMouseDown}
+          >
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center justify-center w-6 h-12 bg-background border border-border rounded-md shadow-sm">
+                <GripVertical className="w-3 h-3 text-muted-foreground" />
+              </div>
+            </div>
+          </div>
+
           {/* Header */}
           <header className="flex items-center justify-between p-4 border-b bg-muted/30">
             <div className="flex items-center gap-2 min-w-0 flex-1">
