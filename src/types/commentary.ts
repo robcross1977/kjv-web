@@ -52,7 +52,7 @@ export const VerseCommentarySchema = z.object({
   chapter: z.number(),
   verse: z.number(),
   context: z.string(), // Verse-specific context
-  strongs: z.record(z.any()), // Strong's concordance data as JSON
+  strongs: z.record(StrongsWordSchema), // Strong's concordance data as JSON
   words: z.record(z.any()), // Word meanings and analysis as JSON
   grammar: z.string().nullable(), // Grammatical analysis
   references: z.array(z.string()), // Cross-references
