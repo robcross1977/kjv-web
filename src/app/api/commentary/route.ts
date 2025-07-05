@@ -184,10 +184,16 @@ export async function POST(request: NextRequest) {
 async function handleGetChapterCommentary(book: string, chapter: number) {
   const existingCommentary = await getChapterCommentary(book, chapter)();
   if (E.isRight(existingCommentary) && O.isSome(existingCommentary.right)) {
-    return NextResponse.json({
+    const cached = existingCommentary.right.value;
+    const responseShape = {
       cached: true,
-      ...existingCommentary.right.value,
-    });
+      type: "chapter",
+      chapterContext: cached.context,
+      chapterCommentary: cached.commentary,
+      generatedAt: new Date().toISOString(),
+      model: "cache",
+    };
+    return NextResponse.json(responseShape);
   }
   return NextResponse.json({ cached: false });
 }
