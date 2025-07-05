@@ -196,14 +196,11 @@ export default function UnifiedSearch({
   };
 
   const handleStructuredSearch = () => {
-    if (!selectedBook) return;
+    if (!selectedBook || !selectedChapter) return;
 
-    let url = `/?book=${selectedBook}`;
-    if (selectedChapter) {
-      url += `&chapter=${selectedChapter}`;
-      if (selectedVerse) {
-        url += `&verse=${selectedVerse}`;
-      }
+    let url = `/?book=${selectedBook}&chapter=${selectedChapter}`;
+    if (selectedVerse) {
+      url += `&verse=${selectedVerse}`;
     }
     router.push(url);
 
@@ -397,7 +394,9 @@ export default function UnifiedSearch({
             ) : (
               <div className="space-y-3">
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Book</label>
+                  <label className="text-sm font-medium mb-1 block">
+                    Book <span className="text-red-500">*</span>
+                  </label>
                   <Command>
                     <CommandInput placeholder="Search books..." />
                     <CommandList className="max-h-32">
@@ -423,7 +422,7 @@ export default function UnifiedSearch({
                 {selectedBook && (
                   <div>
                     <label className="text-sm font-medium mb-1 block">
-                      Chapter
+                      Chapter <span className="text-red-500">*</span>
                     </label>
                     <div className="grid grid-cols-6 gap-1 max-h-24 overflow-y-auto">
                       {availableChapters.map((chapter) => (
@@ -481,16 +480,24 @@ export default function UnifiedSearch({
                     </div>
                   )}
 
-                <div className="flex gap-2">
-                  <Button
-                    onClick={handleStructuredSearch}
-                    disabled={!selectedBook}
-                    className="flex-1"
-                  >
-                    Go to {selectedBook ? formatBookName(selectedBook) : "Book"}
-                    {selectedChapter ? ` ${selectedChapter}` : ""}
-                    {selectedVerse ? `:${selectedVerse}` : ""}
-                  </Button>
+                <div className="space-y-2">
+                  {selectedBook && !selectedChapter && (
+                    <p className="text-xs text-muted-foreground">
+                      Please select a chapter to continue
+                    </p>
+                  )}
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleStructuredSearch}
+                      disabled={!selectedBook || !selectedChapter}
+                      className="flex-1"
+                    >
+                      Go to{" "}
+                      {selectedBook ? formatBookName(selectedBook) : "Book"}
+                      {selectedChapter ? ` ${selectedChapter}` : ""}
+                      {selectedVerse ? `:${selectedVerse}` : ""}
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
