@@ -70,7 +70,7 @@ export default function LastReferenceNavigator({
   if (!hasCurrentSearch && (isAuthLoading || isLoading)) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
-        <LoadingSpinner size="md" showMessages={true} className="text-center" />
+        <LoadingSpinner size="xl" showMessages={true} className="text-center" />
       </div>
     );
   }
