@@ -100,8 +100,8 @@ export function SelectableVerse({
         </div>
       )}
 
-      {/* Commentary button - appears on hover, now calls parent function */}
-      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      {/* Commentary button - visible on mobile, appears on hover on desktop */}
+      <div className="absolute top-2 right-2 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
         <Button
           onClick={handleCommentaryClick}
           variant="ghost"
