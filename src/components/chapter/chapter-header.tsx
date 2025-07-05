@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { ValidBookName } from "kingjames";
 import { BookmarkButton } from "@/components/bookmarks/bookmark-button";
+import { CommentaryButton } from "@/components/commentary/commentary-button";
 
 type Props = {
   book: ValidBookName;
@@ -33,6 +34,14 @@ export function ChapterHeader({
       <div className="ml-2 mb-2 flex items-center gap-2">
         {/* Bookmark button - authentication-aware */}
         <BookmarkButton
+          book={book}
+          chapter={chapter}
+          variant="outline"
+          size="sm"
+        />
+
+        {/* Commentary button */}
+        <CommentaryButton
           book={book}
           chapter={chapter}
           variant="outline"

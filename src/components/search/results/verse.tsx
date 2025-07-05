@@ -9,6 +9,7 @@ import { ValidBookName, VerseRecords } from "kingjames";
 import { SelectableVerse } from "@/components/verse/selectable-verse";
 import { ChapterHeader } from "@/components/chapter/chapter-header";
 import { useTools } from "@/components/tools/tools-provider";
+import { CommentaryDialog } from "@/components/commentary/commentary-dialog";
 
 // Types
 type VerseElement = [string, React.JSX.Element];
@@ -43,6 +44,11 @@ type VersesContainerProps = {
   verse: string;
   text: string;
   show: boolean;
+  onCommentaryClick: (
+    book: ValidBookName,
+    chapter: number,
+    verse: number
+  ) => void;
 };
 
 function VersesContainer({
@@ -51,6 +57,7 @@ function VersesContainer({
   verse,
   text,
   show,
+  onCommentaryClick,
 }: VersesContainerProps) {
   const { isToolsActive, toggleVerseReadStatus, getVerseReadStatus } =
     useTools();
@@ -68,6 +75,7 @@ function VersesContainer({
         readStatus={getVerseReadStatus(book, chapterNum, verseNum)}
         isToolsActive={isToolsActive}
         onToggleReadStatus={toggleVerseReadStatus}
+        onCommentaryClick={onCommentaryClick}
       />
     </div>
   );
@@ -89,6 +97,28 @@ export default function VersesDisplay({
 }: Props) {
   const { fetchReadStatus, setCurrentVerses, isToolsActive, markAllAsRead } =
     useTools();
+
+  // Commentary state
+  const [commentaryOpen, setCommentaryOpen] = React.useState(false);
+  const [commentaryBook, setCommentaryBook] =
+    React.useState<ValidBookName>(book);
+  const [commentaryChapter, setCommentaryChapter] = React.useState<number>(
+    parseInt(chapter)
+  );
+  const [commentaryVerse, setCommentaryVerse] = React.useState<
+    number | undefined
+  >();
+
+  const handleCommentaryClick = (
+    book: ValidBookName,
+    chapter: number,
+    verse: number
+  ) => {
+    setCommentaryBook(book);
+    setCommentaryChapter(chapter);
+    setCommentaryVerse(verse);
+    setCommentaryOpen(true);
+  };
 
   // Fetch read status and set current verses when component mounts
   React.useEffect(() => {
@@ -121,6 +151,7 @@ export default function VersesDisplay({
         verse={verse}
         text={text}
         show={show}
+        onCommentaryClick={handleCommentaryClick}
       />
     )),
     R.toArray,
@@ -139,6 +170,17 @@ export default function VersesDisplay({
         />
       </div>
       <div className="space-y-2">{verseElements}</div>
+
+      {/* Commentary dialog at the container level */}
+      {commentaryOpen && (
+        <CommentaryDialog
+          book={commentaryBook}
+          chapter={commentaryChapter}
+          verse={commentaryVerse}
+          isOpen={commentaryOpen}
+          onClose={() => setCommentaryOpen(false)}
+        />
+      )}
     </div>
   );
 }

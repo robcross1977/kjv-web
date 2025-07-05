@@ -97,3 +97,50 @@ model ReadVerse {
   @@unique([userId, book, chapter, verse])
   @@map("read_verse")
 }
+
+model ChapterCommentary {
+  id          String   @id @default(cuid())
+  book        String   // Normalized book name (e.g., "john")
+  chapter     Int      // Chapter number
+  
+  // AI-generated content
+  context     String   // Modern English explanation
+  speaker     String?  // Who is speaking/writing
+  topics      String[] // Main topics/themes
+  culture     String?  // Ancient cultural context
+  history     String?  // Historical background
+  commentary  String   // Independent Baptist commentary
+  
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  model       String   // AI model used (e.g., "gpt-4")
+  version     String   @default("1.0") // Commentary version for cache invalidation
+  
+  @@unique([book, chapter, version])
+  @@map("chapter_commentary")
+}
+
+model VerseCommentary {
+  id          String   @id @default(cuid())
+  book        String   // Normalized book name
+  chapter     Int      // Chapter number
+  verse       Int      // Verse number
+  
+  // AI-generated content
+  context     String   // Verse-specific context
+  strongs     Json     // Strong's concordance data
+  words       Json     // Word meanings and analysis
+  grammar     String?  // Grammatical analysis
+  references  String[] // Cross-references
+  commentary  String   // Independent Baptist commentary
+  
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  model       String   // AI model used
+  version     String   @default("1.0") // Commentary version
+  
+  @@unique([book, chapter, verse, version])
+  @@map("verse_commentary")
+}

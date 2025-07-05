@@ -4,7 +4,7 @@ type LoadingSpinnerProps = {
   width?: string;
   height?: string;
   showMessages?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   className?: string;
 };
 
@@ -30,8 +30,10 @@ export default function LoadingSpinner({
       case "md":
         return { width: "w-24", height: "h-24" };
       case "lg":
-      default:
         return { width: "w-48", height: "h-48" };
+      case "xl":
+      default:
+        return { width: "w-64", height: "h-64" };
     }
   };
 
@@ -121,12 +123,12 @@ export default function LoadingSpinner({
           <div
             className={`relative flex flex-col items-center justify-center text-center transition-opacity duration-${ANIMATION_DURATION} ${
               isFading ? "opacity-0" : "opacity-100"
-            } w-full h-full overflow-hidden`}
+            } w-full h-full overflow-hidden p-4`}
           >
-            <span className="text-lg font-bold text-primary text-center">
+            <span className="text-xl font-bold text-primary text-center">
               {messages[currentMessageIndex].reference}
             </span>
-            <span className="px-2 text-xs text-primary text-center">
+            <span className="mt-2 px-4 text-sm text-primary text-center">
               {messages[currentMessageIndex].text}
             </span>
           </div>

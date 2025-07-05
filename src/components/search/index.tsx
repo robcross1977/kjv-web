@@ -4,23 +4,12 @@ import { useTools } from "@/components/tools/tools-provider";
 import BooksDisplay from "./results";
 import { ValidBookName, WrappedRecords } from "kingjames";
 import { useAutoSaveReference } from "@/hooks/use-last-reference";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { parseReference } from "@/lib/reference-parser";
 import { pipe } from "fp-ts/function";
 import * as E from "fp-ts/Either";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Search as SearchIcon,
-  Navigation,
-  ChevronDown,
-  ChevronUp,
-  MessageSquare,
-  Book,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-
-import SelectSearch from "./select-search";
-import HeaderMastraSearch from "./mastra-search/header-search";
+import { Card, CardContent } from "@/components/ui/card";
+import { Search as SearchIcon, MessageSquare, Book } from "lucide-react";
 
 type Props = {
   book?: ValidBookName;
@@ -39,10 +28,6 @@ export default function Search({
   results,
   aiContext,
 }: Props) {
-  const [selectSearchOpen, setSelectSearchOpen] = useState(false);
-  const [navigationOpen, setNavigationOpen] = useState(true);
-  const [textSearchOpen, setTextSearchOpen] = useState(true);
-
   // Format current reference for auto-saving
   const currentReference = useMemo(() => {
     console.log("SEARCH COMPONENT: Props received:", {

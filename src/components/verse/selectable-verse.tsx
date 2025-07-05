@@ -2,17 +2,24 @@
 
 import { pipe } from "fp-ts/function";
 import * as O from "fp-ts/Option";
-import { CheckCircle, Circle } from "lucide-react";
+import { CheckCircle, Circle, MessageSquare } from "lucide-react";
 import { ReadStatus } from "@/types/read-status";
+import { ValidBookName } from "kingjames";
+import { Button } from "@/components/ui/button";
 
 type Props = {
-  book: string;
+  book: ValidBookName;
   chapter: number;
   verse: number;
   text: string;
   readStatus: ReadStatus;
   isToolsActive: boolean;
   onToggleReadStatus: (book: string, chapter: number, verse: number) => void;
+  onCommentaryClick: (
+    book: ValidBookName,
+    chapter: number,
+    verse: number
+  ) => void;
 };
 
 /**
@@ -27,12 +34,18 @@ export function SelectableVerse({
   readStatus,
   isToolsActive,
   onToggleReadStatus,
+  onCommentaryClick,
 }: Props) {
   const handleCircleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isToolsActive) {
       onToggleReadStatus(book, chapter, verse);
     }
+  };
+
+  const handleCommentaryClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onCommentaryClick(book, chapter, verse);
   };
 
   const getReadStatusIcon = () => {
@@ -68,7 +81,7 @@ export function SelectableVerse({
   };
 
   return (
-    <div className="relative p-2 rounded-md transition-all duration-200 hover:bg-accent/50">
+    <div className="relative p-2 rounded-md transition-all duration-200 hover:bg-accent/50 group">
       {/* Read status circle - only visible when tools are active */}
       {isToolsActive && (
         <div
@@ -87,8 +100,21 @@ export function SelectableVerse({
         </div>
       )}
 
+      {/* Commentary button - appears on hover, now calls parent function */}
+      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <Button
+          onClick={handleCommentaryClick}
+          variant="ghost"
+          size="sm"
+          className="flex items-center gap-2"
+          title="Verse Commentary"
+        >
+          <MessageSquare className="h-4 w-4" />
+        </Button>
+      </div>
+
       {/* Verse content */}
-      <div className={`${isToolsActive ? "ml-8" : "ml-2"}`}>
+      <div className={`${isToolsActive ? "ml-8" : "ml-2"} pr-12`}>
         <span className={getVerseNumberStyles()}>{verse}</span>
         <span className="text-foreground leading-relaxed">{text}</span>
       </div>
