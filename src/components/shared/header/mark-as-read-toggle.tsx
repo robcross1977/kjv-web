@@ -29,12 +29,22 @@ export function MarkAsReadToggle() {
             variant={isToolsActive ? "default" : "outline"}
             size="sm"
             onClick={toggleTools}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3"
             title={tooltipText}
           >
             <BookCheck className="h-4 w-4" />
-            <span className="hidden min-[480px]:inline">
-              {isToolsActive ? "Mark Mode On" : "Mark Mode"}
+            <span className="text-xs sm:text-sm">
+              {isToolsActive ? (
+                <>
+                  <span className="sm:hidden">On</span>
+                  <span className="hidden sm:inline">Mark Mode On</span>
+                </>
+              ) : (
+                <>
+                  <span className="sm:hidden">Mark</span>
+                  <span className="hidden sm:inline">Mark Mode</span>
+                </>
+              )}
             </span>
           </Button>
         </TooltipTrigger>

@@ -27,11 +27,11 @@ export function ToolsButton() {
             variant={isToolsSheetOpen ? "default" : "outline"}
             size="sm"
             onClick={() => openToolsSheet("reading")}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3"
             title={tooltipText}
           >
             <Wrench className="h-4 w-4" />
-            <span className="hidden min-[480px]:inline">Tools</span>
+            <span className="text-xs sm:text-sm">Tools</span>
           </Button>
         </TooltipTrigger>
         <TooltipContent>

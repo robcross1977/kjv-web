@@ -144,11 +144,11 @@ export function BookmarkButton({
       <Button
         variant={variant}
         size={size}
-        className={`flex items-center gap-2 rounded-r-none border-r-0 ${className}`}
+        className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 rounded-r-none border-r-0 ${className}`}
         onClick={handleQuickBookmark}
       >
         <Zap className="h-4 w-4" />
-        {showText && <span className="hidden min-[480px]:inline">Quick</span>}
+        {showText && <span className="text-xs sm:text-sm">Quick</span>}
       </Button>
 
       {/* Dropdown for Full Bookmark */}

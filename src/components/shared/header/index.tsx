@@ -33,7 +33,7 @@ export default function Header() {
           {/* Title and Auth Row */}
           <div className="flex flex-col sm:flex-row justify-between items-center w-full gap-4">
             <Title />
-            <div className="flex flex-wrap items-center gap-2 justify-center sm:justify-end">
+            <div className="flex flex-wrap items-center gap-1 sm:gap-2 justify-center sm:justify-end">
               <ToolsButton />
               <MarkAsReadToggle />
               <Auth />

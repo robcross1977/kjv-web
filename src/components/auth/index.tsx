@@ -7,11 +7,15 @@ export default async function Auth() {
   const user = session?.user;
 
   return (
-    <div className="lg:mr-5 items-center justify-center">
+    <div className="flex items-center justify-center">
       {user ? (
-        <div className="flex flex-row items-center justify-center gap-2">
+        <div className="flex flex-row items-center justify-center gap-1 sm:gap-2">
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/api/auth/signout" data-testid="logout" className="lg:pr-3">
+          <a
+            href="/api/auth/signout"
+            data-testid="logout"
+            className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 rounded border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
             Logout
           </a>
           {user.image && (
@@ -19,9 +23,9 @@ export default async function Auth() {
               <Image
                 src={user.image}
                 alt={user.name ?? "Profile Picture"}
-                width={30}
-                height={30}
-                className="rounded-full"
+                width={24}
+                height={24}
+                className="rounded-full sm:w-[30px] sm:h-[30px]"
               />
             </Link>
           )}
@@ -29,7 +33,11 @@ export default async function Auth() {
       ) : (
         <>
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/api/auth/signin" data-testid="login">
+          <a
+            href="/api/auth/signin"
+            data-testid="login"
+            className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 rounded border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
             Login
           </a>
         </>

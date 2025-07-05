@@ -125,14 +125,14 @@ export function ToolsSheet({
                   className="flex items-center gap-2 text-gray-700 data-[state=active]:text-primary data-[state=active]:bg-white"
                 >
                   {getSectionIcon("reading")}
-                  <span className="hidden sm:inline">Reading</span>
+                  <span className="text-xs sm:text-sm">Reading</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="bookmarks"
                   className="flex items-center gap-2 text-gray-700 data-[state=active]:text-primary data-[state=active]:bg-white"
                 >
                   {getSectionIcon("bookmarks")}
-                  <span className="hidden sm:inline">Bookmarks</span>
+                  <span className="text-xs sm:text-sm">Bookmarks</span>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
